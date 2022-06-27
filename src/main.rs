@@ -29,16 +29,16 @@ const INFINITY: f64 = f64::INFINITY;
 fn main() -> Result<(), Box<dyn std::error::Error>>{
     // Image
     const ASPECT_RATIO: f64  = 3.0 / 2.0;
-    const IMAGE_WIDTH: u32 = 600;
+    const IMAGE_WIDTH: u32 = 1200;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-    let samples_per_pixel = 1;
+    let samples_per_pixel = 35;
     let max_depth = 100;
     let zbuffer= Arc::new(Mutex::new(vec![vec![INFINITY; IMAGE_WIDTH as usize]; IMAGE_HEIGHT as usize]));
 
     // World
     let mut world = random_scene();
 
-    let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/dragon2.obj")?);
+    let input = BufReader::new(File::open("/home/max/Rust/tracer/suz2.obj")?);
     let model: Obj = load_obj(input)?;
     let _obj_material = Metal { albedo: Colour::new(0.35, 0.35, 0.45), f: 0.0 };
     let _obj_material_glass = Dialectric { index_of_refraction: 1.5 };
@@ -53,12 +53,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
     //     1000.0,
     //     ground_material,
     // )));
-    // let light_material = Light { intensity: 100.0, colour: Colour::new(180.0 / 255.0, 162.0 / 255.0, 252.0 / 255.0) };
-    // world.objects.push(Box::new(Sphere::new(
-    //     Vec3::new(2.0, 3.3, 0.0),
-    //     0.3,
-    //     light_material,
-    // )));
+    let light_material = Light { intensity: 100.0, colour: Colour::new(180.0 / 255.0, 162.0 / 255.0, 252.0 / 255.0) };
+    world.objects.push(Box::new(Sphere::new(
+        Vec3::new(2.0, 2.8, 0.0),
+        0.3,
+        light_material,
+    )));
 
     // Camera
     let look_from = Vec3::new(8.0, 2.0, 2.0);
@@ -122,8 +122,8 @@ fn ray_colour(ray: &Ray, world: &HittableList, depth: i32, p_0: u32, p_1: u32, z
     let direction = ray.direction.unit();
 
     let t = 0.5 * (direction.y + 1.0);
-    return (1.0 - t) * Colour::new(1.0, 1.0, 1.0) + t * Colour::new(0.5, 0.7, 1.0);
-    // return Colour::new(0.0, 0.0, 0.0);
+    // return (1.0 - t) * Colour::new(1.0, 1.0, 1.0) + t * Colour::new(0.5, 0.7, 1.0);
+    return Colour::new(0.0, 0.0, 0.0);
 }
 
 fn random_scene() -> HittableList {

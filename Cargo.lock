@@ -136,15 +136,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7709cef83f0c1f58f666e746a08b21e0085f7440fa6a29cc194d68aac97a4225"
 
 [[package]]
-name = "pathtracer"
-version = "0.1.0"
-dependencies = [
- "obj-rs",
- "rand",
- "rayon",
-]
-
-[[package]]
 name = "ppv-lite86"
 version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -257,6 +248,15 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "tracer"
+version = "0.1.0"
+dependencies = [
+ "obj-rs",
+ "rand",
+ "rayon",
 ]
 
 [[package]]

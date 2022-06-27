@@ -1,5 +1,5 @@
 [package]
-name = "pathtracer"
+name = "tracer"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,3 +9,6 @@ edition = "2021"
 rand = "0.8.5"
 obj-rs = "0.7.0"
 rayon = "1.5"
+
+# [profile.release]
+# debug = true

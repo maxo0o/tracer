@@ -1,5 +1,5 @@
-use std::ops;
 use rand::Rng;
+use std::ops;
 
 #[derive(Debug)]
 pub struct Colour {
@@ -24,7 +24,7 @@ impl Colour {
     pub fn random() -> Colour {
         Colour {
             r: rand::random::<f64>(),
-            g: rand::random::<f64>(), 
+            g: rand::random::<f64>(),
             b: rand::random::<f64>(),
         }
     }
@@ -32,7 +32,7 @@ impl Colour {
     pub fn random_min_max(min: f64, max: f64) -> Colour {
         Colour {
             r: rand::thread_rng().gen_range(min..max),
-            g: rand::thread_rng().gen_range(min..max), 
+            g: rand::thread_rng().gen_range(min..max),
             b: rand::thread_rng().gen_range(min..max),
         }
     }

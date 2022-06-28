@@ -1,48 +1,58 @@
+mod bsp;
 mod camera;
 mod colour;
 mod hittable;
 mod material;
+mod object;
 mod ray;
 mod sphere;
 mod utils;
 mod vector;
-mod object;
-mod bsp;
 
 use camera::Camera;
 use colour::Colour;
 use hittable::{Hittable, HittableList};
-use material::{Dialectric, Lambertian, Metal, Light};
-use ray::Ray;
-use sphere::Sphere;
-use vector::Vec3;
+use material::{Dialectric, Lambertian, Light, Metal};
+use obj::{load_obj, Obj};
 use object::Object;
+use rand::Rng;
+use ray::Ray;
+use rayon::prelude::*;
+use sphere::Sphere;
 use std::fs::File;
 use std::io::BufReader;
-use obj::{load_obj, Obj};
-use rayon::prelude::*;
 use std::sync::{Arc, Mutex};
-use rand::{Rng};
+use vector::Vec3;
 
 const INFINITY: f64 = f64::INFINITY;
 
-fn main() -> Result<(), Box<dyn std::error::Error>>{
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Image
-    const ASPECT_RATIO: f64  = 3.0 / 2.0;
+    const ASPECT_RATIO: f64 = 3.0 / 2.0;
     const IMAGE_WIDTH: u32 = 800;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
     let samples_per_pixel = 35;
     let max_depth = 100;
-    let zbuffer= Arc::new(Mutex::new(vec![vec![INFINITY; IMAGE_WIDTH as usize]; IMAGE_HEIGHT as usize]));
+    let zbuffer = Arc::new(Mutex::new(vec![
+        vec![INFINITY; IMAGE_WIDTH as usize];
+        IMAGE_HEIGHT as usize
+    ]));
 
     // World
     let mut world = random_scene();
 
-    let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/suz2.obj")?);
+    let input = BufReader::new(File::open("/home/max/Rust/tracer/suz2.obj")?);
     let model: Obj = load_obj(input)?;
-    let _obj_material = Metal { albedo: Colour::new(0.35, 0.35, 0.45), f: 0.0 };
-    let _obj_material_glass = Dialectric { index_of_refraction: 1.5 };
-    let _obj_diffuse = Lambertian { albedo: Colour::new(0.35, 0.35, 0.35) };
+    let _obj_material = Metal {
+        albedo: Colour::new(0.35, 0.35, 0.45),
+        f: 0.0,
+    };
+    let _obj_material_glass = Dialectric {
+        index_of_refraction: 1.5,
+    };
+    let _obj_diffuse = Lambertian {
+        albedo: Colour::new(0.35, 0.35, 0.35),
+    };
     eprintln!("Started BSP load");
     let object = Object::new(model, _obj_diffuse);
     eprintln!("Finished BSP load");
@@ -55,7 +65,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
     //     1000.0,
     //     ground_material,
     // )));
-    let light_material = Light { intensity: 80.0, colour: Colour::new(180.0 / 255.0, 162.0 / 255.0, 252.0 / 255.0) };
+    let light_material = Light {
+        intensity: 80.0,
+        colour: Colour::new(180.0 / 255.0, 162.0 / 255.0, 252.0 / 255.0),
+    };
     world.objects.push(Box::new(Sphere::new(
         Vec3::new(2.0, 2.8, 0.0),
         0.3,
@@ -85,17 +98,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
     for j in (0..=IMAGE_HEIGHT - 1).rev() {
         eprint!("\rScanlines remaining: {:?}", j);
 
-        let scanline: Vec<Colour> = (0..IMAGE_WIDTH).into_par_iter().map(|i| {
-            let mut pixel_colour = Colour::new(0.0, 0.0, 0.0);
-            for _ in 0..samples_per_pixel {
-                let u = (i as f64 + rand::random::<f64>()) / (IMAGE_WIDTH - 1) as f64;
-                let v = (j as f64 + rand::random::<f64>()) / (IMAGE_HEIGHT - 1) as f64;
+        let scanline: Vec<Colour> = (0..IMAGE_WIDTH)
+            .into_par_iter()
+            .map(|i| {
+                let mut pixel_colour = Colour::new(0.0, 0.0, 0.0);
+                for _ in 0..samples_per_pixel {
+                    let u = (i as f64 + rand::random::<f64>()) / (IMAGE_WIDTH - 1) as f64;
+                    let v = (j as f64 + rand::random::<f64>()) / (IMAGE_HEIGHT - 1) as f64;
 
-                let ray = cam.get_ray(u, v);
-                pixel_colour += ray_colour(&ray, &world, max_depth, j, i, Arc::clone(&zbuffer));
-            }
-            pixel_colour
-        }).collect();
+                    let ray = cam.get_ray(u, v);
+                    pixel_colour += ray_colour(&ray, &world, max_depth, j, i, Arc::clone(&zbuffer));
+                }
+                pixel_colour
+            })
+            .collect();
 
         for pixel_colour in scanline {
             pixel_colour.write_colour(samples_per_pixel);
@@ -106,15 +122,31 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
     Ok(())
 }
 
-fn ray_colour(ray: &Ray, world: &HittableList, depth: i32, p_0: u32, p_1: u32, zbuffer: Arc<Mutex<Vec<Vec<f64>>>>) -> Colour {
+fn ray_colour(
+    ray: &Ray,
+    world: &HittableList,
+    depth: i32,
+    p_0: u32,
+    p_1: u32,
+    zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+) -> Colour {
     if depth <= 0 {
         return Colour::new(0.0, 0.0, 0.0);
     }
 
     if let Some(hit_record) = world.hit(ray, 0.001, INFINITY, p_0, p_1, Arc::clone(&zbuffer)) {
-        let (scattered_ray, albedo, is_scattered, is_light) = hit_record.material.scatter(ray, &hit_record);
+        let (scattered_ray, albedo, is_scattered, is_light) =
+            hit_record.material.scatter(ray, &hit_record);
         if is_scattered && !is_light {
-            return albedo * ray_colour(&scattered_ray, world, depth - 1, p_0, p_1, Arc::clone(&zbuffer));
+            return albedo
+                * ray_colour(
+                    &scattered_ray,
+                    world,
+                    depth - 1,
+                    p_0,
+                    p_1,
+                    Arc::clone(&zbuffer),
+                );
         } else if is_light {
             return albedo;
         }
@@ -131,7 +163,9 @@ fn ray_colour(ray: &Ray, world: &HittableList, depth: i32, p_0: u32, p_1: u32, z
 fn random_scene() -> HittableList {
     let mut world = HittableList::new();
 
-    let ground_material = Lambertian { albedo: Colour::new(0.5, 0.5, 0.5) };
+    let ground_material = Lambertian {
+        albedo: Colour::new(0.5, 0.5, 0.5),
+    };
     world.objects.push(Box::new(Sphere::new(
         Vec3::new(0.0, -1000.0, 0.0),
         1000.0,

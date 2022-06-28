@@ -1,6 +1,6 @@
 use crate::ray::Ray;
-use crate::vector::Vec3;
 use crate::utils::random_in_unit_disk;
+use crate::vector::Vec3;
 
 pub struct Camera {
     pub origin: Vec3,
@@ -13,7 +13,15 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new(look_from: &Vec3, look_at: &Vec3, vup: Vec3, vfov: f64, aspect_ratio: f64, aperture: f64, focus_dist: f64) -> Camera {
+    pub fn new(
+        look_from: &Vec3,
+        look_at: &Vec3,
+        vup: Vec3,
+        vfov: f64,
+        aspect_ratio: f64,
+        aperture: f64,
+        focus_dist: f64,
+    ) -> Camera {
         let theta = vfov.to_radians();
         let h = (theta / 2.0).tan();
         let viewport_height = 2.0 * h;
@@ -46,8 +54,9 @@ impl Camera {
         let offset = rd.x * &self.u + rd.y * &self.v;
 
         let origin_c = Vec3::new(self.origin.x, self.origin.y, self.origin.z);
-        let direction =
-            &self.lower_left_corner + s * &self.horizontal + t * &self.vertical - &self.origin - &offset;
+        let direction = &self.lower_left_corner + s * &self.horizontal + t * &self.vertical
+            - &self.origin
+            - &offset;
         Ray::new(origin_c + offset, direction)
     }
 }

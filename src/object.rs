@@ -17,7 +17,7 @@ pub struct Object<M: Material> {
 impl<M: Material> Object<M> {
     pub fn new(object: Obj, material: M) -> Object<M> {
         let mut tree = Box::new(BSPTree::build_new(object));
-        BSPTree::build(&mut tree, 1);
+        BSPTree::build(&mut tree, 3);
         Object { tree, material }
     }
 }

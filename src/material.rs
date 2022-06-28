@@ -42,7 +42,12 @@ impl Material for Metal {
         );
         let scattered = scattered_ray.direction.dot(&hit_record.normal) > 0.0;
         let is_light = false;
-        (scattered_ray, Colour::copy(&self.albedo), scattered, is_light)
+        (
+            scattered_ray,
+            Colour::copy(&self.albedo),
+            scattered,
+            is_light,
+        )
     }
 }
 
@@ -92,7 +97,12 @@ impl Material for Light {
     fn scatter(&self, ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool, bool) {
         let ray = Ray::new(Vec3::copy(&ray_in.origin), Vec3::copy(&ray_in.direction));
         let is_light = true;
-        (ray, self.intensity * Colour::copy(&self.colour), false, is_light)
+        (
+            ray,
+            self.intensity * Colour::copy(&self.colour),
+            false,
+            is_light,
+        )
     }
 }
 

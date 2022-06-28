@@ -24,12 +24,11 @@ use std::sync::{Arc, Mutex};
 use rand::{Rng};
 
 const INFINITY: f64 = f64::INFINITY;
-// const PI: f64 = std::f64::consts::PI;
 
 fn main() -> Result<(), Box<dyn std::error::Error>>{
     // Image
     const ASPECT_RATIO: f64  = 3.0 / 2.0;
-    const IMAGE_WIDTH: u32 = 1200;
+    const IMAGE_WIDTH: u32 = 800;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
     let samples_per_pixel = 35;
     let max_depth = 100;
@@ -38,22 +37,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
     // World
     let mut world = random_scene();
 
-    let input = BufReader::new(File::open("/home/max/Rust/tracer/suz2.obj")?);
+    let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/dragon2.obj")?);
     let model: Obj = load_obj(input)?;
     let _obj_material = Metal { albedo: Colour::new(0.35, 0.35, 0.45), f: 0.0 };
     let _obj_material_glass = Dialectric { index_of_refraction: 1.5 };
     let _obj_diffuse = Lambertian { albedo: Colour::new(0.35, 0.35, 0.35) };
     let object = Object::new(model, _obj_diffuse);
-
-    //let mut world = HittableList::new();
     world.objects.push(Box::new(object));
+
     // let ground_material = Lambertian { albedo: Colour::new(0.5, 0.5, 0.5) };
     // world.objects.push(Box::new(Sphere::new(
     //     Vec3::new(0.0, -1000.839506, 0.0),
     //     1000.0,
     //     ground_material,
     // )));
-    let light_material = Light { intensity: 100.0, colour: Colour::new(180.0 / 255.0, 162.0 / 255.0, 252.0 / 255.0) };
+    let light_material = Light { intensity: 80.0, colour: Colour::new(180.0 / 255.0, 162.0 / 255.0, 252.0 / 255.0) };
     world.objects.push(Box::new(Sphere::new(
         Vec3::new(2.0, 2.8, 0.0),
         0.3,

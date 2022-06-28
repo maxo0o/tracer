@@ -38,12 +38,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
     // World
     let mut world = random_scene();
 
-    let input = BufReader::new(File::open("suz2.obj")?);
+    let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/suz2.obj")?);
     let model: Obj = load_obj(input)?;
     let _obj_material = Metal { albedo: Colour::new(0.35, 0.35, 0.45), f: 0.0 };
     let _obj_material_glass = Dialectric { index_of_refraction: 1.5 };
     let _obj_diffuse = Lambertian { albedo: Colour::new(0.35, 0.35, 0.35) };
+    eprintln!("Started BSP load");
     let object = Object::new(model, _obj_diffuse);
+    eprintln!("Finished BSP load");
+    eprintln!("{:?}", object.tree);
     world.objects.push(Box::new(object));
 
     // let ground_material = Lambertian { albedo: Colour::new(0.5, 0.5, 0.5) };

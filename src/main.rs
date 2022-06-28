@@ -7,6 +7,7 @@ mod sphere;
 mod utils;
 mod vector;
 mod object;
+mod bsp;
 
 use camera::Camera;
 use colour::Colour;
@@ -37,7 +38,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
     // World
     let mut world = random_scene();
 
-    let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/dragon2.obj")?);
+    let input = BufReader::new(File::open("suz2.obj")?);
     let model: Obj = load_obj(input)?;
     let _obj_material = Metal { albedo: Colour::new(0.35, 0.35, 0.45), f: 0.0 };
     let _obj_material_glass = Dialectric { index_of_refraction: 1.5 };

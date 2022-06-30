@@ -1,3 +1,4 @@
+use crate::hittable::HitRecord;
 use crate::ray::Ray;
 use crate::vector::Vec3;
 use obj::Obj;
@@ -52,7 +53,7 @@ impl BSPTree {
         let parent_v2 = Vec3::copy(&parent.faces[0][2]);
         let p0p1 = &parent_v1 - &parent_v0;
         let p0p2 = &parent_v2 - &parent_v0;
-        let hyperplane_normal = p0p1.cross(&p0p2);
+        let hyperplane_normal = p0p1.cross(&p0p2).unit();
 
         if parent.faces.len() < 2 {
             return;
@@ -86,14 +87,10 @@ impl BSPTree {
 
         if let Some(child_infront) = &mut parent.infront {
             BSPTree::build(child_infront, depth - 1);
-        } else {
-            println!("No children infront?");
         }
 
         if let Some(child_behind) = &mut parent.behind {
             BSPTree::build(child_behind, depth - 1);
-        } else {
-            println!("No children behind?");
         }
     }
 
@@ -105,16 +102,65 @@ impl BSPTree {
         }
     }
 
-    pub fn ray_hit(ray: &Ray) -> bool {
+    pub fn ray_hit(&self, ray: &Ray) -> Option<BSPHit> {
         // check if ray insects faces plane...
-        // if yes
-            // check faces list
-            // if yes
-                // return result
-            // else
-                // look through behind list
-        // else
-            // look through infront list
+
+        if self.faces.len() == 0 {
+            return None;
+        }
+
+        let sample_face = &self.faces[0];
+        let p0 = Vec3::copy(&sample_face[0]);
+        let p1 = Vec3::copy(&sample_face[1]);
+        let p2 = Vec3::copy(&sample_face[2]);
+
+        if let (true, Some(p), Some(n)) = ray_hit_plane(ray, &p0, &p1, &p2) {
+            let edge0 = &p1 - &p0;
+            let v_p1 = &p - &p0;
+            let c0 = edge0.cross(&v_p1);
+            // if n.dot(&c0) < 0.0 {
+            //     return None;
+            // }
+
+            let edge1 = &p2 - &p1;
+            let v_p2 = &p - &p1;
+            let c1 = edge1.cross(&v_p2);
+            // if n.dot(&c1) < 0.0 {
+            //     return None;
+            // }
+
+            let edge2 = p0 - &p2;
+            let v_p3 = &p - &p2;
+            let c2 = edge2.cross(&v_p3);
+            // if n.dot(&c2) < 0.0 {
+            //     return None;
+            // }
+
+            if n.dot(&c2) >= 0.0 && n.dot(&c1) >= 0.0 && n.dot(&c0) >= 0.0 {
+                let n_norm = n.unit();
+                let mut _front_face = true;
+                if ray.direction.dot(&n_norm) > 0.0 {
+                    _front_face = false;
+                    return None;
+                }
+
+                return Some(BSPHit {
+                    p,
+                    normal: n_norm,
+                    front_face: _front_face,
+                });
+            }
+        }
+
+        if let Some(infront) = &self.infront {
+            return infront.ray_hit(ray);
+        }
+
+        if let Some(behind) = &self.behind {
+            return behind.ray_hit(ray);
+        }
+
+        None
     }
 
     pub fn add_face(&mut self, hyperplane_normal: &Vec3, face: [Vec3; 3]) {
@@ -260,18 +306,38 @@ impl BSPTree {
     // }
 }
 
+pub struct BSPHit {
+    pub p: Vec3,
+    pub normal: Vec3,
+    pub front_face: bool,
+}
+
+fn ray_hit_plane(ray: &Ray, p0: &Vec3, p1: &Vec3, p2: &Vec3) -> (bool, Option<Vec3>, Option<Vec3>) {
+    let p0p1 = p1 - p0;
+    let p0p2 = p2 - p0;
+    let plane_normal = p0p1.cross(&p0p2).unit();
+
+    let triangle_ray_dot_product = plane_normal.dot(&ray.direction);
+    if triangle_ray_dot_product.abs() == 0.0 {
+        return (false, None, None);
+    }
+
+    let d = -plane_normal.dot(&p1);
+
+    let t = -(plane_normal.dot(&ray.origin) + d) / triangle_ray_dot_product;
+    if t < 0.0 {
+        return (false, None, None);
+    }
+
+    let p = ray.at(t);
+
+    (true, Some(p), Some(plane_normal))
+}
+
 fn find_intersection_plane_and_line(p_normal: &Vec3, point_a: &Vec3, point_b: &Vec3) -> Vec3 {
     let l0 = point_b - point_a;
-    let d = -(p_normal.x * point_a.x
-        + p_normal.y * point_a.y
-        + p_normal.z * point_a.z);
-    let t = -(p_normal.x *point_a.x
-        + p_normal.y *point_a.y
-        + p_normal.z *point_a.z
-        + d)
-        / (p_normal.x * l0.x
-            + p_normal.y * l0.y
-            + p_normal.z * l0.z);
+    let d = -(p_normal.dot(&point_a));
+    let t = -(p_normal.dot(&point_a) + d) / (p_normal.dot(&l0));
     point_a + t * &l0
 }
 

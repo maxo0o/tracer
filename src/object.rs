@@ -1,31 +1,70 @@
 use std::f64::INFINITY;
 
 use crate::hittable::{HitRecord, Hittable};
+use crate::kdtree::{build, build_from_obj, KDTree, KDTreeHitRecord};
 use crate::material::Material;
 use crate::ray::Ray;
+use crate::utils::distance;
 use crate::vector::Vec3;
-use crate::utils::{distance};
-use crate::bsp::BSPTree;
 use obj::Obj;
 use std::sync::{Arc, Mutex};
 
 pub struct Object<M: Material> {
-    pub tree: Box<BSPTree>,
+    pub tree: Box<KDTree>,
     material: M,
 }
 
 impl<M: Material> Object<M> {
     pub fn new(object: Obj, material: M) -> Object<M> {
-        let mut tree = Box::new(BSPTree::build_new(object));
-        BSPTree::build(&mut tree, 3);
-        Object { tree, material }
+        let mut faces = build_from_obj(object);
+        if let Some(tree) = build(&mut faces[..], 3, 0) {
+            return Object { tree, material };
+        } else {
+            panic!("Problem building kdtree");
+        }
+        // let mut tree = Box::new(BSPTree::build_new(object));
+        // BSPTree::build(&mut tree, 13);
     }
 }
 
 impl<T: Material> Hittable for Object<T> {
-    fn hit(&self, ray: &Ray, _t_min: f64, _t_max: f64, p_0: u32, p_1: u32, zbuffer: Arc<Mutex<Vec<Vec<f64>>>>) -> Option<HitRecord> {
+    fn hit(
+        &self,
+        ray: &Ray,
+        _t_min: f64,
+        _t_max: f64,
+        p_0: u32,
+        p_1: u32,
+        zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+    ) -> Option<HitRecord> {
         let mut potential_hit: Option<HitRecord> = None;
         let mut _position = Vec3::new(INFINITY, INFINITY, INFINITY);
+
+        if let Some(KDTreeHitRecord {
+            p,
+            t,
+            normal,
+            front_face,
+        }) = self.tree.traverse(ray, 0.0, 1.0)
+        {
+            return Some(HitRecord {
+                p: p,
+                t: t,
+                normal: normal,
+                material: &self.material,
+                front_face: front_face,
+            });
+        }
+        // if let Some(bsp_hit) = self.tree.ray_hit(&ray) {
+        //     eprintln!("HELLO");
+        //     potential_hit = Some(HitRecord {
+        //         p: bsp_hit.p,
+        //         t: 0.0,
+        //         normal: bsp_hit.normal,
+        //         material: &self.material,
+        //         front_face: bsp_hit.front_face,
+        //     });
+        // }
 
         // for indices in self.object.indices.chunks(3) {
         //     let v_0 = &self.object.vertices[indices[0] as usize];
@@ -97,7 +136,7 @@ impl<T: Material> Hittable for Object<T> {
         //     let cam_look_from = Vec3::new(8.0, 2.0, 2.0);
         //     let z_distance = distance(&p, &cam_look_from).abs();
         //     let mut zbuff = zbuffer.lock().unwrap();
-            
+
         //     if z_distance < zbuff[p_0 as usize][p_1 as usize] {
         //         zbuff[p_0 as usize][p_1 as usize] = z_distance;
         //     } else {
@@ -114,13 +153,13 @@ impl<T: Material> Hittable for Object<T> {
         // }
 
         // reset so sampling works correctly
-        let mut zbuff = zbuffer.lock().unwrap();
-        zbuff[p_0 as usize][p_1 as usize] = f64::INFINITY;
+        // let mut zbuff = zbuffer.lock().unwrap();
+        // zbuff[p_0 as usize][p_1 as usize] = f64::INFINITY;
 
         potential_hit
     }
 }
 
 fn _signed_volume(a: &Vec3, b: &Vec3, c: &Vec3, d: &Vec3) -> f64 {
-    (1.0 / 6.0) * &((b - a).cross(&(c - a))).dot(&(d-a))
+    (1.0 / 6.0) * &((b - a).cross(&(c - a))).dot(&(d - a))
 }

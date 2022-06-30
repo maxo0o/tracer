@@ -11,17 +11,21 @@ use std::sync::{Arc, Mutex};
 
 pub struct Object<M: Material> {
     pub tree: Box<KDTree>,
+    // object: Obj,
     material: M,
 }
 
 impl<M: Material> Object<M> {
     pub fn new(object: Obj, material: M) -> Object<M> {
         let mut faces = build_from_obj(object);
-        if let Some(tree) = build(&mut faces[..], 3, 0) {
+        if let Some(tree) = build(&mut faces[..], 1, 0) {
+            // eprintln!("{:?}", tree);
             return Object { tree, material };
         } else {
             panic!("Problem building kdtree");
         }
+
+        // return Object {  material, object };
         // let mut tree = Box::new(BSPTree::build_new(object));
         // BSPTree::build(&mut tree, 13);
     }
@@ -45,7 +49,7 @@ impl<T: Material> Hittable for Object<T> {
             t,
             normal,
             front_face,
-        }) = self.tree.traverse(ray, 0.0, 1.0)
+        }) = self.tree.traverse(ray, 0.0, 10.0)
         {
             return Some(HitRecord {
                 p: p,
@@ -55,16 +59,6 @@ impl<T: Material> Hittable for Object<T> {
                 front_face: front_face,
             });
         }
-        // if let Some(bsp_hit) = self.tree.ray_hit(&ray) {
-        //     eprintln!("HELLO");
-        //     potential_hit = Some(HitRecord {
-        //         p: bsp_hit.p,
-        //         t: 0.0,
-        //         normal: bsp_hit.normal,
-        //         material: &self.material,
-        //         front_face: bsp_hit.front_face,
-        //     });
-        // }
 
         // for indices in self.object.indices.chunks(3) {
         //     let v_0 = &self.object.vertices[indices[0] as usize];

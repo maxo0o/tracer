@@ -29,7 +29,7 @@ const INFINITY: f64 = f64::INFINITY;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Image
     const ASPECT_RATIO: f64 = 3.0 / 2.0;
-    const IMAGE_WIDTH: u32 = 800;
+    const IMAGE_WIDTH: u32 = 1800;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
     let samples_per_pixel = 1;
     let max_depth = 100;
@@ -41,7 +41,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // World
     let mut world = random_scene();
 
-    let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/cube.obj")?);
+    let input = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/cube.obj")?);
+    //let input = BufReader::new(File::open("/home/max/Rust/tracer/cube.obj")?);
     let model: Obj = load_obj(input)?;
     let _obj_material = Metal {
         albedo: Colour::new(0.35, 0.35, 0.45),

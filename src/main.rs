@@ -42,7 +42,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut world = random_scene();
 
     let input = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/cube.obj")?);
-    //let input = BufReader::new(File::open("/home/max/Rust/tracer/cube.obj")?);
+    //let input = BufReader::new(File::open("/home/max/Rust/tracer/dragon2.obj")?);
     let model: Obj = load_obj(input)?;
     let _obj_material = Metal {
         albedo: Colour::new(0.35, 0.35, 0.45),

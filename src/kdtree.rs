@@ -1,5 +1,7 @@
 use crate::ray::Ray;
 use crate::vector::Vec3;
+use crate::utils::distance;
+
 use obj::Obj;
 
 #[derive(Debug, Clone, Copy)]
@@ -43,10 +45,10 @@ impl KDTree {
         let ray_dir = [ray.direction.x, ray.direction.y, ray.direction.z];
 
         if self.is_leaf {
-            // check list to see if we intersect any of the triangles
-            // just test the three lines tbh for this
             // eprintln!("Hit a leaf!");
+            let mut potential_hit: Option<KDTreeHitRecord> = None;
             if let Some(points) = &self.points {
+                let mut d_min = f64::INFINITY;
                 for triangle in points {
                     let p1 = Vec3::new(
                         triangle.points[0][0],
@@ -80,7 +82,19 @@ impl KDTree {
                         continue;
                     }
 
+                    if !(t_start <= t) ||!(t <= t_end) {
+                        continue;
+                    }
+
                     let p = ray.at(t);
+
+                    // let cam_look_from = Vec3::new(8.0, 2.0, 2.0);
+                    // let z_distance = distance(&p, &cam_look_from).abs();
+                    // if z_distance <= d_min {
+                    //     d_min = z_distance;
+                    // } else {
+                    //     continue;
+                    // }
 
                     let edge0 = &p2 - &p1;
                     let v_p1 = &p - &p1;
@@ -110,7 +124,7 @@ impl KDTree {
                         continue;
                     }
 
-                    return Some(KDTreeHitRecord {
+                    potential_hit = Some(KDTreeHitRecord {
                         p,
                         t,
                         normal: n_norm,
@@ -119,7 +133,7 @@ impl KDTree {
                 }
             }
 
-            return None;
+            return potential_hit;
         }
 
         // eprintln!(
@@ -222,10 +236,6 @@ impl KDTree {
 }
 
 pub fn build(point_list: &mut [Box<Triangle>], max_depth: u32, depth: u32) -> Option<Box<KDTree>> {
-    if point_list.len() == 0 {
-        return None;
-    }
-
     let axis = (depth % 3) as usize; // only 2D for now - CHANGE for 3D
     point_list.sort_by(|triangle_a, triangle_b| {
         // Sort the points inside the triangle by axis too
@@ -250,23 +260,69 @@ pub fn build(point_list: &mut [Box<Triangle>], max_depth: u32, depth: u32) -> Op
         .points
         .sort_by(|a, b| a[axis].partial_cmp(&b[axis]).unwrap());
 
-    // if depth == max_depth {
-    //     return Some(Box::new(KDTree {
-    //         split_axis: axis,
-    //         left_child: None,
-    //         right_child: None,
-    //         split_distance: median_triangle.points[0][axis],
-    //         location: Box::new(median_triangle),
-    //         is_leaf: true,
-    //         points: Some(point_list.to_vec()),
-    //     }));
-    // }
+    if point_list.len() == 1 || depth == max_depth {
+        return Some(Box::new(KDTree {
+            split_axis: axis,
+            left_child: None,
+            right_child: None,
+            split_distance: median_triangle.points[0][axis],
+            location: Box::new(median_triangle),
+            is_leaf: true,
+            points: Some(point_list.to_vec()),
+        }));
+    }
 
-    // TODO find any triangles that intersect the split plane! These
-    // need to be added to both sides
+    let mut left_additional = vec![];
+    let mut right_additional = vec![];
+    for i in 0..point_list.len() {
+        let mut point_on_right = false;
+        let mut point_on_left = false;
+        if point_list[i].points[0][axis] > median_triangle.points[0][axis] {
+            point_on_right = true;
+        } else if point_list[i].points[1][axis] > median_triangle.points[0][axis] {
+            point_on_right = true;
+        } else if point_list[i].points[2][axis] > median_triangle.points[0][axis] {
+            point_on_right = true;
+        }
 
-    let left_child = build(&mut point_list[..median], max_depth, depth + 1);
-    let right_child = build(&mut point_list[median..], max_depth, depth + 1);
+        if point_list[i].points[0][axis] < median_triangle.points[0][axis] {
+            point_on_left = true;
+        } else if point_list[i].points[1][axis] < median_triangle.points[0][axis] {
+            point_on_left = true;
+        } else if point_list[i].points[2][axis] < median_triangle.points[0][axis] {
+            point_on_left = true;
+        }
+        
+        if point_on_left && point_on_right {
+            if i < median {
+                right_additional.push(Triangle::copy(&point_list[i]));
+            } else if i > median {
+                left_additional.push(Triangle::copy(&point_list[i]));
+            }
+        }
+    }
+
+    let mut left_points = vec![];
+    let mut right_points = vec![];
+
+    for left_point in &point_list[..median] {
+        left_points.push(Box::new(Triangle::copy(left_point)));
+    }
+
+    for left_additional_point in &left_additional {
+        left_points.push(Box::new(Triangle::copy(left_additional_point)));
+    }
+
+    for right_point in &point_list[median..] {
+        right_points.push(Box::new(Triangle::copy(right_point)));
+    }
+
+    for right_additional_point in &right_additional {
+        right_points.push(Box::new(Triangle::copy(right_additional_point)));
+    }
+
+    let left_child = build(&mut left_points[..], max_depth, depth + 1);
+    let right_child = build(&mut right_points[..], max_depth, depth + 1);
 
     Some(Box::new(KDTree {
         split_axis: axis,

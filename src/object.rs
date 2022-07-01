@@ -18,8 +18,9 @@ pub struct Object<M: Material> {
 impl<M: Material> Object<M> {
     pub fn new(object: Obj, material: M) -> Object<M> {
         let mut faces = build_from_obj(object);
-        if let Some(tree) = build(&mut faces[..], 1, 0) {
-            // eprintln!("{:?}", tree);
+        //eprintln!("HELLLLLO {:?}", faces);
+        if let Some(tree) = build(&mut faces[..], 20, 0) {
+            //eprintln!("{:?}", tree);
             return Object { tree, material };
         } else {
             panic!("Problem building kdtree");
@@ -49,7 +50,7 @@ impl<T: Material> Hittable for Object<T> {
             t,
             normal,
             front_face,
-        }) = self.tree.traverse(ray, 0.0, 10.0)
+        }) = self.tree.traverse(ray, _t_min, _t_max)
         {
             return Some(HitRecord {
                 p: p,

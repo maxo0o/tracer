@@ -44,6 +44,7 @@ impl KDTree {
         let ray_origin = [ray.origin.x, ray.origin.y, ray.origin.z];
         let ray_dir = [ray.direction.x, ray.direction.y, ray.direction.z];
 
+        let t_split = (self.split_distance - ray_origin[self.split_axis]) / ray_dir[self.split_axis];
         if self.is_leaf {
             // eprintln!("Hit a leaf!");
             let mut potential_hit: Option<KDTreeHitRecord> = None;
@@ -82,7 +83,8 @@ impl KDTree {
                         continue;
                     }
 
-                    if !(t_start <= t) ||!(t <= t_end) {
+                    // TODO IS THIS WRONG?
+                    if t_start > t || t > t_end {
                         continue;
                     }
 
@@ -140,37 +142,30 @@ impl KDTree {
         //     "split_distance: {}, axis: {}",
         //     self.split_distance, self.split_axis
         // );
-
-        let t = (self.split_distance - ray_origin[self.split_axis]) / ray_dir[self.split_axis];
         // eprintln!("{}", t);
         let flip_front_and_back = ray_dir[self.split_axis].is_sign_negative();
-        if t <= t_start {
-            // eprintln!("Right side");
-            let mut child: Option<Box<KDTree>> = None;
-            if flip_front_and_back {
-                if let Some(chosen_child) = &self.left_child {
-                    return chosen_child.traverse(ray, t_start, t_end);
-                }
-            } else {
-                if let Some(chosen_child) = &self.right_child {
-                    return chosen_child.traverse(ray, t_start, t_end);
-                }
-            }
-        } else if t >= t_end {
-            // eprintln!("Left side");
-            let mut child: Option<Box<KDTree>> = None;
-            if flip_front_and_back {
-                if let Some(chosen_child) = &self.right_child {
-                    return chosen_child.traverse(ray, t_start, t_end);
-                }
-            } else {
-                if let Some(chosen_child) = &self.left_child {
-                    return chosen_child.traverse(ray, t_start, t_end);
-                }
-            }
+        if t_split <= t_start {
 
-            if let Some(chosen_child) = child {
-                return chosen_child.traverse(ray, t_start, t_end);
+            // eprintln!("Right side");
+            if flip_front_and_back {
+                if let Some(chosen_child) = &self.left_child {
+                    return chosen_child.traverse(ray, t_start, t_end);
+                }
+            } else {
+                if let Some(chosen_child) = &self.right_child {
+                    return chosen_child.traverse(ray, t_start, t_end);
+                }
+            }
+        } else if t_split >= t_end {
+            // eprintln!("Left side");
+            if flip_front_and_back {
+                if let Some(chosen_child) = &self.right_child {
+                    return chosen_child.traverse(ray, t_start, t_end);
+                }
+            } else {
+                if let Some(chosen_child) = &self.left_child {
+                    return chosen_child.traverse(ray, t_start, t_end);
+                }
             }
         } else {
             // left first
@@ -183,14 +178,14 @@ impl KDTree {
                         t: t_hit,
                         normal,
                         front_face,
-                    }) = right_child.traverse(ray, t_start, t)
+                    }) = right_child.traverse(ray, t_start, t_split)
                     {
                         // eprintln!("t_hit: {}", t_hit);
-                        if t_hit < t {
+                        if t_hit < t_split {
                             // eprintln!("t_hit hit left???");
                             return Some(KDTreeHitRecord {
                                 p,
-                                t,
+                                t: t_split,
                                 normal,
                                 front_face,
                             });
@@ -199,7 +194,7 @@ impl KDTree {
 
                     if let Some(left_child) = &self.left_child {
                         // eprintln!("GO RIGHT? HELLO?");
-                        return left_child.traverse(ray, t, t_end);
+                        return left_child.traverse(ray, t_split, t_end);
                     }
                 }
             } else {
@@ -209,14 +204,14 @@ impl KDTree {
                         t: t_hit,
                         normal,
                         front_face,
-                    }) = left_child.traverse(ray, t_start, t)
+                    }) = left_child.traverse(ray, t_start, t_split)
                     {
                         // eprintln!("t_hit: {}", t_hit);
-                        if t_hit < t {
+                        if t_hit < t_split {
                             // eprintln!("t_hit hit left???");
                             return Some(KDTreeHitRecord {
                                 p,
-                                t,
+                                t: t_split,
                                 normal,
                                 front_face,
                             });
@@ -225,7 +220,7 @@ impl KDTree {
 
                     if let Some(right_child) = &self.right_child {
                         // eprintln!("GO RIGHT? HELLO?");
-                        return right_child.traverse(ray, t, t_end);
+                        return right_child.traverse(ray, t_split, t_end);
                     }
                 }
             }
@@ -277,26 +272,27 @@ pub fn build(point_list: &mut [Box<Triangle>], max_depth: u32, depth: u32) -> Op
     for i in 0..point_list.len() {
         let mut point_on_right = false;
         let mut point_on_left = false;
-        if point_list[i].points[0][axis] > median_triangle.points[0][axis] {
+        if point_list[i].points[0][axis] >= median_triangle.points[0][axis] {
             point_on_right = true;
-        } else if point_list[i].points[1][axis] > median_triangle.points[0][axis] {
+        } else if point_list[i].points[1][axis] >= median_triangle.points[0][axis] {
             point_on_right = true;
-        } else if point_list[i].points[2][axis] > median_triangle.points[0][axis] {
+        } else if point_list[i].points[2][axis] >= median_triangle.points[0][axis] {
             point_on_right = true;
         }
 
-        if point_list[i].points[0][axis] < median_triangle.points[0][axis] {
+        if point_list[i].points[0][axis] <= median_triangle.points[0][axis] {
             point_on_left = true;
-        } else if point_list[i].points[1][axis] < median_triangle.points[0][axis] {
+        } else if point_list[i].points[1][axis] <= median_triangle.points[0][axis] {
             point_on_left = true;
-        } else if point_list[i].points[2][axis] < median_triangle.points[0][axis] {
+        } else if point_list[i].points[2][axis] <= median_triangle.points[0][axis] {
             point_on_left = true;
         }
         
         if point_on_left && point_on_right {
             if i < median {
                 right_additional.push(Triangle::copy(&point_list[i]));
-            } else if i > median {
+            } 
+            else if i > median {
                 left_additional.push(Triangle::copy(&point_list[i]));
             }
         }

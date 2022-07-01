@@ -61,11 +61,11 @@ impl<T: Material> Hittable for Sphere<T> {
         let z_distance = distance(&p, &cam_look_from).abs();
         let mut zbuff = zbuffer.lock().unwrap();
 
-        if z_distance < zbuff[p_0 as usize][p_1 as usize] {
-            zbuff[p_0 as usize][p_1 as usize] = z_distance;
-        } else {
-            return None;
-        }
+        // if z_distance < zbuff[p_0 as usize][p_1 as usize] {
+        //     zbuff[p_0 as usize][p_1 as usize] = z_distance;
+        // } else {
+        //     return None;
+        // }
 
         Some(HitRecord {
             p,

@@ -43,13 +43,12 @@ impl KDTree {
     pub fn traverse(&self, ray: &Ray, t_start: f64, t_end: f64) -> Option<KDTreeHitRecord> {
         let ray_origin = [ray.origin.x, ray.origin.y, ray.origin.z];
         let ray_dir = [ray.direction.x, ray.direction.y, ray.direction.z];
-
+        let mut d_min = f64::INFINITY;
         let t_split = (self.split_distance - ray_origin[self.split_axis]) / ray_dir[self.split_axis];
         if self.is_leaf {
             // eprintln!("Hit a leaf!");
             let mut potential_hit: Option<KDTreeHitRecord> = None;
             if let Some(points) = &self.points {
-                let mut d_min = f64::INFINITY;
                 for triangle in points {
                     let p1 = Vec3::new(
                         triangle.points[0][0],
@@ -90,14 +89,6 @@ impl KDTree {
 
                     let p = ray.at(t);
 
-                    // let cam_look_from = Vec3::new(8.0, 2.0, 2.0);
-                    // let z_distance = distance(&p, &cam_look_from).abs();
-                    // if z_distance <= d_min {
-                    //     d_min = z_distance;
-                    // } else {
-                    //     continue;
-                    // }
-
                     let edge0 = &p2 - &p1;
                     let v_p1 = &p - &p1;
                     let c0 = edge0.cross(&v_p1);
@@ -125,6 +116,15 @@ impl KDTree {
                         _front_face = false;
                         continue;
                     }
+
+                    let cam_look_from = Vec3::new(8.0, 2.0, 2.0);
+                    let z_distance = distance(&p, &cam_look_from).abs();
+                    if z_distance <= d_min {
+                        d_min = z_distance;
+                    } else {
+                        continue;
+                    }
+
 
                     potential_hit = Some(KDTreeHitRecord {
                         p,

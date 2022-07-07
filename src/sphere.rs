@@ -3,6 +3,7 @@ use crate::material::Material;
 use crate::ray::Ray;
 use crate::vector::Vec3;
 use crate::camera::Camera;
+use crate::aabb::AxisAlignedBoundingBox;
 
 pub struct Sphere<T: Material> {
     pub center: Vec3,
@@ -55,5 +56,12 @@ impl<T: Material> Hittable for Sphere<T> {
             material: &self.material,
             front_face,
         })
+    }
+
+    fn bounding_box(&self) -> Option<AxisAlignedBoundingBox> {
+        let point_a = &self.center - Vec3::new(self.radius, self.radius, self.radius);
+        let point_b = &self.center + Vec3::new(self.radius, self.radius, self.radius);
+
+        Some(AxisAlignedBoundingBox::new(point_a, point_b))
     }
 }

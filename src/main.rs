@@ -8,6 +8,8 @@ mod ray;
 mod sphere;
 mod utils;
 mod vector;
+mod aabb;
+mod bvh;
 
 use camera::Camera;
 use colour::Colour;

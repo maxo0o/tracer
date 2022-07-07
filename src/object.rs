@@ -3,6 +3,7 @@ use crate::kdtree::{build, build_from_obj, KDTree, KDTreeHitRecord};
 use crate::material::Material;
 use crate::ray::Ray;
 use crate::camera::Camera;
+use crate::aabb::AxisAlignedBoundingBox;
 use obj::Obj;
 
 pub struct Object<M: Material> {
@@ -40,6 +41,10 @@ impl<T: Material> Hittable for Object<T> {
             });
         }
 
+        None
+    }
+
+    fn bounding_box(&self) -> Option<AxisAlignedBoundingBox> {
         None
     }
 }

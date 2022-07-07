@@ -31,17 +31,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     const ASPECT_RATIO: f64 = 3.0 / 2.0;
     const IMAGE_WIDTH: u32 = 3000;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-    let samples_per_pixel = 1;
+    let samples_per_pixel = 25;
     let max_depth = 100;
-    let zbuffer = Arc::new(Mutex::new(vec![
-        vec![INFINITY; IMAGE_WIDTH as usize];
-        IMAGE_HEIGHT as usize
-    ]));
 
     // World
     let mut world = random_scene();
 
-    let input = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/dragon2.obj")?);
+    let input = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/suz2.obj")?);
     // let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/suz2.obj")?);
     let model: Obj = load_obj(input)?;
     let _obj_material = Metal {
@@ -108,7 +104,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     let v = (j as f64 + rand::random::<f64>()) / (IMAGE_HEIGHT - 1) as f64;
 
                     let ray = cam.get_ray(u, v);
-                    pixel_colour += ray_colour(&ray, &world, max_depth, j, i, Arc::clone(&zbuffer));
+                    pixel_colour += ray_colour(&ray, &world, max_depth);
                 }
                 pixel_colour
             })
@@ -127,15 +123,12 @@ fn ray_colour(
     ray: &Ray,
     world: &HittableList,
     depth: i32,
-    p_0: u32,
-    p_1: u32,
-    zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
 ) -> Colour {
     if depth <= 0 {
         return Colour::new(0.0, 0.0, 0.0);
     }
 
-    if let Some(hit_record) = world.hit(ray, 0.001, INFINITY, p_0, p_1, Arc::clone(&zbuffer)) {
+    if let Some(hit_record) = world.hit(ray, 0.001, INFINITY) {
         let (scattered_ray, albedo, is_scattered, is_light) =
             hit_record.material.scatter(ray, &hit_record);
         if is_scattered && !is_light {
@@ -144,9 +137,6 @@ fn ray_colour(
                     &scattered_ray,
                     world,
                     depth - 1,
-                    p_0,
-                    p_1,
-                    Arc::clone(&zbuffer),
                 );
         } else if is_light {
             return albedo;

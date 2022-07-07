@@ -27,9 +27,6 @@ impl<T: Material> Hittable for Sphere<T> {
         ray: &Ray,
         t_min: f64,
         t_max: f64,
-        p_0: u32,
-        p_1: u32,
-        zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     ) -> Option<HitRecord> {
         let oc = &ray.origin - &self.center;
         let a = ray.direction.length_squared();
@@ -59,13 +56,6 @@ impl<T: Material> Hittable for Sphere<T> {
 
         let cam_look_from = Vec3::new(8.0, 2.0, 2.0);
         let z_distance = distance(&p, &cam_look_from).abs();
-        let mut zbuff = zbuffer.lock().unwrap();
-
-        // if z_distance < zbuff[p_0 as usize][p_1 as usize] {
-        //     zbuff[p_0 as usize][p_1 as usize] = z_distance;
-        // } else {
-        //     return None;
-        // }
 
         Some(HitRecord {
             p,

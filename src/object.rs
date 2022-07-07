@@ -17,7 +17,7 @@ impl<M: Material> Object<M> {
     pub fn new(object: Obj, material: M) -> Object<M> {
         let mut faces = build_from_obj(object);
 
-        if let Some(tree) = build(&mut faces[..], 12, 0) {
+        if let Some(tree) = build(&mut faces[..], 15, 0) {
             return Object { tree, material };
         } else {
             panic!("Problem building kdtree");
@@ -31,9 +31,6 @@ impl<T: Material> Hittable for Object<T> {
         ray: &Ray,
         _t_min: f64,
         _t_max: f64,
-        p_0: u32,
-        p_1: u32,
-        zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     ) -> Option<HitRecord> {
         let mut potential_hit: Option<HitRecord> = None;
         let mut _position = Vec3::new(INFINITY, INFINITY, INFINITY);

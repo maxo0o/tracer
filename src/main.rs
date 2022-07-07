@@ -15,13 +15,12 @@ use hittable::{Hittable, HittableList};
 use material::{Dialectric, Lambertian, Light, Metal};
 use obj::{load_obj, Obj};
 use object::Object;
-use rand::Rng;
+// use rand::Rng;
 use ray::Ray;
 use rayon::prelude::*;
 use sphere::Sphere;
 use std::fs::File;
 use std::io::BufReader;
-use std::sync::{Arc, Mutex};
 use vector::Vec3;
 
 const INFINITY: f64 = f64::INFINITY;
@@ -31,13 +30,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     const ASPECT_RATIO: f64 = 3.0 / 2.0;
     const IMAGE_WIDTH: u32 = 3000;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-    let samples_per_pixel = 25;
+    let samples_per_pixel = 300;
     let max_depth = 100;
 
     // World
     let mut world = random_scene();
 
-    let input = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/suz2.obj")?);
+    let input = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/dragon2.obj")?);
     // let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/suz2.obj")?);
     let model: Obj = load_obj(input)?;
     let _obj_material = Metal {
@@ -53,31 +52,25 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     eprintln!("Started KDTree load");
     let object = Object::new(model, _obj_diffuse);
     eprintln!("Finished KDTree load");
-    // eprintln!("{:?}", object.tree);
     world.objects.push(Box::new(object));
 
-    // let ground_material = Lambertian { albedo: Colour::new(0.5, 0.5, 0.5) };
-    // world.objects.push(Box::new(Sphere::new(
-    //     Vec3::new(0.0, -1000.839506, 0.0),
-    //     1000.0,
-    //     ground_material,
-    // )));
-    // let light_material = Light {
-    //     intensity: 100.0,
-    //     colour: Colour::new(180.0 / 255.0, 162.0 / 255.0, 252.0 / 255.0),
-    // };
-    // world.objects.push(Box::new(Sphere::new(
-    //     Vec3::new(2.0, 2.8, 0.0),
-    //     0.3,
-    //     light_material,
-    // )));
+
+    let light_material = Light {
+        intensity: 80.0,
+        colour: Colour::new((254. / 256.0 as f64).powf(2.0), (129.0 / 256.0  as f64).powf(2.0), (76.0 / 256.0  as f64).powf(2.0)),
+    };
+    world.objects.push(Box::new(Sphere::new(
+        Vec3::new(2.0, 2.8, 0.0),
+        0.3,
+        light_material,
+    )));
 
     // Camera
     let look_from = Vec3::new(8.0, 2.0, 2.0);
     let look_at = Vec3::new(0.0, 1.0, 0.0);
     let vup = Vec3::new(0.0, 1.0, 0.0);
-    let dist_to_focus = 1.0;
-    let aperture = 0.0;
+    let dist_to_focus = 7.5;
+    let aperture = 0.2;
 
     let cam = Camera::new(
         &look_from,
@@ -104,7 +97,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     let v = (j as f64 + rand::random::<f64>()) / (IMAGE_HEIGHT - 1) as f64;
 
                     let ray = cam.get_ray(u, v);
-                    pixel_colour += ray_colour(&ray, &world, max_depth);
+                    pixel_colour += ray_colour(&ray, &cam, &world, max_depth);
                 }
                 pixel_colour
             })
@@ -119,48 +112,43 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn ray_colour(
-    ray: &Ray,
-    world: &HittableList,
-    depth: i32,
-) -> Colour {
+fn ray_colour(ray: &Ray, camera: &Camera, world: &HittableList, depth: i32) -> Colour {
     if depth <= 0 {
         return Colour::new(0.0, 0.0, 0.0);
     }
 
-    if let Some(hit_record) = world.hit(ray, 0.001, INFINITY) {
+    if let Some(hit_record) = world.hit(ray, camera, 0.001, INFINITY) {
         let (scattered_ray, albedo, is_scattered, is_light) =
             hit_record.material.scatter(ray, &hit_record);
         if is_scattered && !is_light {
-            return albedo
-                * ray_colour(
-                    &scattered_ray,
-                    world,
-                    depth - 1,
-                );
+            return albedo * ray_colour(&scattered_ray, camera, world, depth - 1);
         } else if is_light {
             return albedo;
         }
 
         return Colour::new(0.0, 0.0, 0.0);
     }
-    let direction = ray.direction.unit();
-
-    let t = 0.5 * (direction.y + 1.0);
-    return (1.0 - t) * Colour::new(1.0, 1.0, 1.0) + t * Colour::new(0.5, 0.7, 1.0);
+    // let direction = ray.direction.unit();
+    // let t = 0.5 * (direction.y + 1.0);
+    //return (1.0 - t) * Colour::new(70. / 256., 216. / 256., 253. / 256.) + t * Colour::new( 39. / 256., 87. / 256., 185. / 256.);
+    //return (1.0 - t) * Colour::new(1.0, 1.0, 1.0) + t * Colour::new(0.5, 0.7, 1.0);
     // return Colour::new(0.0, 0.0, 0.0);
+    return Colour::new( (39. / 256. as f64).powf(2.), (87. / 256. as f64).powf(2.), (185. / 256. as f64).powf(2.));
 }
 
 fn random_scene() -> HittableList {
     let mut world = HittableList::new();
-
-    let ground_material = Lambertian {
+    let _obj_material = Metal {
+        albedo: Colour::new(0.35, 0.35, 0.45),
+        f: 0.05,
+    };
+    let _ground_material = Lambertian {
         albedo: Colour::new(0.5, 0.5, 0.5),
     };
     world.objects.push(Box::new(Sphere::new(
         Vec3::new(0.0, -1000.0, 0.0),
         1000.0,
-        ground_material,
+        _obj_material,
     )));
 
     // for a in -5..5 {

@@ -4,7 +4,6 @@ use crate::hittable::{HitRecord, Hittable};
 use crate::kdtree::{build, build_from_obj, KDTree, KDTreeHitRecord};
 use crate::material::Material;
 use crate::ray::Ray;
-use crate::utils::distance;
 use crate::vector::Vec3;
 use obj::Obj;
 use std::sync::{Arc, Mutex};
@@ -18,7 +17,7 @@ impl<M: Material> Object<M> {
     pub fn new(object: Obj, material: M) -> Object<M> {
         let mut faces = build_from_obj(object);
 
-        if let Some(tree) = build(&mut faces[..], 20, 0) {
+        if let Some(tree) = build(&mut faces[..], 15, 0) {
             return Object { tree, material };
         } else {
             panic!("Problem building kdtree");

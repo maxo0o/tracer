@@ -1,6 +1,6 @@
 use crate::ray::Ray;
-use crate::vector::Vec3;
 use crate::utils::distance;
+use crate::vector::Vec3;
 
 use obj::Obj;
 
@@ -44,7 +44,8 @@ impl KDTree {
         let ray_origin = [ray.origin.x, ray.origin.y, ray.origin.z];
         let ray_dir = [ray.direction.x, ray.direction.y, ray.direction.z];
         let mut d_min = f64::INFINITY;
-        let t_split = (self.split_distance - ray_origin[self.split_axis]) / ray_dir[self.split_axis];
+        let t_split =
+            (self.split_distance - ray_origin[self.split_axis]) / ray_dir[self.split_axis];
         if self.is_leaf {
             // eprintln!("Hit a leaf!");
             let mut potential_hit: Option<KDTreeHitRecord> = None;
@@ -125,7 +126,6 @@ impl KDTree {
                         continue;
                     }
 
-
                     potential_hit = Some(KDTreeHitRecord {
                         p,
                         t,
@@ -138,14 +138,8 @@ impl KDTree {
             return potential_hit;
         }
 
-        // eprintln!(
-        //     "split_distance: {}, axis: {}",
-        //     self.split_distance, self.split_axis
-        // );
-        // eprintln!("{}", t);
         let flip_front_and_back = ray_dir[self.split_axis].is_sign_negative();
         if t_split <= t_start {
-
             // eprintln!("Right side");
             if flip_front_and_back {
                 if let Some(chosen_child) = &self.left_child {
@@ -230,9 +224,13 @@ impl KDTree {
     }
 }
 
-pub fn build(point_list: &mut [Box<Triangle>], max_depth: u32, depth: u32) -> Option<Box<KDTree>> {
+pub fn build(
+    triangle_list: &mut [Box<Triangle>],
+    max_depth: u32,
+    depth: u32,
+) -> Option<Box<KDTree>> {
     let axis = (depth % 3) as usize; // only 2D for now - CHANGE for 3D
-    point_list.sort_by(|triangle_a, triangle_b| {
+    triangle_list.sort_by(|triangle_a, triangle_b| {
         // Sort the points inside the triangle by axis too
         let mut triangle_a_0 = Triangle::clone(triangle_a);
         let mut triangle_b_0 = Triangle::clone(triangle_b);
@@ -248,52 +246,52 @@ pub fn build(point_list: &mut [Box<Triangle>], max_depth: u32, depth: u32) -> Op
             .partial_cmp(&triangle_b_0.points[0][axis])
             .unwrap()
     });
-    let median = point_list.len() / 2 as usize;
+    let median = triangle_list.len() / 2 as usize;
 
-    let mut median_triangle = Triangle::copy(&point_list[median]);
+    let mut median_triangle = Triangle::copy(&triangle_list[median]);
     median_triangle
         .points
         .sort_by(|a, b| a[axis].partial_cmp(&b[axis]).unwrap());
 
-    if point_list.len() == 1 || depth == max_depth {
+    let split_distance = median_triangle.points[0][axis];
+    if triangle_list.len() <= 15 || depth == max_depth {
         return Some(Box::new(KDTree {
             split_axis: axis,
             left_child: None,
             right_child: None,
-            split_distance: median_triangle.points[0][axis],
+            split_distance,
             location: Box::new(median_triangle),
             is_leaf: true,
-            points: Some(point_list.to_vec()),
+            points: Some(triangle_list.to_vec()),
         }));
     }
 
     let mut left_additional = vec![];
     let mut right_additional = vec![];
-    for i in 0..point_list.len() {
+    for i in 0..triangle_list.len() {
         let mut point_on_right = false;
         let mut point_on_left = false;
-        if point_list[i].points[0][axis] >= median_triangle.points[0][axis] {
+        if triangle_list[i].points[0][axis] >= split_distance {
             point_on_right = true;
-        } else if point_list[i].points[1][axis] >= median_triangle.points[0][axis] {
+        } else if triangle_list[i].points[1][axis] >= split_distance {
             point_on_right = true;
-        } else if point_list[i].points[2][axis] >= median_triangle.points[0][axis] {
+        } else if triangle_list[i].points[2][axis] >= split_distance {
             point_on_right = true;
         }
 
-        if point_list[i].points[0][axis] <= median_triangle.points[0][axis] {
+        if triangle_list[i].points[0][axis] <= split_distance {
             point_on_left = true;
-        } else if point_list[i].points[1][axis] <= median_triangle.points[0][axis] {
+        } else if triangle_list[i].points[1][axis] <= split_distance {
             point_on_left = true;
-        } else if point_list[i].points[2][axis] <= median_triangle.points[0][axis] {
+        } else if triangle_list[i].points[2][axis] <= split_distance {
             point_on_left = true;
         }
-        
+
         if point_on_left && point_on_right {
             if i < median {
-                right_additional.push(Triangle::copy(&point_list[i]));
-            } 
-            else if i > median {
-                left_additional.push(Triangle::copy(&point_list[i]));
+                right_additional.push(Triangle::copy(&triangle_list[i]));
+            } else if i > median {
+                left_additional.push(Triangle::copy(&triangle_list[i]));
             }
         }
     }
@@ -301,7 +299,7 @@ pub fn build(point_list: &mut [Box<Triangle>], max_depth: u32, depth: u32) -> Op
     let mut left_points = vec![];
     let mut right_points = vec![];
 
-    for left_point in &point_list[..median] {
+    for left_point in &triangle_list[..median] {
         left_points.push(Box::new(Triangle::copy(left_point)));
     }
 
@@ -309,7 +307,7 @@ pub fn build(point_list: &mut [Box<Triangle>], max_depth: u32, depth: u32) -> Op
         left_points.push(Box::new(Triangle::copy(left_additional_point)));
     }
 
-    for right_point in &point_list[median..] {
+    for right_point in &triangle_list[median..] {
         right_points.push(Box::new(Triangle::copy(right_point)));
     }
 
@@ -358,14 +356,4 @@ pub fn build_from_obj<'a>(object: Obj) -> Vec<Box<Triangle>> {
     }
 
     points
-}
-
-fn side(p: [f64; 3], q: [f64; 3], a: [f64; 3], b: [f64; 3]) -> f64 {
-    let z1 = (b[0] - a[0]) * (p[1] - a[1]) - (p[0] - a[0]) * (b[1] - a[1]);
-    let z2 = (b[0] - a[0]) * (q[1] - a[1]) - (q[0] - a[0]) * (b[1] - a[1]);
-    z1 * z2
-}
-
-fn left_of(a: [f64; 3], b: [f64; 3], point: [f64; 3]) -> f64 {
-    (b[0] - a[0]) * (point[1] - a[1]) - (b[1] - a[1]) * (point[0] - a[0])
 }

@@ -29,9 +29,9 @@ const INFINITY: f64 = f64::INFINITY;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Image
     const ASPECT_RATIO: f64 = 3.0 / 2.0;
-    const IMAGE_WIDTH: u32 = 1000;
+    const IMAGE_WIDTH: u32 = 3000;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-    let samples_per_pixel = 50;
+    let samples_per_pixel = 1;
     let max_depth = 100;
     let zbuffer = Arc::new(Mutex::new(vec![
         vec![INFINITY; IMAGE_WIDTH as usize];
@@ -42,7 +42,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut world = random_scene();
 
     // let input = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/suz2.obj")?);
-    let input = BufReader::new(File::open("/home/max/Rust/tracer/suz2.obj")?);
+    let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/suz2.obj")?);
     let model: Obj = load_obj(input)?;
     let _obj_material = Metal {
         albedo: Colour::new(0.35, 0.35, 0.45),

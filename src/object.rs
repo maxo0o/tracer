@@ -1,9 +1,9 @@
+use crate::aabb::AxisAlignedBoundingBox;
+use crate::camera::Camera;
 use crate::hittable::{HitRecord, Hittable};
 use crate::kdtree::{build, build_from_obj, KDTree, KDTreeHitRecord};
 use crate::material::Material;
 use crate::ray::Ray;
-use crate::camera::Camera;
-use crate::aabb::AxisAlignedBoundingBox;
 use obj::Obj;
 
 pub struct Object<M: Material> {

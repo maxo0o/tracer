@@ -1,3 +1,5 @@
+mod aabb;
+mod bvh;
 mod camera;
 mod colour;
 mod hittable;
@@ -8,8 +10,6 @@ mod ray;
 mod sphere;
 mod utils;
 mod vector;
-mod aabb;
-mod bvh;
 
 use camera::Camera;
 use colour::Colour;
@@ -56,10 +56,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     eprintln!("Finished KDTree load");
     world.objects.push(Box::new(object));
 
-
     let light_material = Light {
         intensity: 80.0,
-        colour: Colour::new((254. / 256.0 as f64).powf(2.0), (129.0 / 256.0  as f64).powf(2.0), (76.0 / 256.0  as f64).powf(2.0)),
+        colour: Colour::new(
+            (254. / 256.0 as f64).powf(2.0),
+            (129.0 / 256.0 as f64).powf(2.0),
+            (76.0 / 256.0 as f64).powf(2.0),
+        ),
     };
     world.objects.push(Box::new(Sphere::new(
         Vec3::new(2.0, 2.8, 0.0),
@@ -135,7 +138,11 @@ fn ray_colour(ray: &Ray, camera: &Camera, world: &HittableList, depth: i32) -> C
     //return (1.0 - t) * Colour::new(70. / 256., 216. / 256., 253. / 256.) + t * Colour::new( 39. / 256., 87. / 256., 185. / 256.);
     //return (1.0 - t) * Colour::new(1.0, 1.0, 1.0) + t * Colour::new(0.5, 0.7, 1.0);
     // return Colour::new(0.0, 0.0, 0.0);
-    return Colour::new( (39. / 256. as f64).powf(2.), (87. / 256. as f64).powf(2.), (185. / 256. as f64).powf(2.));
+    return Colour::new(
+        (39. / 256. as f64).powf(2.),
+        (87. / 256. as f64).powf(2.),
+        (185. / 256. as f64).powf(2.),
+    );
 }
 
 fn random_scene() -> HittableList {

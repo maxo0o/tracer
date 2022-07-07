@@ -41,7 +41,13 @@ pub struct KDTree {
 }
 
 impl KDTree {
-    pub fn traverse(&self, ray: &Ray, camera: &Camera, t_start: f64, t_end: f64) -> Option<KDTreeHitRecord> {
+    pub fn traverse(
+        &self,
+        ray: &Ray,
+        camera: &Camera,
+        t_start: f64,
+        t_end: f64,
+    ) -> Option<KDTreeHitRecord> {
         let ray_origin = [ray.origin.x, ray.origin.y, ray.origin.z];
         let ray_dir = [ray.direction.x, ray.direction.y, ray.direction.z];
         let mut d_min = f64::INFINITY;

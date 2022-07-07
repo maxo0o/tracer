@@ -1,9 +1,9 @@
+use crate::aabb::AxisAlignedBoundingBox;
+use crate::camera::Camera;
 use crate::hittable::{HitRecord, Hittable};
 use crate::material::Material;
 use crate::ray::Ray;
 use crate::vector::Vec3;
-use crate::camera::Camera;
-use crate::aabb::AxisAlignedBoundingBox;
 
 pub struct Sphere<T: Material> {
     pub center: Vec3,

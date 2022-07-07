@@ -1,12 +1,9 @@
-use std::f64::INFINITY;
-
 use crate::hittable::{HitRecord, Hittable};
 use crate::kdtree::{build, build_from_obj, KDTree, KDTreeHitRecord};
 use crate::material::Material;
 use crate::ray::Ray;
-use crate::vector::Vec3;
+use crate::camera::Camera;
 use obj::Obj;
-use std::sync::{Arc, Mutex};
 
 pub struct Object<M: Material> {
     pub tree: Box<KDTree>,
@@ -26,31 +23,23 @@ impl<M: Material> Object<M> {
 }
 
 impl<T: Material> Hittable for Object<T> {
-    fn hit(
-        &self,
-        ray: &Ray,
-        _t_min: f64,
-        _t_max: f64,
-    ) -> Option<HitRecord> {
-        let mut potential_hit: Option<HitRecord> = None;
-        let mut _position = Vec3::new(INFINITY, INFINITY, INFINITY);
-
+    fn hit(&self, ray: &Ray, camera: &Camera, t_min: f64, t_max: f64) -> Option<HitRecord> {
         if let Some(KDTreeHitRecord {
             p,
             t,
             normal,
             front_face,
-        }) = self.tree.traverse(ray, _t_min, _t_max)
+        }) = self.tree.traverse(ray, camera, t_min, t_max)
         {
             return Some(HitRecord {
-                p: p,
-                t: t,
-                normal: normal,
+                p,
+                t,
+                normal,
                 material: &self.material,
-                front_face: front_face,
+                front_face,
             });
         }
 
-        potential_hit
+        None
     }
 }

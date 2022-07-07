@@ -1,9 +1,8 @@
 use crate::hittable::{HitRecord, Hittable};
 use crate::material::Material;
 use crate::ray::Ray;
-use crate::utils::distance;
 use crate::vector::Vec3;
-use std::sync::{Arc, Mutex};
+use crate::camera::Camera;
 
 pub struct Sphere<T: Material> {
     pub center: Vec3,
@@ -22,12 +21,7 @@ impl<T: Material> Sphere<T> {
 }
 
 impl<T: Material> Hittable for Sphere<T> {
-    fn hit(
-        &self,
-        ray: &Ray,
-        t_min: f64,
-        t_max: f64,
-    ) -> Option<HitRecord> {
+    fn hit(&self, ray: &Ray, _camera: &Camera, t_min: f64, t_max: f64) -> Option<HitRecord> {
         let oc = &ray.origin - &self.center;
         let a = ray.direction.length_squared();
         let half_b = oc.dot(&ray.direction);
@@ -53,9 +47,6 @@ impl<T: Material> Hittable for Sphere<T> {
         }
 
         let p = ray.at(root);
-
-        let cam_look_from = Vec3::new(8.0, 2.0, 2.0);
-        let z_distance = distance(&p, &cam_look_from).abs();
 
         Some(HitRecord {
             p,

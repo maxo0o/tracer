@@ -94,7 +94,7 @@ pub struct Light {
 }
 
 impl Material for Light {
-    fn scatter(&self, ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool, bool) {
+    fn scatter(&self, ray_in: &Ray, _hit_record: &HitRecord) -> (Ray, Colour, bool, bool) {
         let ray = Ray::new(Vec3::copy(&ray_in.origin), Vec3::copy(&ray_in.direction));
         let is_light = true;
         (

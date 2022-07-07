@@ -1,3 +1,4 @@
+use crate::camera::Camera;
 use crate::ray::Ray;
 use crate::utils::distance;
 use crate::vector::Vec3;
@@ -40,7 +41,7 @@ pub struct KDTree {
 }
 
 impl KDTree {
-    pub fn traverse(&self, ray: &Ray, t_start: f64, t_end: f64) -> Option<KDTreeHitRecord> {
+    pub fn traverse(&self, ray: &Ray, camera: &Camera, t_start: f64, t_end: f64) -> Option<KDTreeHitRecord> {
         let ray_origin = [ray.origin.x, ray.origin.y, ray.origin.z];
         let ray_dir = [ray.direction.x, ray.direction.y, ray.direction.z];
         let mut d_min = f64::INFINITY;
@@ -51,8 +52,11 @@ impl KDTree {
             let mut potential_hit: Option<KDTreeHitRecord> = None;
             if let Some(points) = &self.points {
                 for triangle in points {
-                    if let Some(hit) = triangle_intersection(t_start, t_end, ray, &triangle, d_min) {
+                    if let (Some(hit), distance_min) =
+                        triangle_intersection(t_start, t_end, ray, &triangle, camera, d_min)
+                    {
                         potential_hit = Some(hit);
+                        d_min = distance_min;
                     }
                 }
             }
@@ -64,21 +68,21 @@ impl KDTree {
         if t_split <= t_start {
             if flip_front_and_back {
                 if let Some(chosen_child) = &self.left_child {
-                    return chosen_child.traverse(ray, t_start, t_end);
+                    return chosen_child.traverse(ray, camera, t_start, t_end);
                 }
             } else {
                 if let Some(chosen_child) = &self.right_child {
-                    return chosen_child.traverse(ray, t_start, t_end);
+                    return chosen_child.traverse(ray, camera, t_start, t_end);
                 }
             }
         } else if t_split >= t_end {
             if flip_front_and_back {
                 if let Some(chosen_child) = &self.right_child {
-                    return chosen_child.traverse(ray, t_start, t_end);
+                    return chosen_child.traverse(ray, camera, t_start, t_end);
                 }
             } else {
                 if let Some(chosen_child) = &self.left_child {
-                    return chosen_child.traverse(ray, t_start, t_end);
+                    return chosen_child.traverse(ray, camera, t_start, t_end);
                 }
             }
         } else {
@@ -89,7 +93,7 @@ impl KDTree {
                         t: t_hit,
                         normal,
                         front_face,
-                    }) = right_child.traverse(ray, t_start, t_split)
+                    }) = right_child.traverse(ray, camera, t_start, t_split)
                     {
                         if t_hit < t_split {
                             return Some(KDTreeHitRecord {
@@ -102,7 +106,7 @@ impl KDTree {
                     }
 
                     if let Some(left_child) = &self.left_child {
-                        return left_child.traverse(ray, t_split, t_end);
+                        return left_child.traverse(ray, camera, t_split, t_end);
                     }
                 }
             } else {
@@ -112,7 +116,7 @@ impl KDTree {
                         t: t_hit,
                         normal,
                         front_face,
-                    }) = left_child.traverse(ray, t_start, t_split)
+                    }) = left_child.traverse(ray, camera, t_start, t_split)
                     {
                         if t_hit < t_split {
                             return Some(KDTreeHitRecord {
@@ -125,7 +129,7 @@ impl KDTree {
                     }
 
                     if let Some(right_child) = &self.right_child {
-                        return right_child.traverse(ray, t_split, t_end);
+                        return right_child.traverse(ray, camera, t_split, t_end);
                     }
                 }
             }
@@ -270,7 +274,14 @@ pub fn build_from_obj<'a>(object: Obj) -> Vec<Box<Triangle>> {
     points
 }
 
-fn triangle_intersection(t_start: f64, t_end: f64, ray: &Ray, triangle: &Triangle, mut d_min: f64) -> Option<KDTreeHitRecord> {
+fn triangle_intersection(
+    t_start: f64,
+    t_end: f64,
+    ray: &Ray,
+    triangle: &Triangle,
+    camera: &Camera,
+    mut d_min: f64,
+) -> (Option<KDTreeHitRecord>, f64) {
     let p1 = Vec3::new(
         triangle.points[0][0],
         triangle.points[0][1],
@@ -293,19 +304,19 @@ fn triangle_intersection(t_start: f64, t_end: f64, ray: &Ray, triangle: &Triangl
 
     let triangle_ray_dot_product = n.dot(&ray.direction);
     if triangle_ray_dot_product.abs() == 0.0 {
-        return None;
+        return (None, 0.0);
     }
 
     let d = -n.dot(&p1);
 
     let t = -(n.dot(&ray.origin) + d) / triangle_ray_dot_product;
     if t < 0.0 {
-        return None;
+        return (None, 0.0);
     }
 
     // TODO IS THIS WRONG?
     if t_start > t || t > t_end {
-        return None;
+        return (None, 0.0);
     }
 
     let p = ray.at(t);
@@ -314,42 +325,44 @@ fn triangle_intersection(t_start: f64, t_end: f64, ray: &Ray, triangle: &Triangl
     let v_p1 = &p - &p1;
     let c0 = edge0.cross(&v_p1);
     if n.dot(&c0) < 0.0 {
-        return None;
+        return (None, 0.0);
     }
 
     let edge1 = &p3 - &p2;
     let v_p2 = &p - &p2;
     let c1 = edge1.cross(&v_p2);
     if n.dot(&c1) < 0.0 {
-        return None;
+        return (None, 0.0);
     }
 
     let edge2 = p1 - &p3;
     let v_p3 = &p - &p3;
     let c2 = edge2.cross(&v_p3);
     if n.dot(&c2) < 0.0 {
-        return None;
+        return (None, 0.0);
     }
 
     let n_norm = n.unit();
     let mut _front_face = true;
     if ray.direction.dot(&n_norm) > 0.0 {
         _front_face = false;
-        return None;
+        return (None, 0.0);
     }
 
-    let cam_look_from = Vec3::new(8.0, 2.0, 2.0);
-    let z_distance = distance(&p, &cam_look_from).abs();
+    let z_distance = distance(&p, &camera.origin).abs();
     if z_distance <= d_min {
         d_min = z_distance;
     } else {
-        return None;
+        return (None, 0.0);
     }
 
-    Some(KDTreeHitRecord {
-        p,
-        t,
-        normal: n_norm,
-        front_face: _front_face,
-    })
+    (
+        Some(KDTreeHitRecord {
+            p,
+            t,
+            normal: n_norm,
+            front_face: _front_face,
+        }),
+        d_min,
+    )
 }

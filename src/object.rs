@@ -17,7 +17,7 @@ impl<M: Material> Object<M> {
     pub fn new(object: Obj, material: M) -> Object<M> {
         let mut faces = build_from_obj(object);
 
-        if let Some(tree) = build(&mut faces[..], 15, 0) {
+        if let Some(tree) = build(&mut faces[..], 12, 0) {
             return Object { tree, material };
         } else {
             panic!("Problem building kdtree");

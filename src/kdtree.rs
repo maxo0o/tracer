@@ -46,92 +46,14 @@ impl KDTree {
         let mut d_min = f64::INFINITY;
         let t_split =
             (self.split_distance - ray_origin[self.split_axis]) / ray_dir[self.split_axis];
+
         if self.is_leaf {
-            // eprintln!("Hit a leaf!");
             let mut potential_hit: Option<KDTreeHitRecord> = None;
             if let Some(points) = &self.points {
                 for triangle in points {
-                    let p1 = Vec3::new(
-                        triangle.points[0][0],
-                        triangle.points[0][1],
-                        triangle.points[0][2],
-                    );
-                    let p2 = Vec3::new(
-                        triangle.points[1][0],
-                        triangle.points[1][1],
-                        triangle.points[1][2],
-                    );
-                    let p3 = Vec3::new(
-                        triangle.points[2][0],
-                        triangle.points[2][1],
-                        triangle.points[2][2],
-                    );
-
-                    let p1p2 = &p2 - &p1;
-                    let p1p3 = &p3 - &p1;
-                    let n = p1p2.cross(&p1p3);
-
-                    let triangle_ray_dot_product = n.dot(&ray.direction);
-                    if triangle_ray_dot_product.abs() == 0.0 {
-                        continue;
+                    if let Some(hit) = triangle_intersection(t_start, t_end, ray, &triangle, d_min) {
+                        potential_hit = Some(hit);
                     }
-
-                    let d = -n.dot(&p1);
-
-                    let t = -(n.dot(&ray.origin) + d) / triangle_ray_dot_product;
-                    if t < 0.0 {
-                        continue;
-                    }
-
-                    // TODO IS THIS WRONG?
-                    if t_start > t || t > t_end {
-                        continue;
-                    }
-
-                    let p = ray.at(t);
-
-                    let edge0 = &p2 - &p1;
-                    let v_p1 = &p - &p1;
-                    let c0 = edge0.cross(&v_p1);
-                    if n.dot(&c0) < 0.0 {
-                        continue;
-                    }
-
-                    let edge1 = &p3 - &p2;
-                    let v_p2 = &p - &p2;
-                    let c1 = edge1.cross(&v_p2);
-                    if n.dot(&c1) < 0.0 {
-                        continue;
-                    }
-
-                    let edge2 = p1 - &p3;
-                    let v_p3 = &p - &p3;
-                    let c2 = edge2.cross(&v_p3);
-                    if n.dot(&c2) < 0.0 {
-                        continue;
-                    }
-
-                    let n_norm = n.unit();
-                    let mut _front_face = true;
-                    if ray.direction.dot(&n_norm) > 0.0 {
-                        _front_face = false;
-                        continue;
-                    }
-
-                    let cam_look_from = Vec3::new(8.0, 2.0, 2.0);
-                    let z_distance = distance(&p, &cam_look_from).abs();
-                    if z_distance <= d_min {
-                        d_min = z_distance;
-                    } else {
-                        continue;
-                    }
-
-                    potential_hit = Some(KDTreeHitRecord {
-                        p,
-                        t,
-                        normal: n_norm,
-                        front_face: _front_face,
-                    });
                 }
             }
 
@@ -140,7 +62,6 @@ impl KDTree {
 
         let flip_front_and_back = ray_dir[self.split_axis].is_sign_negative();
         if t_split <= t_start {
-            // eprintln!("Right side");
             if flip_front_and_back {
                 if let Some(chosen_child) = &self.left_child {
                     return chosen_child.traverse(ray, t_start, t_end);
@@ -151,7 +72,6 @@ impl KDTree {
                 }
             }
         } else if t_split >= t_end {
-            // eprintln!("Left side");
             if flip_front_and_back {
                 if let Some(chosen_child) = &self.right_child {
                     return chosen_child.traverse(ray, t_start, t_end);
@@ -162,9 +82,6 @@ impl KDTree {
                 }
             }
         } else {
-            // left first
-            // eprintln!("WUT");
-
             if flip_front_and_back {
                 if let Some(right_child) = &self.right_child {
                     if let Some(KDTreeHitRecord {
@@ -174,9 +91,7 @@ impl KDTree {
                         front_face,
                     }) = right_child.traverse(ray, t_start, t_split)
                     {
-                        // eprintln!("t_hit: {}", t_hit);
                         if t_hit < t_split {
-                            // eprintln!("t_hit hit left???");
                             return Some(KDTreeHitRecord {
                                 p,
                                 t: t_split,
@@ -187,7 +102,6 @@ impl KDTree {
                     }
 
                     if let Some(left_child) = &self.left_child {
-                        // eprintln!("GO RIGHT? HELLO?");
                         return left_child.traverse(ray, t_split, t_end);
                     }
                 }
@@ -200,9 +114,7 @@ impl KDTree {
                         front_face,
                     }) = left_child.traverse(ray, t_start, t_split)
                     {
-                        // eprintln!("t_hit: {}", t_hit);
                         if t_hit < t_split {
-                            // eprintln!("t_hit hit left???");
                             return Some(KDTreeHitRecord {
                                 p,
                                 t: t_split,
@@ -213,7 +125,6 @@ impl KDTree {
                     }
 
                     if let Some(right_child) = &self.right_child {
-                        // eprintln!("GO RIGHT? HELLO?");
                         return right_child.traverse(ray, t_split, t_end);
                     }
                 }
@@ -229,7 +140,7 @@ pub fn build(
     max_depth: u32,
     depth: u32,
 ) -> Option<Box<KDTree>> {
-    let axis = (depth % 3) as usize; // only 2D for now - CHANGE for 3D
+    let axis = (depth % 3) as usize;
     triangle_list.sort_by(|triangle_a, triangle_b| {
         // Sort the points inside the triangle by axis too
         let mut triangle_a_0 = Triangle::clone(triangle_a);
@@ -266,6 +177,7 @@ pub fn build(
         }));
     }
 
+    // find any points that may not have been placed on the correct side
     let mut left_additional = vec![];
     let mut right_additional = vec![];
     for i in 0..triangle_list.len() {
@@ -356,4 +268,88 @@ pub fn build_from_obj<'a>(object: Obj) -> Vec<Box<Triangle>> {
     }
 
     points
+}
+
+fn triangle_intersection(t_start: f64, t_end: f64, ray: &Ray, triangle: &Triangle, mut d_min: f64) -> Option<KDTreeHitRecord> {
+    let p1 = Vec3::new(
+        triangle.points[0][0],
+        triangle.points[0][1],
+        triangle.points[0][2],
+    );
+    let p2 = Vec3::new(
+        triangle.points[1][0],
+        triangle.points[1][1],
+        triangle.points[1][2],
+    );
+    let p3 = Vec3::new(
+        triangle.points[2][0],
+        triangle.points[2][1],
+        triangle.points[2][2],
+    );
+
+    let p1p2 = &p2 - &p1;
+    let p1p3 = &p3 - &p1;
+    let n = p1p2.cross(&p1p3);
+
+    let triangle_ray_dot_product = n.dot(&ray.direction);
+    if triangle_ray_dot_product.abs() == 0.0 {
+        return None;
+    }
+
+    let d = -n.dot(&p1);
+
+    let t = -(n.dot(&ray.origin) + d) / triangle_ray_dot_product;
+    if t < 0.0 {
+        return None;
+    }
+
+    // TODO IS THIS WRONG?
+    if t_start > t || t > t_end {
+        return None;
+    }
+
+    let p = ray.at(t);
+
+    let edge0 = &p2 - &p1;
+    let v_p1 = &p - &p1;
+    let c0 = edge0.cross(&v_p1);
+    if n.dot(&c0) < 0.0 {
+        return None;
+    }
+
+    let edge1 = &p3 - &p2;
+    let v_p2 = &p - &p2;
+    let c1 = edge1.cross(&v_p2);
+    if n.dot(&c1) < 0.0 {
+        return None;
+    }
+
+    let edge2 = p1 - &p3;
+    let v_p3 = &p - &p3;
+    let c2 = edge2.cross(&v_p3);
+    if n.dot(&c2) < 0.0 {
+        return None;
+    }
+
+    let n_norm = n.unit();
+    let mut _front_face = true;
+    if ray.direction.dot(&n_norm) > 0.0 {
+        _front_face = false;
+        return None;
+    }
+
+    let cam_look_from = Vec3::new(8.0, 2.0, 2.0);
+    let z_distance = distance(&p, &cam_look_from).abs();
+    if z_distance <= d_min {
+        d_min = z_distance;
+    } else {
+        return None;
+    }
+
+    Some(KDTreeHitRecord {
+        p,
+        t,
+        normal: n_norm,
+        front_face: _front_face,
+    })
 }

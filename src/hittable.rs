@@ -1,4 +1,4 @@
-use crate::aabb::AxisAlignedBoundingBox;
+use crate::aabb::{AxisAlignedBoundingBox, surrounding_box};
 use crate::ray::Ray;
 use crate::vector::Vec3;
 use crate::{camera::Camera, material::Material};
@@ -63,26 +63,4 @@ impl Hittable for HittableList {
 
         bounding_box
     }
-}
-
-fn surrounding_box(
-    box_a: &Option<AxisAlignedBoundingBox>,
-    box_b: &Option<AxisAlignedBoundingBox>,
-) -> Option<AxisAlignedBoundingBox> {
-    if let (Some(box_a), Some(box_b)) = (box_a, box_b) {
-        let small = Vec3::new(
-            box_a.minimum.x.min(box_b.minimum.x),
-            box_a.minimum.y.min(box_b.minimum.y),
-            box_a.minimum.z.min(box_b.minimum.z),
-        );
-
-        let big = Vec3::new(
-            box_a.maxmimum.x.min(box_b.maxmimum.x),
-            box_a.maxmimum.y.min(box_b.maxmimum.y),
-            box_a.maxmimum.z.min(box_b.maxmimum.z),
-        );
-
-        return Some(AxisAlignedBoundingBox::new(small, big));
-    }
-    None
 }

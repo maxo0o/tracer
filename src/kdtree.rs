@@ -29,7 +29,7 @@ pub struct KDTreeHitRecord {
     pub front_face: bool,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct KDTree {
     pub split_axis: usize,
     pub left_child: Option<Box<KDTree>>,

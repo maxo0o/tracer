@@ -6,6 +6,7 @@ use crate::material::Material;
 use crate::ray::Ray;
 use obj::Obj;
 
+#[derive(Clone)]
 pub struct Object<M: Material> {
     pub tree: Box<KDTree>,
     material: M,

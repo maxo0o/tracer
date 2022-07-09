@@ -6,10 +6,11 @@ use crate::vector::Vec3;
 
 use rand::Rng;
 
-pub trait Material: Send + Sync {
+pub trait Material: Send + Sync + std::fmt::Debug {
     fn scatter(&self, ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool, bool);
 }
 
+#[derive(Debug)]
 pub struct Lambertian {
     pub albedo: Colour,
 }
@@ -28,6 +29,7 @@ impl Material for Lambertian {
     }
 }
 
+#[derive(Debug)]
 pub struct Metal {
     pub albedo: Colour,
     pub f: f64,
@@ -51,6 +53,7 @@ impl Material for Metal {
     }
 }
 
+#[derive(Debug)]
 pub struct Dialectric {
     pub index_of_refraction: f64,
 }
@@ -88,6 +91,7 @@ impl Material for Dialectric {
     }
 }
 
+#[derive(Debug)]
 pub struct Light {
     pub intensity: f64,
     pub colour: Colour,

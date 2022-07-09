@@ -1,3 +1,4 @@
+use crate::aabb::AxisAlignedBoundingBox;
 use crate::camera::Camera;
 use crate::ray::Ray;
 use crate::utils::distance;
@@ -143,116 +144,118 @@ impl KDTree {
 
         None
     }
-}
 
-pub fn build(
-    triangle_list: &mut [Box<Triangle>],
-    max_depth: u32,
-    depth: u32,
-) -> Option<Box<KDTree>> {
-    let axis = (depth % 3) as usize;
-    triangle_list.sort_by(|triangle_a, triangle_b| {
-        // Sort the points inside the triangle by axis too
-        let mut triangle_a_0 = Triangle::clone(triangle_a);
-        let mut triangle_b_0 = Triangle::clone(triangle_b);
+    pub fn build(
+        triangle_list: &mut [Box<Triangle>],
+        max_depth: u32,
+        depth: u32,
+    ) -> Option<Box<KDTree>> {
+        let axis = (depth % 3) as usize;
+        triangle_list.sort_by(|triangle_a, triangle_b| {
+            // Sort the points inside the triangle by axis too
+            let mut triangle_a_0 = Triangle::clone(triangle_a);
+            let mut triangle_b_0 = Triangle::clone(triangle_b);
 
-        triangle_a_0
+            triangle_a_0
+                .points
+                .sort_by(|a, b| a[axis].partial_cmp(&b[axis]).unwrap());
+            triangle_b_0
+                .points
+                .sort_by(|a, b| a[axis].partial_cmp(&b[axis]).unwrap());
+
+            triangle_a_0.points[0][axis]
+                .partial_cmp(&triangle_b_0.points[0][axis])
+                .unwrap()
+        });
+        let median = triangle_list.len() / 2 as usize;
+
+        let mut median_triangle = Triangle::copy(&triangle_list[median]);
+        median_triangle
             .points
             .sort_by(|a, b| a[axis].partial_cmp(&b[axis]).unwrap());
-        triangle_b_0
-            .points
-            .sort_by(|a, b| a[axis].partial_cmp(&b[axis]).unwrap());
 
-        triangle_a_0.points[0][axis]
-            .partial_cmp(&triangle_b_0.points[0][axis])
-            .unwrap()
-    });
-    let median = triangle_list.len() / 2 as usize;
-
-    let mut median_triangle = Triangle::copy(&triangle_list[median]);
-    median_triangle
-        .points
-        .sort_by(|a, b| a[axis].partial_cmp(&b[axis]).unwrap());
-
-    let split_distance = median_triangle.points[0][axis];
-    if triangle_list.len() <= 15 || depth == max_depth {
-        return Some(Box::new(KDTree {
-            split_axis: axis,
-            left_child: None,
-            right_child: None,
-            split_distance,
-            location: Box::new(median_triangle),
-            is_leaf: true,
-            points: Some(triangle_list.to_vec()),
-        }));
-    }
-
-    // find any points that may not have been placed on the correct side
-    let mut left_additional = vec![];
-    let mut right_additional = vec![];
-    for i in 0..triangle_list.len() {
-        let mut point_on_right = false;
-        let mut point_on_left = false;
-        if triangle_list[i].points[0][axis] >= split_distance {
-            point_on_right = true;
-        } else if triangle_list[i].points[1][axis] >= split_distance {
-            point_on_right = true;
-        } else if triangle_list[i].points[2][axis] >= split_distance {
-            point_on_right = true;
+        let split_distance = median_triangle.points[0][axis];
+        if triangle_list.len() <= 15 || depth == max_depth {
+            return Some(Box::new(KDTree {
+                split_axis: axis,
+                left_child: None,
+                right_child: None,
+                split_distance,
+                location: Box::new(median_triangle),
+                is_leaf: true,
+                points: Some(triangle_list.to_vec()),
+            }));
         }
 
-        if triangle_list[i].points[0][axis] <= split_distance {
-            point_on_left = true;
-        } else if triangle_list[i].points[1][axis] <= split_distance {
-            point_on_left = true;
-        } else if triangle_list[i].points[2][axis] <= split_distance {
-            point_on_left = true;
-        }
+        // find any points that may not have been placed on the correct side
+        let mut left_additional = vec![];
+        let mut right_additional = vec![];
+        for i in 0..triangle_list.len() {
+            let mut point_on_right = false;
+            let mut point_on_left = false;
+            if triangle_list[i].points[0][axis] >= split_distance {
+                point_on_right = true;
+            } else if triangle_list[i].points[1][axis] >= split_distance {
+                point_on_right = true;
+            } else if triangle_list[i].points[2][axis] >= split_distance {
+                point_on_right = true;
+            }
 
-        if point_on_left && point_on_right {
-            if i < median {
-                right_additional.push(Triangle::copy(&triangle_list[i]));
-            } else if i > median {
-                left_additional.push(Triangle::copy(&triangle_list[i]));
+            if triangle_list[i].points[0][axis] <= split_distance {
+                point_on_left = true;
+            } else if triangle_list[i].points[1][axis] <= split_distance {
+                point_on_left = true;
+            } else if triangle_list[i].points[2][axis] <= split_distance {
+                point_on_left = true;
+            }
+
+            if point_on_left && point_on_right {
+                if i < median {
+                    right_additional.push(Triangle::copy(&triangle_list[i]));
+                } else if i > median {
+                    left_additional.push(Triangle::copy(&triangle_list[i]));
+                }
             }
         }
+
+        let mut left_points = vec![];
+        let mut right_points = vec![];
+
+        for left_point in &triangle_list[..median] {
+            left_points.push(Box::new(Triangle::copy(left_point)));
+        }
+
+        for left_additional_point in &left_additional {
+            left_points.push(Box::new(Triangle::copy(left_additional_point)));
+        }
+
+        for right_point in &triangle_list[median..] {
+            right_points.push(Box::new(Triangle::copy(right_point)));
+        }
+
+        for right_additional_point in &right_additional {
+            right_points.push(Box::new(Triangle::copy(right_additional_point)));
+        }
+
+        let left_child = KDTree::build(&mut left_points[..], max_depth, depth + 1);
+        let right_child = KDTree::build(&mut right_points[..], max_depth, depth + 1);
+
+        Some(Box::new(KDTree {
+            split_axis: axis,
+            left_child,
+            right_child,
+            split_distance: median_triangle.points[0][axis],
+            location: Box::new(median_triangle),
+            is_leaf: false,
+            points: None,
+        }))
     }
-
-    let mut left_points = vec![];
-    let mut right_points = vec![];
-
-    for left_point in &triangle_list[..median] {
-        left_points.push(Box::new(Triangle::copy(left_point)));
-    }
-
-    for left_additional_point in &left_additional {
-        left_points.push(Box::new(Triangle::copy(left_additional_point)));
-    }
-
-    for right_point in &triangle_list[median..] {
-        right_points.push(Box::new(Triangle::copy(right_point)));
-    }
-
-    for right_additional_point in &right_additional {
-        right_points.push(Box::new(Triangle::copy(right_additional_point)));
-    }
-
-    let left_child = build(&mut left_points[..], max_depth, depth + 1);
-    let right_child = build(&mut right_points[..], max_depth, depth + 1);
-
-    Some(Box::new(KDTree {
-        split_axis: axis,
-        left_child,
-        right_child,
-        split_distance: median_triangle.points[0][axis],
-        location: Box::new(median_triangle),
-        is_leaf: false,
-        points: None,
-    }))
 }
 
-pub fn build_from_obj<'a>(object: Obj) -> Vec<Box<Triangle>> {
+pub fn build_from_obj<'a>(object: Obj) -> (Vec<Box<Triangle>>, AxisAlignedBoundingBox) {
     let mut points = vec![];
+    let mut minimum = Vec3::new(f64::INFINITY, f64::INFINITY, f64::INFINITY);
+    let mut maximum = Vec3::new(-f64::INFINITY, -f64::INFINITY, -f64::INFINITY);
 
     for indices in object.indices.chunks(3) {
         let p1 = [
@@ -274,10 +277,42 @@ pub fn build_from_obj<'a>(object: Obj) -> Vec<Box<Triangle>> {
         let triangle = Triangle {
             points: [p1, p2, p3],
         };
+
+        let min_x = p1[0].min(p2[0]).min(p3[0]);
+        if min_x < minimum.x {
+            minimum.x = min_x;
+        }
+
+        let min_y = p1[1].min(p2[1]).min(p3[1]);
+        if min_y < minimum.y {
+            minimum.y = min_y;
+        }
+
+        let min_z = p1[2].min(p2[2]).min(p3[2]);
+        if min_z < minimum.z {
+            minimum.z = min_z;
+        }
+
+        let max_x = p1[0].max(p2[0]).max(p3[0]);
+        if max_x > maximum.x {
+            maximum.x = max_x;
+        }
+
+        let max_y = p1[1].max(p2[1]).max(p3[1]);
+        if max_y > maximum.y {
+            maximum.y = max_y;
+        }
+
+        let max_z = p1[2].max(p2[2]).max(p3[2]);
+        if max_z > maximum.z {
+            maximum.z = max_z;
+        }
+
         points.push(Box::new(triangle));
     }
 
-    points
+    let bounding_box = AxisAlignedBoundingBox { minimum, maximum };
+    (points, bounding_box)
 }
 
 fn triangle_intersection(

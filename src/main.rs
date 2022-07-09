@@ -17,7 +17,9 @@ use hittable::{Hittable, HittableList};
 use material::{Dialectric, Lambertian, Light, Metal};
 use obj::{load_obj, Obj};
 use object::Object;
+use std::sync::Arc;
 // use rand::Rng;
+use bvh::BoundingVolumeHierarchy;
 use ray::Ray;
 use rayon::prelude::*;
 use sphere::Sphere;
@@ -32,13 +34,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     const ASPECT_RATIO: f64 = 3.0 / 2.0;
     const IMAGE_WIDTH: u32 = 3000;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-    let samples_per_pixel = 300;
+    let samples_per_pixel = 1;
     let max_depth = 100;
 
     // World
     let mut world = random_scene();
 
-    let input = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/dragon2.obj")?);
+    let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/dragon2.obj")?);
     // let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/suz2.obj")?);
     let model: Obj = load_obj(input)?;
     let _obj_material = Metal {
@@ -55,6 +57,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let object = Object::new(model, _obj_diffuse);
     eprintln!("Finished KDTree load");
     world.objects.push(Box::new(object));
+    //objects.push(Arc::new(Box::new(object)));
+
+    let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/box.obj")?);
+    let _obj_diffuse_box = Lambertian {
+        albedo: Colour::new(0.35, 0.35, 0.35),
+    };
+    // let box_model: Obj = load_obj(input)?;
+    // let box_object = Object::new(box_model, _obj_diffuse_box);
+    // world.objects.push(Box::new(box_object));
+    //objects.push(Arc::new(Box::new(box_object)));
 
     let light_material = Light {
         intensity: 80.0,
@@ -64,18 +76,35 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             (76.0 / 256.0 as f64).powf(2.0),
         ),
     };
-    world.objects.push(Box::new(Sphere::new(
-        Vec3::new(2.0, 2.8, 0.0),
-        0.3,
-        light_material,
-    )));
+    let light = Box::new(Sphere::new(Vec3::new(2.0, 2.8, 0.0), 0.3, light_material));
+    world.objects.push(light);
+    //objects.push(Arc::new(light));
+
+    // let material1 = Metal { albedo: Colour::new(0.7, 0.6, 0.5), f: 0.0 };
+    // objects.push(Arc::new(Box::new(Sphere::new(
+    //     Vec3::new(0.0, 1.0, 0.0),
+    //     1.0,
+    //     material1,
+    // ))));
+
+    // let _ground_material = Lambertian {
+    //     albedo: Colour::new(0.5, 0.5, 0.5),
+    // };
+    // objects.push(Arc::new(Box::new(Sphere::new(
+    //     Vec3::new(0.0, -1000.0, 0.0),
+    //     1000.0,
+    //     _obj_material,
+    // ))));
+
+    // let objects = BoundingVolumeHierarchy::build(&mut objects[..], 0);
+    // eprintln!("HELLO {:?}", objects);
 
     // Camera
     let look_from = Vec3::new(8.0, 2.0, 2.0);
     let look_at = Vec3::new(0.0, 1.0, 0.0);
     let vup = Vec3::new(0.0, 1.0, 0.0);
-    let dist_to_focus = 7.5;
-    let aperture = 0.2;
+    let dist_to_focus = 1.0;
+    let aperture = 0.0;
 
     let cam = Camera::new(
         &look_from,
@@ -103,6 +132,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                     let ray = cam.get_ray(u, v);
                     pixel_colour += ray_colour(&ray, &cam, &world, max_depth);
+                    // if world.hit_something(&ray, 0.001, INFINITY) {
+                    //    pixel_colour += ray_colour(&ray, &cam, &world, max_depth);
+                    // } else {
+                    //     pixel_colour += Colour::new(
+                    //         (39. / 256. as f64).powf(2.),
+                    //         (87. / 256. as f64).powf(2.),
+                    //         (185. / 256. as f64).powf(2.),
+                    //     )
+                    // }
                 }
                 pixel_colour
             })

@@ -1,8 +1,9 @@
+use crate::aabb::{surrounding_box, AxisAlignedBoundingBox};
 use crate::hittable::{HitRecord, Hittable};
 use crate::vector::Vec3;
 use std::sync::Arc;
-use crate::aabb::{AxisAlignedBoundingBox, surrounding_box};
 
+#[derive(Debug)]
 pub struct BoundingVolumeHierarchy {
     pub bounding_box: AxisAlignedBoundingBox,
     pub left: Arc<Box<dyn Hittable>>,
@@ -10,11 +11,7 @@ pub struct BoundingVolumeHierarchy {
 }
 
 impl BoundingVolumeHierarchy {
-    pub fn build(
-        &mut self,
-        list: &mut [Arc<Box<dyn Hittable>>],
-        depth: u32,
-    ) -> BoundingVolumeHierarchy {
+    pub fn build(list: &mut [Arc<Box<dyn Hittable>>], depth: u32) -> BoundingVolumeHierarchy {
         let axis = (depth % 3) as usize;
 
         match list.len() {
@@ -43,7 +40,7 @@ impl BoundingVolumeHierarchy {
                 } else {
                     let left = Arc::clone(&list[1]);
                     let right = Arc::clone(&list[0]);
-                    let bounding_box = surrounding_box(&left.bounding_box(), &right.bounding_box());
+                    let bounding_box = surrounding_box(&right.bounding_box(), &left.bounding_box());
 
                     return BoundingVolumeHierarchy {
                         bounding_box: bounding_box.unwrap(),
@@ -66,8 +63,8 @@ impl BoundingVolumeHierarchy {
                 });
 
                 let mid = list.len() / 2;
-                let left = self.build(&mut list[..mid], depth+1);
-                let right = self.build(&mut list[..mid], depth+1);
+                let left = BoundingVolumeHierarchy::build(&mut list[..mid], depth + 1);
+                let right = BoundingVolumeHierarchy::build(&mut list[mid..], depth + 1);
                 let bounding_box = surrounding_box(&left.bounding_box(), &right.bounding_box());
 
                 return BoundingVolumeHierarchy {
@@ -92,21 +89,28 @@ impl Hittable for BoundingVolumeHierarchy {
             return None;
         }
 
+        let mut hit: Option<HitRecord> = None;
         if let Some(hit_left) = self.left.hit(ray, camera, t_min, t_max) {
-            return Some(hit_left);
+            hit = Some(hit_left);
         }
 
-        if let Some(hit_right) = self.right.hit(ray, camera, t_min, t_max) {
-            return Some(hit_right);
+        let mut left_hit_t = 0.0;
+        if let Some(hit_left) = &hit {
+            left_hit_t = hit_left.t;
+        } else {
+            left_hit_t = t_max;
+        }
+        if let Some(hit_right) = self.right.hit(ray, camera, t_min, left_hit_t) {
+            hit = Some(hit_right);
         }
 
-        None
+        hit
     }
 
     fn bounding_box(&self) -> Option<AxisAlignedBoundingBox> {
         Some(AxisAlignedBoundingBox::new(
             Vec3::copy(&self.bounding_box.minimum),
-            Vec3::copy(&self.bounding_box.maxmimum),
+            Vec3::copy(&self.bounding_box.maximum),
         ))
     }
 }

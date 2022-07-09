@@ -1,13 +1,14 @@
-use crate::aabb::{AxisAlignedBoundingBox, surrounding_box};
+use crate::aabb::{surrounding_box, AxisAlignedBoundingBox};
 use crate::ray::Ray;
 use crate::vector::Vec3;
 use crate::{camera::Camera, material::Material};
 
-pub trait Hittable: Send + Sync {
+pub trait Hittable: Send + Sync + std::fmt::Debug {
     fn hit(&self, ray: &Ray, camera: &Camera, t_min: f64, t_max: f64) -> Option<HitRecord>;
     fn bounding_box(&self) -> Option<AxisAlignedBoundingBox>;
 }
 
+#[derive(Debug)]
 pub struct HitRecord<'a> {
     pub p: Vec3,
     pub normal: Vec3,
@@ -16,6 +17,7 @@ pub struct HitRecord<'a> {
     pub front_face: bool,
 }
 
+#[derive(Debug)]
 pub struct HittableList {
     pub objects: Vec<Box<dyn Hittable>>,
 }
@@ -25,6 +27,18 @@ impl HittableList {
         HittableList {
             objects: Vec::new(),
         }
+    }
+
+    pub fn hit_something(&self, ray: &Ray, t_min: f64, t_max: f64) -> bool {
+        for object in &self.objects {
+            if let Some(bounding_box) = object.bounding_box() {
+                if bounding_box.hit(ray, t_min, t_max) {
+                    return true;
+                }
+            }
+        }
+
+        false
     }
 }
 

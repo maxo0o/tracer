@@ -50,12 +50,15 @@ impl<T: Material + std::fmt::Debug> Hittable for Sphere<T> {
 
         let p = ray.at(root);
 
+        let (u, v) = get_sphere_uv(&p);
+
         Some(HitRecord {
             p,
             t: root,
             normal: outward_normal,
             material: &self.material,
             front_face,
+            u, v,
         })
     }
 
@@ -65,4 +68,11 @@ impl<T: Material + std::fmt::Debug> Hittable for Sphere<T> {
 
         Some(AxisAlignedBoundingBox::new(point_a, point_b))
     }
+}
+
+fn get_sphere_uv(p: &Vec3) -> (f64, f64) {
+    let theta = -p.y.acos();
+    let phi = -p.z.atan2(p.x) + std::f64::consts::PI;
+
+    (phi / (2.0 * std::f64::consts::PI), theta / std::f64::consts::PI)
 }

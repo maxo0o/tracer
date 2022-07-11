@@ -10,6 +10,7 @@ mod ray;
 mod sphere;
 mod utils;
 mod vector;
+mod texture;
 
 use camera::Camera;
 use colour::Colour;
@@ -26,6 +27,7 @@ use sphere::Sphere;
 use std::fs::File;
 use std::io::BufReader;
 use vector::Vec3;
+use texture::{SolidColour, Texture, CheckerTexture};
 
 const INFINITY: f64 = f64::INFINITY;
 
@@ -51,7 +53,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         index_of_refraction: 1.5,
     };
     let _obj_diffuse = Lambertian {
-        albedo: Colour::new(0.35, 0.35, 0.35),
+        albedo: Box::new(SolidColour::new(Colour::new(0.35, 0.35, 0.35))),
     };
     eprintln!("Started KDTree load");
     let object = Object::new(model, _obj_diffuse);
@@ -61,7 +63,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/box.obj")?);
     let _obj_diffuse_box = Lambertian {
-        albedo: Colour::new(0.35, 0.35, 0.35),
+        albedo: Box::new(SolidColour::new(Colour::new(0.35, 0.35, 0.35))),
     };
     // let box_model: Obj = load_obj(input)?;
     // let box_object = Object::new(box_model, _obj_diffuse_box);
@@ -190,12 +192,15 @@ fn random_scene() -> HittableList {
         f: 0.05,
     };
     let _ground_material = Lambertian {
-        albedo: Colour::new(0.5, 0.5, 0.5),
+        albedo: Box::new(SolidColour::new(Colour::new(0.5, 0.5, 0.5))),
     };
+    let solid_text_1 = Box::new(SolidColour::new(Colour::new(0.2, 0.3, 0.1)));
+    let solid_text_2 = Box::new(SolidColour::new(Colour::new(0.9, 0.9, 0.9)));
+    let material3 = Lambertian { albedo: Box::new(CheckerTexture::new(solid_text_1, solid_text_2))};
     world.objects.push(Box::new(Sphere::new(
         Vec3::new(0.0, -1000.0, 0.0),
         1000.0,
-        _obj_material,
+        material3,
     )));
 
     // for a in -5..5 {
@@ -250,7 +255,9 @@ fn random_scene() -> HittableList {
     //     material2,
     // )));
 
-    // let material3 = Metal { albedo: Colour::new(0.7, 0.6, 0.5), f: 0.0 };
+    // let solid_text_1 = Box::new(SolidColour::new(Colour::new(0.2, 0.3, 0.1)));
+    // let solid_text_2 = Box::new(SolidColour::new(Colour::new(0.9, 0.9, 0.9)));
+    // let material3 = Lambertian { albedo: Box::new(CheckerTexture::new(solid_text_1, solid_text_2))};
     // world.objects.push(Box::new(Sphere::new(
     //     Vec3::new(4.0, 1.0, 0.0),
     //     1.0,

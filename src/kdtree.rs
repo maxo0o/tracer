@@ -23,6 +23,11 @@ impl Triangle {
     }
 }
 
+struct Face {
+    verts: Triangle,
+    text_coords: (f64, f64),
+}
+
 pub struct KDTreeHitRecord {
     pub p: Vec3,
     pub t: f64,

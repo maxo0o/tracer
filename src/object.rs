@@ -44,6 +44,7 @@ impl<T: Material + std::fmt::Debug> Hittable for Object<T> {
                 normal,
                 material: &self.material,
                 front_face,
+                u: 0.0, v: 0.0,
             });
         }
 

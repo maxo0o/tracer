@@ -4,7 +4,7 @@ use crate::hittable::{HitRecord, Hittable};
 use crate::kdtree::{build_from_obj, KDTree, KDTreeHitRecord};
 use crate::material::Material;
 use crate::ray::Ray;
-use obj::Obj;
+use obj::{Obj, TexturedVertex};
 
 #[derive(Debug)]
 pub struct Object<M: Material> {
@@ -14,7 +14,7 @@ pub struct Object<M: Material> {
 }
 
 impl<M: Material> Object<M> {
-    pub fn new(object: Obj, material: M) -> Object<M> {
+    pub fn new(object: Obj<TexturedVertex, u32>, material: M) -> Object<M> {
         let (mut faces, bounding_box) = build_from_obj(object);
 
         if let Some(tree) = KDTree::build(&mut faces[..], 15, 0) {
@@ -36,6 +36,7 @@ impl<T: Material + std::fmt::Debug> Hittable for Object<T> {
             t,
             normal,
             front_face,
+            text_coord
         }) = self.tree.traverse(ray, camera, t_min, t_max)
         {
             return Some(HitRecord {
@@ -44,7 +45,7 @@ impl<T: Material + std::fmt::Debug> Hittable for Object<T> {
                 normal,
                 material: &self.material,
                 front_face,
-                u: 0.0, v: 0.0,
+                u: text_coord.u, v: text_coord.v,
             });
         }
 

@@ -20,6 +20,15 @@ impl Vec3 {
         }
     }
 
+    pub fn get(&self, axis: usize) -> f64 {
+        match axis {
+            0 => return self.x,
+            1 => return self.y,
+            2 => return self.z,
+            _ => panic!("Invalid axis!"),
+        }
+    }
+
     pub fn length_squared(&self) -> f64 {
         self.x * self.x + self.y * self.y + self.z * self.z
     }

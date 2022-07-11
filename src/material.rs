@@ -26,6 +26,8 @@ impl Material for Lambertian {
 
         let scattered = Ray::new(Vec3::copy(&hit_record.p), scatter_direction);
         let is_light = false;
+        // eprintln!("{}, {}", hit_record.u, hit_record.v);
+
         (scattered, Colour::copy(&self.albedo.value(hit_record.u, hit_record.v, &hit_record.p)), true, is_light)
     }
 }

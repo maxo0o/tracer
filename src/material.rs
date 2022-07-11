@@ -3,6 +3,7 @@ use crate::hittable::HitRecord;
 use crate::ray::Ray;
 use crate::utils::{random_in_unit_sphere, random_in_unit_vector, reflect, refract};
 use crate::vector::Vec3;
+use crate::texture::{Texture, SolidColour};
 
 use rand::Rng;
 
@@ -12,7 +13,7 @@ pub trait Material: Send + Sync + std::fmt::Debug {
 
 #[derive(Debug)]
 pub struct Lambertian {
-    pub albedo: Colour,
+    pub albedo: Box<dyn Texture + Send + Sync>,
 }
 
 impl Material for Lambertian {
@@ -25,7 +26,7 @@ impl Material for Lambertian {
 
         let scattered = Ray::new(Vec3::copy(&hit_record.p), scatter_direction);
         let is_light = false;
-        (scattered, Colour::copy(&self.albedo), true, is_light)
+        (scattered, Colour::copy(&self.albedo.value(hit_record.u, hit_record.v, &hit_record.p)), true, is_light)
     }
 }
 

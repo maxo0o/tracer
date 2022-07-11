@@ -9,6 +9,3 @@ edition = "2021"
 rand = "0.8.5"
 obj-rs = "0.7.0"
 rayon = "1.5"
-
-# [profile.release]
-# debug = true

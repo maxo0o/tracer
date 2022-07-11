@@ -16,7 +16,7 @@ use camera::Camera;
 use colour::Colour;
 use hittable::{Hittable, HittableList};
 use material::{Dialectric, Lambertian, Light, Metal};
-use obj::{load_obj, Obj};
+use obj::{load_obj, Obj, TexturedVertex};
 use object::Object;
 use std::sync::Arc;
 // use rand::Rng;
@@ -42,9 +42,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // World
     let mut world = random_scene();
 
-    let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/dragon2.obj")?);
+    let input = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/dragon2_uv.obj")?);
     // let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/suz2.obj")?);
-    let model: Obj = load_obj(input)?;
+    let model: Obj<TexturedVertex, u32> = load_obj(input)?;
     let _obj_material = Metal {
         albedo: Colour::new(0.35, 0.35, 0.45),
         f: 0.0,
@@ -55,16 +55,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let _obj_diffuse = Lambertian {
         albedo: Box::new(SolidColour::new(Colour::new(0.35, 0.35, 0.35))),
     };
+    let solid_text_1 = Box::new(SolidColour::new(Colour::new(0.2, 0.3, 0.1)));
+    let solid_text_2 = Box::new(SolidColour::new(Colour::new(0.9, 0.9, 0.9)));
+    let material3 = Lambertian { albedo: Box::new(CheckerTexture::new(solid_text_1, solid_text_2))};
     eprintln!("Started KDTree load");
-    let object = Object::new(model, _obj_diffuse);
+    let object = Object::new(model, material3);
     eprintln!("Finished KDTree load");
     world.objects.push(Box::new(object));
     //objects.push(Arc::new(Box::new(object)));
 
-    let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/box.obj")?);
-    let _obj_diffuse_box = Lambertian {
-        albedo: Box::new(SolidColour::new(Colour::new(0.35, 0.35, 0.35))),
-    };
+    // let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/box.obj")?);
+    // let _obj_diffuse_box = Lambertian {
+    //     albedo: Box::new(SolidColour::new(Colour::new(0.35, 0.35, 0.35))),
+    // };
     // let box_model: Obj = load_obj(input)?;
     // let box_object = Object::new(box_model, _obj_diffuse_box);
     // world.objects.push(Box::new(box_object));
@@ -79,8 +82,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ),
     };
     let light = Box::new(Sphere::new(Vec3::new(2.0, 2.8, 0.0), 0.3, light_material));
-    world.objects.push(light);
-    //objects.push(Arc::new(light));
+    // world.objects.push(light);
 
     // let material1 = Metal { albedo: Colour::new(0.7, 0.6, 0.5), f: 0.0 };
     // objects.push(Arc::new(Box::new(Sphere::new(
@@ -173,16 +175,16 @@ fn ray_colour(ray: &Ray, camera: &Camera, world: &HittableList, depth: i32) -> C
 
         return Colour::new(0.0, 0.0, 0.0);
     }
-    // let direction = ray.direction.unit();
-    // let t = 0.5 * (direction.y + 1.0);
+    let direction = ray.direction.unit();
+    let t = 0.5 * (direction.y + 1.0);
     //return (1.0 - t) * Colour::new(70. / 256., 216. / 256., 253. / 256.) + t * Colour::new( 39. / 256., 87. / 256., 185. / 256.);
-    //return (1.0 - t) * Colour::new(1.0, 1.0, 1.0) + t * Colour::new(0.5, 0.7, 1.0);
+    return (1.0 - t) * Colour::new(1.0, 1.0, 1.0) + t * Colour::new(0.5, 0.7, 1.0);
     // return Colour::new(0.0, 0.0, 0.0);
-    return Colour::new(
-        (39. / 256. as f64).powf(2.),
-        (87. / 256. as f64).powf(2.),
-        (185. / 256. as f64).powf(2.),
-    );
+    // return Colour::new(
+    //     (39. / 256. as f64).powf(2.),
+    //     (87. / 256. as f64).powf(2.),
+    //     (185. / 256. as f64).powf(2.),
+    // );
 }
 
 fn random_scene() -> HittableList {
@@ -200,7 +202,7 @@ fn random_scene() -> HittableList {
     world.objects.push(Box::new(Sphere::new(
         Vec3::new(0.0, -1000.0, 0.0),
         1000.0,
-        material3,
+        _ground_material,
     )));
 
     // for a in -5..5 {

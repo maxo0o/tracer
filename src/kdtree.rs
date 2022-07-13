@@ -163,7 +163,8 @@ impl KDTree {
                 .points
                 .sort_by(|a, b| a.get(axis).partial_cmp(&b.get(axis)).unwrap());
 
-            triangle_a_0.points[0].get(axis)
+            triangle_a_0.points[0]
+                .get(axis)
                 .partial_cmp(&triangle_b_0.points[0].get(axis))
                 .unwrap()
         });
@@ -252,7 +253,9 @@ impl KDTree {
     }
 }
 
-pub fn build_from_obj<'a>(object: Obj<TexturedVertex, u32>) -> (Vec<Box<Face>>, AxisAlignedBoundingBox) {
+pub fn build_from_obj<'a>(
+    object: Obj<TexturedVertex, u32>,
+) -> (Vec<Box<Face>>, AxisAlignedBoundingBox) {
     let mut points = vec![];
     let mut minimum = Vec3::new(f64::INFINITY, f64::INFINITY, f64::INFINITY);
     let mut maximum = Vec3::new(-f64::INFINITY, -f64::INFINITY, -f64::INFINITY);
@@ -337,21 +340,9 @@ fn triangle_intersection(
     camera: &Camera,
     mut d_min: f64,
 ) -> (Option<KDTreeHitRecord>, f64) {
-    let p1 = Vec3::new(
-        face.points[0].x,
-        face.points[0].y,
-        face.points[0].z,
-    );
-    let p2 = Vec3::new(
-        face.points[1].x,
-        face.points[1].y,
-        face.points[1].z,
-    );
-    let p3 = Vec3::new(
-        face.points[2].x,
-        face.points[2].y,
-        face.points[2].z,
-    );
+    let p1 = Vec3::new(face.points[0].x, face.points[0].y, face.points[0].z);
+    let p2 = Vec3::new(face.points[1].x, face.points[1].y, face.points[1].z);
+    let p3 = Vec3::new(face.points[2].x, face.points[2].y, face.points[2].z);
 
     let p1p2 = &p2 - &p1;
     let p1p3 = &p3 - &p1;
@@ -397,10 +388,11 @@ fn triangle_intersection(
         return (None, 0.0);
     }
 
-    let n_norm = n.unit();
+    let mut n_norm = n.unit();
     let mut _front_face = true;
     if ray.direction.dot(&n_norm) > 0.0 {
         _front_face = false;
+        n_norm = -n_norm;
         return (None, 0.0);
     }
 
@@ -411,12 +403,14 @@ fn triangle_intersection(
         return (None, 0.0);
     }
 
-    // Determine the UV coords of the hitpoint    
+    // Determine the UV coords of the hitpoint
     let mut text_coord = UVCoord { u: 0.3, v: 0.5 };
     if let Some((b1, b2)) = get_bary_coords(&p1, &p2, &p3, &p) {
         let b0 = 1.0 - b1 - b2;
-        text_coord.u = b0 * face.text_coords[0].u + b1 * face.text_coords[1].u + b2 * face.text_coords[2].u;
-        text_coord.v = b0 * face.text_coords[0].v + b1 * face.text_coords[1].v + b2 * face.text_coords[2].v;
+        text_coord.u =
+            b0 * face.text_coords[0].u + b1 * face.text_coords[1].u + b2 * face.text_coords[2].u;
+        text_coord.v =
+            b0 * face.text_coords[0].v + b1 * face.text_coords[1].v + b2 * face.text_coords[2].v;
     }
 
     (
@@ -463,6 +457,4 @@ fn get_bary_coords(p0: &Vec3, p1: &Vec3, p2: &Vec3, hit_point: &Vec3) -> Option<
     Some((r, t))
 }
 
-fn get_uv_coords() {
-
-}
+fn get_uv_coords() {}

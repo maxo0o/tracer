@@ -36,7 +36,7 @@ impl<T: Material + std::fmt::Debug> Hittable for Object<T> {
             t,
             normal,
             front_face,
-            text_coord
+            text_coord,
         }) = self.tree.traverse(ray, camera, t_min, t_max)
         {
             return Some(HitRecord {
@@ -45,7 +45,8 @@ impl<T: Material + std::fmt::Debug> Hittable for Object<T> {
                 normal,
                 material: &self.material,
                 front_face,
-                u: text_coord.u, v: text_coord.v,
+                u: text_coord.u,
+                v: text_coord.v,
             });
         }
 

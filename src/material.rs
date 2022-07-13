@@ -1,14 +1,18 @@
 use crate::colour::Colour;
 use crate::hittable::HitRecord;
 use crate::ray::Ray;
+use crate::texture::Texture;
 use crate::utils::{random_in_unit_sphere, random_in_unit_vector, reflect, refract};
 use crate::vector::Vec3;
-use crate::texture::{Texture, SolidColour};
 
 use rand::Rng;
 
 pub trait Material: Send + Sync + std::fmt::Debug {
-    fn scatter(&self, ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool, bool);
+    fn scatter(&self, ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool);
+
+    fn emitted(&self, u: f64, v: f64, p: &Vec3) -> Colour {
+        Colour::new(0.0, 0.0, 0.0)
+    }
 }
 
 #[derive(Debug)]
@@ -17,7 +21,7 @@ pub struct Lambertian {
 }
 
 impl Material for Lambertian {
-    fn scatter(&self, _ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool, bool) {
+    fn scatter(&self, _ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool) {
         let mut scatter_direction = &hit_record.normal + random_in_unit_vector();
 
         if scatter_direction.near_zero() {
@@ -25,10 +29,12 @@ impl Material for Lambertian {
         }
 
         let scattered = Ray::new(Vec3::copy(&hit_record.p), scatter_direction);
-        let is_light = false;
-        // eprintln!("{}, {}", hit_record.u, hit_record.v);
 
-        (scattered, Colour::copy(&self.albedo.value(hit_record.u, hit_record.v, &hit_record.p)), true, is_light)
+        (
+            scattered,
+            Colour::copy(&self.albedo.value(hit_record.u, hit_record.v, &hit_record.p)),
+            true,
+        )
     }
 }
 
@@ -39,20 +45,14 @@ pub struct Metal {
 }
 
 impl Material for Metal {
-    fn scatter(&self, ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool, bool) {
+    fn scatter(&self, ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool) {
         let reflected = reflect(&ray_in.direction.unit(), &hit_record.normal);
         let scattered_ray = Ray::new(
             Vec3::copy(&hit_record.p),
             reflected + self.f.clamp(0.0, 1.0) * &random_in_unit_sphere(),
         );
         let scattered = scattered_ray.direction.dot(&hit_record.normal) > 0.0;
-        let is_light = false;
-        (
-            scattered_ray,
-            Colour::copy(&self.albedo),
-            scattered,
-            is_light,
-        )
+        (scattered_ray, Colour::copy(&self.albedo), scattered)
     }
 }
 
@@ -62,7 +62,7 @@ pub struct Dialectric {
 }
 
 impl Material for Dialectric {
-    fn scatter(&self, ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool, bool) {
+    fn scatter(&self, ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool) {
         let attenuation = Colour::new(1.0, 1.0, 1.0);
         let refraction_ratio = if hit_record.front_face {
             1.0 / self.index_of_refraction
@@ -84,12 +84,10 @@ impl Material for Dialectric {
             refract(&unit_direction, &hit_record.normal, refraction_ratio)
         };
 
-        let is_light = false;
         (
             Ray::new(Vec3::copy(&hit_record.p), direction),
             attenuation,
             true,
-            is_light,
         )
     }
 }
@@ -97,19 +95,17 @@ impl Material for Dialectric {
 #[derive(Debug)]
 pub struct Light {
     pub intensity: f64,
-    pub colour: Colour,
+    pub albedo: Box<dyn Texture + Send + Sync>,
 }
 
 impl Material for Light {
-    fn scatter(&self, ray_in: &Ray, _hit_record: &HitRecord) -> (Ray, Colour, bool, bool) {
+    fn scatter(&self, ray_in: &Ray, _hit_record: &HitRecord) -> (Ray, Colour, bool) {
         let ray = Ray::new(Vec3::copy(&ray_in.origin), Vec3::copy(&ray_in.direction));
-        let is_light = true;
-        (
-            ray,
-            self.intensity * Colour::copy(&self.colour),
-            false,
-            is_light,
-        )
+        (ray, Colour::new(0.0, 0.0, 0.0), false)
+    }
+
+    fn emitted(&self, u: f64, v: f64, p: &Vec3) -> Colour {
+        self.intensity * self.albedo.value(u, v, p)
     }
 }
 

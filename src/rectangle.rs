@@ -1,6 +1,9 @@
-use crate::hittable::{HitRecord, Hittable};
+use crate::hittable::{HitRecord, Hittable, HittableList};
 use crate::material::Material;
 use crate::vector::Vec3;
+use crate::colour::Colour;
+use crate::texture::SolidColour;
+use crate::material::Lambertian;
 
 #[derive(Debug)]
 pub enum PlaneOrientation {
@@ -100,6 +103,82 @@ impl<T: Material + std::fmt::Debug> Hittable for Plane<T> {
     }
 }
 
-pub struct Box {
-    
+#[derive(Debug)]
+pub struct Cube {
+    box_min: Vec3,
+    box_max: Vec3,
+    sides: HittableList,
+    colour: Colour,
+}
+
+impl Cube {
+    pub fn new(box_min: Vec3, box_max: Vec3, colour: Colour) -> Cube {
+        let mut sides = HittableList::new();
+
+        let side_colour_1 = Lambertian {
+            albedo: Box::new(SolidColour::new(Colour::copy(&colour))),
+        };
+        let side_colour_2 = Lambertian {
+            albedo: Box::new(SolidColour::new(Colour::copy(&colour))),
+        };
+        let side_colour_3 = Lambertian {
+            albedo: Box::new(SolidColour::new(Colour::copy(&colour))),
+        };
+        let side_colour_4 = Lambertian {
+            albedo: Box::new(SolidColour::new(Colour::copy(&colour))),
+        };
+        let side_colour_5 = Lambertian {
+            albedo: Box::new(SolidColour::new(Colour::copy(&colour))),
+        };
+        let side_colour_6 = Lambertian {
+            albedo: Box::new(SolidColour::new(Colour::copy(&colour))),
+        };
+
+        sides.objects.push(Box::new(Plane::new(
+            (box_min.x, box_max.x, box_min.y, box_max.y),
+            box_max.z,
+            side_colour_1,
+            PlaneOrientation::XY,
+        )));
+        sides.objects.push(Box::new(Plane::new(
+            (box_min.x, box_max.x, box_min.y, box_max.y),
+            box_min.z,
+            side_colour_2,
+            PlaneOrientation::XY,
+        )));
+
+        sides.objects.push(Box::new(Plane::new(
+            (box_min.x, box_max.x, box_min.z, box_max.z),
+            box_max.y,
+            side_colour_3,
+            PlaneOrientation::XZ,
+        )));
+        sides.objects.push(Box::new(Plane::new(
+            (box_min.x, box_max.x, box_min.z, box_max.z),
+            box_min.y,
+            side_colour_4,
+            PlaneOrientation::XZ,
+        )));
+
+        sides.objects.push(Box::new(Plane::new(
+            (box_min.y, box_max.y, box_min.z, box_max.z),
+            box_max.x,
+            side_colour_5,
+            PlaneOrientation::YZ,
+        )));
+        sides.objects.push(Box::new(Plane::new(
+            (box_min.y, box_max.y, box_min.z, box_max.z),
+            box_min.x,
+            side_colour_6,
+            PlaneOrientation::YZ,
+        )));
+
+        Cube { box_min, box_max, sides, colour}
+    }
+}
+
+impl Hittable for Cube {
+    fn hit(&self, ray: &crate::ray::Ray, camera: &crate::camera::Camera, t_min: f64, t_max: f64) -> Option<HitRecord> {
+        self.sides.hit(ray, camera, t_min, t_max)
+    }
 }

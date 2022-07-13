@@ -5,6 +5,7 @@ use crate::{camera::Camera, material::Material};
 
 pub trait Hittable: Send + Sync + std::fmt::Debug {
     fn hit(&self, ray: &Ray, camera: &Camera, t_min: f64, t_max: f64) -> Option<HitRecord>;
+
     fn bounding_box(&self) -> Option<AxisAlignedBoundingBox> {
         None
     }
@@ -19,6 +20,13 @@ pub struct HitRecord<'a> {
     pub front_face: bool,
     pub u: f64,
     pub v: f64,
+}
+
+impl HitRecord<'_> {
+    pub fn set_face_normal(&mut self, ray: &Ray, outward_normal: &Vec3) {
+        self.front_face = ray.direction.dot(&outward_normal) < 0.0;
+        self.normal = if self.front_face { outward_normal.clone() } else { -outward_normal.clone() };
+    }
 }
 
 #[derive(Debug)]

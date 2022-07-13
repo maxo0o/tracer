@@ -12,6 +12,7 @@ mod sphere;
 mod texture;
 mod utils;
 mod vector;
+mod instance;
 
 use camera::Camera;
 use colour::Colour;
@@ -30,24 +31,27 @@ use std::fs::File;
 use std::io::BufReader;
 use texture::{CheckerTexture, ImageTexture, SolidColour};
 use vector::Vec3;
+use instance::{Translate, RotateY};
+
+use crate::rectangle::Cube;
 
 const INFINITY: f64 = f64::INFINITY;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Image
-    const ASPECT_RATIO: f64 = 3.0 / 2.0;
-    // const ASPECT_RATIO: f64 = 1.0;
+    // const ASPECT_RATIO: f64 = 3.0 / 2.0;
+    const ASPECT_RATIO: f64 = 1.0;
     const IMAGE_WIDTH: u32 = 3000;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-    let samples_per_pixel = 2;
+    let samples_per_pixel = 200;
     let max_depth = 100;
 
     // World
     let mut world = random_scene();
 
-    let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/dragon2_uv.obj")?);
+    // let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/dragon2_uv.obj")?);
     // let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/suz2.obj")?);
-    let model: Obj<TexturedVertex, u32> = load_obj(input)?;
+    // let model: Obj<TexturedVertex, u32> = load_obj(input)?;
     let _obj_material = Metal {
         albedo: Colour::new(0.35, 0.35, 0.45),
         f: 0.0,
@@ -64,16 +68,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         albedo: Box::new(CheckerTexture::new(solid_text_1, solid_text_2)),
     };
 
-    let img = image::open("/Users/maxmclaughlin/Desktop/xxx.webp").unwrap();
-    let image_texture = ImageTexture::new(img);
-    let image_material = Lambertian {
-        albedo: Box::new(image_texture),
-    };
+    // let img = image::open("/Users/maxmclaughlin/Desktop/xxx.webp").unwrap();
+    // let image_texture = ImageTexture::new(img);
+    // let image_material = Lambertian {
+    //     albedo: Box::new(image_texture),
+    // };
 
     eprintln!("Started KDTree load");
-    let object = Object::new(model, image_material);
+    // let object = Object::new(model, image_material);
     eprintln!("Finished KDTree load");
-    world.objects.push(Box::new(object));
+    // world.objects.push(Box::new(object));
 
     // let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/box.obj")?);
     let _obj_diffuse_box = Lambertian {
@@ -126,7 +130,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         red,
         PlaneOrientation::YZ,
     ));
-    // world.objects.push(box2);
+    world.objects.push(box2);
 
     let light = Light {
         intensity: 15.0,
@@ -174,40 +178,51 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     ));
     world.objects.push(box6);
 
+
+    let cube = Box::new(Cube::new(Vec3::new(0., 0., 0.), Vec3::new(165., 165., 165.), Colour::new(0.73, 0.73, 0.73)));
+    let cube = Box::new(RotateY::new(cube, -18.0));
+    let cube = Box::new(Translate::new(cube, Vec3::new(130., 0., 65.)));
+    world.objects.push(cube);
+ 
+    let cube2 = Box::new(Cube::new(Vec3::new(0., 0., 0.), Vec3::new(165., 330., 165.), Colour::new(0.73, 0.73, 0.73)));
+    let cube2 = Box::new(RotateY::new(cube2, 15.0));
+    let cube2 = Box::new(Translate::new(cube2, Vec3::new(265., 0., 295.)));
+    world.objects.push(cube2);
+
     // let objects = BoundingVolumeHierarchy::build(&mut objects[..], 0);
     // eprintln!("HELLO {:?}", objects);
 
     // Camera
-    let look_from = Vec3::new(8.0, 2.0, 2.0);
-    let look_at = Vec3::new(0.0, 1.0, 0.0);
+    // let look_from = Vec3::new(8.0, 2.0, 2.0);
+    // let look_at = Vec3::new(0.0, 1.0, 0.0);
     // let look_from = Vec3::new(26., 3., 6.);
     // let look_at = Vec3::new(0., 2., 0.);
     let vup = Vec3::new(0.0, 1.0, 0.0);
     let dist_to_focus = 1.0;
     let aperture = 0.0;
 
-    let cam = Camera::new(
-        &look_from,
-        &look_at,
-        vup,
-        20.0,
-        ASPECT_RATIO,
-        aperture,
-        dist_to_focus,
-    );
-
-    // let look_from = Vec3::new(278., 278., -800.);
-    // let look_at = Vec3::new(278., 278., 0.);
-
     // let cam = Camera::new(
     //     &look_from,
     //     &look_at,
     //     vup,
-    //     40.0,
-    //     1.0,
+    //     20.0,
+    //     ASPECT_RATIO,
     //     aperture,
     //     dist_to_focus,
     // );
+
+    let look_from = Vec3::new(278., 278., -800.);
+    let look_at = Vec3::new(278., 278., 0.);
+
+    let cam = Camera::new(
+        &look_from,
+        &look_at,
+        vup,
+        40.0,
+        1.0,
+        aperture,
+        dist_to_focus,
+    );
 
     // Render
     print!("P3\n{} {}\n255\n", IMAGE_WIDTH, IMAGE_HEIGHT);
@@ -269,8 +284,8 @@ fn ray_colour(ray: &Ray, camera: &Camera, world: &HittableList, depth: i32) -> C
     let direction = ray.direction.unit();
     let t = 0.5 * (direction.y + 1.0);
     //return (1.0 - t) * Colour::new(70. / 256., 216. / 256., 253. / 256.) + t * Colour::new( 39. / 256., 87. / 256., 185. / 256.);
-    return (1.0 - t) * Colour::new(1.0, 1.0, 1.0) + t * Colour::new(0.5, 0.7, 1.0);
-    // return Colour::new(0.0, 0.0, 0.0);
+    //return (1.0 - t) * Colour::new(1.0, 1.0, 1.0) + t * Colour::new(0.5, 0.7, 1.0);
+    return Colour::new(0.0, 0.0, 0.0);
     // return Colour::new(
     //     (39. / 256. as f64).powf(2.),
     //     (87. / 256. as f64).powf(2.),

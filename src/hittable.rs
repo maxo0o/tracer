@@ -5,7 +5,9 @@ use crate::{camera::Camera, material::Material};
 
 pub trait Hittable: Send + Sync + std::fmt::Debug {
     fn hit(&self, ray: &Ray, camera: &Camera, t_min: f64, t_max: f64) -> Option<HitRecord>;
-    fn bounding_box(&self) -> Option<AxisAlignedBoundingBox>;
+    fn bounding_box(&self) -> Option<AxisAlignedBoundingBox> {
+        None
+    }
 }
 
 #[derive(Debug)]

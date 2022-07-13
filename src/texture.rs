@@ -1,6 +1,7 @@
 use crate::colour::Colour;
 use crate::vector::Vec3;
 
+use image::{DynamicImage, GenericImageView, Pixel};
 
 pub trait Texture: std::fmt::Debug + Send + Sync {
     fn value(&self, u: f64, v: f64, p: &Vec3) -> Colour;
@@ -43,5 +44,41 @@ impl Texture for CheckerTexture {
         } else {
             return self.even.value(u, v, p);
         }
+    }
+}
+
+#[derive(Debug)]
+pub struct ImageTexture {
+    image: DynamicImage,
+    width: u32,
+    height: u32,
+}
+
+impl ImageTexture {
+    pub fn new(image: DynamicImage) -> ImageTexture {
+        let (width, height) = image.dimensions();
+        ImageTexture {
+            image,
+            width,
+            height,
+        }
+    }
+}
+
+impl Texture for ImageTexture {
+    fn value(&self, u: f64, v: f64, p: &Vec3) -> Colour {
+        let u = u.clamp(0.0, 1.0);
+        let v = 1.0 - v.clamp(0.0, 1.0);
+
+        let i = (u * self.width as f64) as u32;
+        let j = (v * self.height as f64) as u32;
+
+        let pixel = self.image.get_pixel(i, j).to_rgb();
+
+        Colour::new(
+            pixel[0] as f64 / 256.0,
+            pixel[1] as f64 / 256.0,
+            pixel[2] as f64 / 256.0,
+        )
     }
 }

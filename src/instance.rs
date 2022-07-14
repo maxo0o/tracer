@@ -1,6 +1,6 @@
 use crate::hittable::{HitRecord, Hittable};
-use crate::vector::Vec3;
 use crate::ray::Ray;
+use crate::vector::Vec3;
 
 #[derive(Debug)]
 pub struct Translate {
@@ -15,9 +15,15 @@ impl Translate {
 }
 
 impl Hittable for Translate {
-    fn hit(&self, ray: &crate::ray::Ray, camera: &crate::camera::Camera, t_min: f64, t_max: f64) -> Option<HitRecord> {
+    fn hit(
+        &self,
+        ray: &crate::ray::Ray,
+        camera: &crate::camera::Camera,
+        t_min: f64,
+        t_max: f64,
+    ) -> Option<HitRecord> {
         let ray_moved = Ray::new(ray.origin - self.offset, ray.direction);
-        
+
         if let Some(hit) = self.object.hit(&ray_moved, camera, t_min, t_max) {
             let mut hit_record = HitRecord {
                 p: hit.p + self.offset,
@@ -45,12 +51,21 @@ pub struct RotateY {
 
 impl RotateY {
     pub fn new(object: Box<dyn Hittable>, theta: f64) -> RotateY {
-        RotateY { object, theta: theta.to_radians() }
+        RotateY {
+            object,
+            theta: theta.to_radians(),
+        }
     }
 }
 
 impl Hittable for RotateY {
-    fn hit(&self, ray: &Ray, camera: &crate::camera::Camera, t_min: f64, t_max: f64) -> Option<HitRecord> {
+    fn hit(
+        &self,
+        ray: &Ray,
+        camera: &crate::camera::Camera,
+        t_min: f64,
+        t_max: f64,
+    ) -> Option<HitRecord> {
         let mut origin = ray.origin.clone();
         let mut direction = ray.direction.clone();
 

@@ -109,6 +109,22 @@ impl Material for Light {
     }
 }
 
+#[derive(Debug)]
+pub struct Isotropic {
+    pub albedo: Box<dyn Texture + Send + Sync>,
+}
+
+impl Material for Isotropic {
+    fn scatter(&self, ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool) {
+        let ray = Ray::new(Vec3::copy(&hit_record.p), random_in_unit_sphere());
+        (
+            ray,
+            self.albedo.value(hit_record.u, hit_record.v, &hit_record.p),
+            true,
+        )
+    }
+}
+
 fn reflectance(cosine: f64, ref_idx: f64) -> f64 {
     let mut r0 = (1.0 - ref_idx) / (1.0 + ref_idx);
     r0 = r0 * r0;

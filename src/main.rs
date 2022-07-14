@@ -3,6 +3,7 @@ mod bvh;
 mod camera;
 mod colour;
 mod hittable;
+mod instance;
 mod kdtree;
 mod material;
 mod object;
@@ -12,17 +13,18 @@ mod sphere;
 mod texture;
 mod utils;
 mod vector;
-mod instance;
+mod volume;
 
 use camera::Camera;
 use colour::Colour;
 use hittable::{Hittable, HittableList};
-use material::{Dialectric, Lambertian, Light, Metal};
+use material::{Dialectric, Lambertian, Light, Metal, Isotropic};
 use obj::{load_obj, Obj, TexturedVertex};
 use object::Object;
 use std::sync::Arc;
 // use rand::Rng;
 use bvh::BoundingVolumeHierarchy;
+use instance::{RotateY, Translate};
 use ray::Ray;
 use rayon::prelude::*;
 use rectangle::{Plane, PlaneOrientation};
@@ -31,7 +33,7 @@ use std::fs::File;
 use std::io::BufReader;
 use texture::{CheckerTexture, ImageTexture, SolidColour};
 use vector::Vec3;
-use instance::{Translate, RotateY};
+use volume::Volume;
 
 use crate::rectangle::Cube;
 
@@ -41,9 +43,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Image
     // const ASPECT_RATIO: f64 = 3.0 / 2.0;
     const ASPECT_RATIO: f64 = 1.0;
-    const IMAGE_WIDTH: u32 = 3000;
+    const IMAGE_WIDTH: u32 = 1000;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-    let samples_per_pixel = 200;
+    let samples_per_pixel = 100;
     let max_depth = 100;
 
     // World
@@ -109,7 +111,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     ));
     // world.objects.push(light);
 
-
     let green = Lambertian {
         albedo: Box::new(SolidColour::new(Colour::new(0.12, 0.45, 0.15))),
     };
@@ -144,7 +145,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     ));
     world.objects.push(box3);
 
-
     let white1 = Lambertian {
         albedo: Box::new(SolidColour::new(Colour::new(0.73, 0.73, 0.73))),
     };
@@ -178,13 +178,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     ));
     world.objects.push(box6);
 
-
-    let cube = Box::new(Cube::new(Vec3::new(0., 0., 0.), Vec3::new(165., 165., 165.), Colour::new(0.73, 0.73, 0.73)));
+    let cube = Box::new(Cube::new(
+        Vec3::new(0., 0., 0.),
+        Vec3::new(165., 165., 165.),
+        Colour::new(0.73, 0.73, 0.73),
+    ));
     let cube = Box::new(RotateY::new(cube, -18.0));
     let cube = Box::new(Translate::new(cube, Vec3::new(130., 0., 65.)));
+    let fog_material = Isotropic {
+        albedo: Box::new(SolidColour::new(Colour::new(1.0, 1.0, 1.0))),
+    };
+    let cube = Box::new(Volume::new(cube, 0.005, fog_material));
     world.objects.push(cube);
- 
-    let cube2 = Box::new(Cube::new(Vec3::new(0., 0., 0.), Vec3::new(165., 330., 165.), Colour::new(0.73, 0.73, 0.73)));
+
+    let cube2 = Box::new(Cube::new(
+        Vec3::new(0., 0., 0.),
+        Vec3::new(165., 330., 165.),
+        Colour::new(0.73, 0.73, 0.73),
+    ));
     let cube2 = Box::new(RotateY::new(cube2, 15.0));
     let cube2 = Box::new(Translate::new(cube2, Vec3::new(265., 0., 295.)));
     world.objects.push(cube2);

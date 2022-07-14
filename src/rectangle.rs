@@ -1,9 +1,9 @@
-use crate::hittable::{HitRecord, Hittable, HittableList};
-use crate::material::Material;
-use crate::vector::Vec3;
 use crate::colour::Colour;
-use crate::texture::SolidColour;
+use crate::hittable::{HitRecord, Hittable, HittableList};
 use crate::material::Lambertian;
+use crate::material::Material;
+use crate::texture::SolidColour;
+use crate::vector::Vec3;
 
 #[derive(Debug)]
 pub enum PlaneOrientation {
@@ -173,12 +173,23 @@ impl Cube {
             PlaneOrientation::YZ,
         )));
 
-        Cube { box_min, box_max, sides, colour}
+        Cube {
+            box_min,
+            box_max,
+            sides,
+            colour,
+        }
     }
 }
 
 impl Hittable for Cube {
-    fn hit(&self, ray: &crate::ray::Ray, camera: &crate::camera::Camera, t_min: f64, t_max: f64) -> Option<HitRecord> {
+    fn hit(
+        &self,
+        ray: &crate::ray::Ray,
+        camera: &crate::camera::Camera,
+        t_min: f64,
+        t_max: f64,
+    ) -> Option<HitRecord> {
         self.sides.hit(ray, camera, t_min, t_max)
     }
 }

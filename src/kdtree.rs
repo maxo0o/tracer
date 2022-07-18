@@ -393,7 +393,7 @@ fn triangle_intersection(
     if ray.direction.dot(&n_norm) > 0.0 {
         _front_face = false;
         n_norm = -n_norm;
-        return (None, 0.0);
+        // return (None, 0.0);
     }
 
     let z_distance = distance(&p, &camera.origin).abs();
@@ -456,5 +456,3 @@ fn get_bary_coords(p0: &Vec3, p1: &Vec3, p2: &Vec3, hit_point: &Vec3) -> Option<
 
     Some((r, t))
 }
-
-fn get_uv_coords() {}

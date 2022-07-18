@@ -1,6 +1,7 @@
 use crate::hittable::{HitRecord, Hittable};
 use crate::ray::Ray;
 use crate::vector::Vec3;
+use std::sync::{Arc, Mutex};
 
 #[derive(Debug)]
 pub struct Translate {
@@ -21,10 +22,12 @@ impl Hittable for Translate {
         camera: &crate::camera::Camera,
         t_min: f64,
         t_max: f64,
+        pixel: Option<(usize, usize)>,
+        zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     ) -> Option<HitRecord> {
         let ray_moved = Ray::new(ray.origin - self.offset, ray.direction);
 
-        if let Some(hit) = self.object.hit(&ray_moved, camera, t_min, t_max) {
+        if let Some(hit) = self.object.hit(&ray_moved, camera, t_min, t_max, pixel, Arc::clone(&zbuffer)) {
             let mut hit_record = HitRecord {
                 p: hit.p + self.offset,
                 normal: hit.normal.clone(),
@@ -65,6 +68,8 @@ impl Hittable for RotateY {
         camera: &crate::camera::Camera,
         t_min: f64,
         t_max: f64,
+        pixel: Option<(usize, usize)>,
+        zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     ) -> Option<HitRecord> {
         let mut origin = ray.origin.clone();
         let mut direction = ray.direction.clone();
@@ -77,7 +82,7 @@ impl Hittable for RotateY {
 
         let ray_rotated = Ray::new(origin, direction);
 
-        if let Some(hit) = self.object.hit(&ray_rotated, camera, t_min, t_max) {
+        if let Some(hit) = self.object.hit(&ray_rotated, camera, t_min, t_max, pixel, Arc::clone(&zbuffer)) {
             let mut p = hit.p;
 
             p.x = self.theta.cos() * hit.p.x + self.theta.sin() * hit.p.z;

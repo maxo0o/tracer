@@ -5,6 +5,8 @@ use crate::material::Material;
 use crate::ray::Ray;
 use crate::vector::Vec3;
 
+use std::sync::{Arc, Mutex};
+
 #[derive(Clone, Debug)]
 pub struct Sphere<T: Material> {
     pub center: Vec3,
@@ -23,7 +25,15 @@ impl<T: Material> Sphere<T> {
 }
 
 impl<T: Material + std::fmt::Debug> Hittable for Sphere<T> {
-    fn hit(&self, ray: &Ray, _camera: &Camera, t_min: f64, t_max: f64) -> Option<HitRecord> {
+    fn hit(
+        &self,
+        ray: &Ray,
+        _camera: &Camera,
+        t_min: f64,
+        t_max: f64,
+        _pixel: Option<(usize, usize)>,
+        _zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+    ) -> Option<HitRecord> {
         let oc = &ray.origin - &self.center;
         let a = ray.direction.length_squared();
         let half_b = oc.dot(&ray.direction);

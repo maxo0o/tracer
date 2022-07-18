@@ -2,6 +2,8 @@ use crate::hittable::{HitRecord, Hittable};
 use crate::material::Material;
 use crate::vector::Vec3;
 
+use std::sync::{Arc, Mutex};
+
 #[derive(Debug)]
 pub struct Volume<T: Material> {
     boundary: Box<dyn Hittable>,
@@ -26,14 +28,16 @@ impl<T: Material> Hittable for Volume<T> {
         camera: &crate::camera::Camera,
         t_min: f64,
         t_max: f64,
+        pixel: Option<(usize, usize)>,
+        zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     ) -> Option<crate::hittable::HitRecord> {
         if let Some(hit1) = &mut self
             .boundary
-            .hit(ray, camera, -f64::INFINITY, f64::INFINITY)
+            .hit(ray, camera, -f64::INFINITY, f64::INFINITY, pixel, Arc::clone(&zbuffer))
         {
             if let Some(hit2) = &mut self
                 .boundary
-                .hit(ray, camera, hit1.t + 0.0001, f64::INFINITY)
+                .hit(ray, camera, hit1.t + 0.0001, f64::INFINITY, pixel, Arc::clone(&zbuffer))
             {
                 if hit1.t < t_min {
                     hit1.t = t_min;

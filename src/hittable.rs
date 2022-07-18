@@ -3,8 +3,18 @@ use crate::ray::Ray;
 use crate::vector::Vec3;
 use crate::{camera::Camera, material::Material};
 
+use std::sync::{Arc, Mutex};
+
 pub trait Hittable: Send + Sync + std::fmt::Debug {
-    fn hit(&self, ray: &Ray, camera: &Camera, t_min: f64, t_max: f64) -> Option<HitRecord>;
+    fn hit(
+        &self,
+        ray: &Ray,
+        camera: &Camera,
+        t_min: f64,
+        t_max: f64,
+        pixel: Option<(usize, usize)>,
+        zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+    ) -> Option<HitRecord>;
 
     fn bounding_box(&self) -> Option<AxisAlignedBoundingBox> {
         None
@@ -45,7 +55,7 @@ impl HittableList {
         }
     }
 
-    pub fn hit_something(&self, ray: &Ray, t_min: f64, t_max: f64) -> bool {
+    pub fn _hit_something(&self, ray: &Ray, t_min: f64, t_max: f64) -> bool {
         for object in &self.objects {
             if let Some(bounding_box) = object.bounding_box() {
                 if bounding_box.hit(ray, t_min, t_max) {
@@ -59,12 +69,20 @@ impl HittableList {
 }
 
 impl Hittable for HittableList {
-    fn hit(&self, ray: &Ray, camera: &Camera, t_min: f64, t_max: f64) -> Option<HitRecord> {
+    fn hit(
+        &self,
+        ray: &Ray,
+        camera: &Camera,
+        t_min: f64,
+        t_max: f64,
+        pixel: Option<(usize, usize)>,
+        zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+    ) -> Option<HitRecord> {
         let mut hit_anything: Option<HitRecord> = None;
         let mut closest_so_far = t_max;
 
         for object in &self.objects {
-            if let Some(hit_record) = object.hit(ray, camera, t_min, closest_so_far) {
+            if let Some(hit_record) = object.hit(ray, camera, t_min, closest_so_far, pixel, Arc::clone(&zbuffer)) {
                 closest_so_far = hit_record.t;
                 hit_anything = Some(hit_record);
             }

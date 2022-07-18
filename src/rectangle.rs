@@ -5,6 +5,8 @@ use crate::material::Material;
 use crate::texture::SolidColour;
 use crate::vector::Vec3;
 
+use std::sync::{Arc, Mutex};
+
 #[derive(Debug)]
 pub enum PlaneOrientation {
     XY,
@@ -49,6 +51,8 @@ impl<T: Material + std::fmt::Debug> Hittable for Plane<T> {
         _camera: &crate::camera::Camera,
         t_min: f64,
         t_max: f64,
+        _pixel: Option<(usize, usize)>,
+        _zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     ) -> Option<crate::hittable::HitRecord> {
         let t = match &self.orientation {
             PlaneOrientation::XY => (self.k - ray.origin.z) / ray.direction.z,
@@ -189,7 +193,9 @@ impl Hittable for Cube {
         camera: &crate::camera::Camera,
         t_min: f64,
         t_max: f64,
+        pixel: Option<(usize, usize)>,
+        zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     ) -> Option<HitRecord> {
-        self.sides.hit(ray, camera, t_min, t_max)
+        self.sides.hit(ray, camera, t_min, t_max, pixel, Arc::clone(&zbuffer))
     }
 }

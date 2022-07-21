@@ -1,7 +1,11 @@
+use std::f64::consts::PI;
+
 use crate::colour::Colour;
 use crate::hittable::HitRecord;
+use crate::onb::OrthonormalBasis;
 use crate::ray::Ray;
 use crate::texture::Texture;
+use crate::utils::random_cosine_direction;
 use crate::utils::{random_in_unit_sphere, random_in_unit_vector, reflect, refract};
 use crate::vector::Vec3;
 
@@ -13,6 +17,10 @@ pub trait Material: Send + Sync + std::fmt::Debug {
     fn emitted(&self, u: f64, v: f64, p: &Vec3) -> Colour {
         Colour::new(0.0, 0.0, 0.0)
     }
+
+    fn scattering_pdf(&self, ray_in: &Ray, hit_record: &HitRecord, scattered: &Ray) -> f64 {
+        0.0
+    }
 }
 
 #[derive(Debug)]
@@ -22,7 +30,9 @@ pub struct Lambertian {
 
 impl Material for Lambertian {
     fn scatter(&self, _ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool) {
-        let mut scatter_direction = &hit_record.normal + random_in_unit_vector();
+        let onb = OrthonormalBasis::build_from_w(&hit_record.normal);
+        //let mut scatter_direction = &hit_record.normal + random_in_unit_vector();
+        let mut scatter_direction = onb.local_vec(&random_cosine_direction());
 
         if scatter_direction.near_zero() {
             scatter_direction = Vec3::copy(&hit_record.normal);
@@ -35,6 +45,12 @@ impl Material for Lambertian {
             Colour::copy(&self.albedo.value(hit_record.u, hit_record.v, &hit_record.p)),
             true,
         )
+    }
+
+    fn scattering_pdf(&self, ray_in: &Ray, hit_record: &HitRecord, scattered: &Ray) -> f64 {
+        let cosine = hit_record.normal.dot(&scattered.direction.unit());
+
+        return if cosine < 0.0 { 0.0 } else { cosine / PI };
     }
 }
 

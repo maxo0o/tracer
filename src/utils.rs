@@ -1,3 +1,5 @@
+use std::f64::consts::PI;
+
 use crate::vector::Vec3;
 use rand::Rng;
 
@@ -59,4 +61,16 @@ pub fn _random_in_hemisphere(normal: &Vec3) -> Vec3 {
     }
 
     -in_unit_sphere
+}
+
+pub fn random_cosine_direction() -> Vec3 {
+    let r1: f64 = rand::thread_rng().gen();
+    let r2: f64 = rand::thread_rng().gen();
+    let z = (1.0 - r2).sqrt();
+
+    let phi = 2.0 * PI * r1;
+    let x = phi.cos() * r2.sqrt();
+    let y = phi.sin() * r2.sqrt();
+
+    Vec3::new(x, y, z)
 }

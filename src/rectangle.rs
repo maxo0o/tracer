@@ -1,10 +1,13 @@
+use crate::camera::Camera;
 use crate::colour::Colour;
 use crate::hittable::{HitRecord, Hittable, HittableList};
 use crate::material::Lambertian;
 use crate::material::Material;
+use crate::ray::Ray;
 use crate::texture::SolidColour;
 use crate::vector::Vec3;
 
+use rand::Rng;
 use std::sync::{Arc, Mutex};
 
 #[derive(Debug)]
@@ -105,6 +108,41 @@ impl<T: Material + std::fmt::Debug> Hittable for Plane<T> {
             v,
         })
     }
+
+    fn pdf_value(
+        &self,
+        origin: &Vec3,
+        v: &Vec3,
+        camera: &Camera,
+        pixel: Option<(usize, usize)>,
+        zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+    ) -> f64 {
+        if let Some(hit) = self.hit(
+            &Ray::new(*origin, *v),
+            camera,
+            0.0001,
+            f64::INFINITY,
+            pixel,
+            zbuffer,
+        ) {
+            let area = (self.a1 - self.a0) * (self.b1 - self.b0);
+            let distance_squared = hit.t * hit.t * v.length_squared();
+            let cosine = (v.dot(&hit.normal) / v.length()).abs();
+
+            return distance_squared / (cosine * area);
+        }
+
+        0.0
+    }
+
+    fn random(&self, origin: &Vec3) -> Vec3 {
+        let random_point = Vec3::new(
+            rand::thread_rng().gen_range(self.a0..self.a1),
+            self.k,
+            rand::thread_rng().gen_range(self.b0..self.b1),
+        );
+        return random_point - origin;
+    }
 }
 
 #[derive(Debug)]
@@ -196,6 +234,7 @@ impl Hittable for Cube {
         pixel: Option<(usize, usize)>,
         zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     ) -> Option<HitRecord> {
-        self.sides.hit(ray, camera, t_min, t_max, pixel, Arc::clone(&zbuffer))
+        self.sides
+            .hit(ray, camera, t_min, t_max, pixel, Arc::clone(&zbuffer))
     }
 }

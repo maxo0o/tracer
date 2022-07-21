@@ -54,7 +54,7 @@ impl<T: Material + std::fmt::Debug> Hittable for Object<T> {
             if let Some(pixel) = pixel {
                 let z_distance = distance(&p, &camera.origin);
                 let mut zbuff = zbuffer.lock().unwrap();
-    
+
                 if z_distance < zbuff[pixel.0][pixel.1] {
                     zbuff[pixel.0][pixel.1] = z_distance;
                 } else {

@@ -88,3 +88,11 @@ impl ops::Mul<Colour> for Colour {
         Colour::new(self.r * rhs.r, self.g * rhs.g, self.b * rhs.b)
     }
 }
+
+impl ops::Div<f64> for Colour {
+    type Output = Colour;
+
+    fn div(self, rhs: f64) -> Self::Output {
+        Colour::new(self.r / rhs, self.g / rhs, self.b / rhs)
+    }
+}

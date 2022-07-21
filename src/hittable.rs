@@ -3,6 +3,7 @@ use crate::ray::Ray;
 use crate::vector::Vec3;
 use crate::{camera::Camera, material::Material};
 
+use rand::Rng;
 use std::sync::{Arc, Mutex};
 
 pub trait Hittable: Send + Sync + std::fmt::Debug {
@@ -18,6 +19,21 @@ pub trait Hittable: Send + Sync + std::fmt::Debug {
 
     fn bounding_box(&self) -> Option<AxisAlignedBoundingBox> {
         None
+    }
+
+    fn pdf_value(
+        &self,
+        origin: &Vec3,
+        v: &Vec3,
+        camera: &Camera,
+        pixel: Option<(usize, usize)>,
+        zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+    ) -> f64 {
+        0.0
+    }
+
+    fn random(&self, origin: &Vec3) -> Vec3 {
+        Vec3::new(1.0, 0.0, 0.0)
     }
 }
 
@@ -82,7 +98,14 @@ impl Hittable for HittableList {
         let mut closest_so_far = t_max;
 
         for object in &self.objects {
-            if let Some(hit_record) = object.hit(ray, camera, t_min, closest_so_far, pixel, Arc::clone(&zbuffer)) {
+            if let Some(hit_record) = object.hit(
+                ray,
+                camera,
+                t_min,
+                closest_so_far,
+                pixel,
+                Arc::clone(&zbuffer),
+            ) {
                 closest_so_far = hit_record.t;
                 hit_anything = Some(hit_record);
             }

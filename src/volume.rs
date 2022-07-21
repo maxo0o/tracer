@@ -31,14 +31,22 @@ impl<T: Material> Hittable for Volume<T> {
         pixel: Option<(usize, usize)>,
         zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     ) -> Option<crate::hittable::HitRecord> {
-        if let Some(hit1) = &mut self
-            .boundary
-            .hit(ray, camera, -f64::INFINITY, f64::INFINITY, pixel, Arc::clone(&zbuffer))
-        {
-            if let Some(hit2) = &mut self
-                .boundary
-                .hit(ray, camera, hit1.t + 0.0001, f64::INFINITY, pixel, Arc::clone(&zbuffer))
-            {
+        if let Some(hit1) = &mut self.boundary.hit(
+            ray,
+            camera,
+            -f64::INFINITY,
+            f64::INFINITY,
+            pixel,
+            Arc::clone(&zbuffer),
+        ) {
+            if let Some(hit2) = &mut self.boundary.hit(
+                ray,
+                camera,
+                hit1.t + 0.0001,
+                f64::INFINITY,
+                pixel,
+                Arc::clone(&zbuffer),
+            ) {
                 if hit1.t < t_min {
                     hit1.t = t_min;
                 }

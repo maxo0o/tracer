@@ -27,7 +27,14 @@ impl Hittable for Translate {
     ) -> Option<HitRecord> {
         let ray_moved = Ray::new(ray.origin - self.offset, ray.direction);
 
-        if let Some(hit) = self.object.hit(&ray_moved, camera, t_min, t_max, pixel, Arc::clone(&zbuffer)) {
+        if let Some(hit) = self.object.hit(
+            &ray_moved,
+            camera,
+            t_min,
+            t_max,
+            pixel,
+            Arc::clone(&zbuffer),
+        ) {
             let mut hit_record = HitRecord {
                 p: hit.p + self.offset,
                 normal: hit.normal.clone(),
@@ -82,7 +89,14 @@ impl Hittable for RotateY {
 
         let ray_rotated = Ray::new(origin, direction);
 
-        if let Some(hit) = self.object.hit(&ray_rotated, camera, t_min, t_max, pixel, Arc::clone(&zbuffer)) {
+        if let Some(hit) = self.object.hit(
+            &ray_rotated,
+            camera,
+            t_min,
+            t_max,
+            pixel,
+            Arc::clone(&zbuffer),
+        ) {
             let mut p = hit.p;
 
             p.x = self.theta.cos() * hit.p.x + self.theta.sin() * hit.p.z;

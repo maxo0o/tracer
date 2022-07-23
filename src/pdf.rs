@@ -1,5 +1,6 @@
 use std::f64::consts::PI;
 use std::sync::{Arc, Mutex};
+use rand::Rng;
 
 use crate::camera::Camera;
 use crate::hittable::Hittable;
@@ -15,7 +16,7 @@ pub trait ProbabilityDensityFunction {
         pixel: Option<(usize, usize)>,
         zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     ) -> f64;
-    fn generate(&self) -> Vec3;
+    fn generate(&self) -> Option<Vec3>;
 }
 
 pub struct CosinePDF {
@@ -43,8 +44,8 @@ impl ProbabilityDensityFunction for CosinePDF {
         return if cosine <= 0.0 { 0.0 } else { cosine / PI };
     }
 
-    fn generate(&self) -> Vec3 {
-        self.uvw.local_vec(&random_cosine_direction())
+    fn generate(&self) -> Option<Vec3> {
+        Some(self.uvw.local_vec(&random_cosine_direction()))
     }
 }
 
@@ -79,21 +80,18 @@ impl ProbabilityDensityFunction for HittablePDF {
         );
     }
 
-    fn generate(&self) -> Vec3 {
-        return self.hittable.random(&self.origin);
+    fn generate(&self) -> Option<Vec3> {
+        self.hittable.random(&self.origin)
     }
 }
 
 pub struct MixturePDF {
-    pdf: [Box<dyn ProbabilityDensityFunction>; 2],
+    pdfs: Vec<Box<dyn ProbabilityDensityFunction>>,
 }
 
 impl MixturePDF {
-    pub fn new(
-        p0: Box<dyn ProbabilityDensityFunction>,
-        p1: Box<dyn ProbabilityDensityFunction>,
-    ) -> MixturePDF {
-        MixturePDF { pdf: [p0, p1] }
+    pub fn new(pdfs: Vec<Box<dyn ProbabilityDensityFunction>>) -> MixturePDF {
+        MixturePDF { pdfs }
     }
 }
 
@@ -105,15 +103,20 @@ impl ProbabilityDensityFunction for MixturePDF {
         pixel: Option<(usize, usize)>,
         zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     ) -> f64 {
-        0.5 * self.pdf[0].value(direction, camera, pixel, Arc::clone(&zbuffer))
-            + 0.5 * self.pdf[1].value(direction, camera, pixel, Arc::clone(&zbuffer))
+        self.pdfs
+            .iter()
+            .map(|pdf| {
+                (1.0 / self.pdfs.len() as f64) * pdf.value(direction, camera, pixel, Arc::clone(&zbuffer)) as f64
+            })
+            .fold(0.0, |acc, x| acc + x)
     }
 
-    fn generate(&self) -> Vec3 {
-        return if rand::random::<f64>() < 0.5 {
-            self.pdf[0].generate()
-        } else {
-            self.pdf[1].generate()
-        };
+    fn generate(&self) -> Option<Vec3> {
+        let mut pdf: Option<Vec3> = None;
+        while let None = pdf {
+            let choice = rand::thread_rng().gen_range(0..self.pdfs.len());
+            pdf = self.pdfs[choice].generate();
+        }
+        pdf
     }
 }

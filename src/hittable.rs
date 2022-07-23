@@ -1,5 +1,7 @@
 use crate::aabb::{surrounding_box, AxisAlignedBoundingBox};
+use crate::material::{Lambertian, UnitMaterial};
 use crate::ray::Ray;
+use crate::sphere::Sphere;
 use crate::vector::Vec3;
 use crate::{camera::Camera, material::Material};
 
@@ -32,8 +34,12 @@ pub trait Hittable: Send + Sync + std::fmt::Debug {
         0.0
     }
 
-    fn random(&self, origin: &Vec3) -> Vec3 {
-        Vec3::new(1.0, 0.0, 0.0)
+    fn random(&self, origin: &Vec3) -> Option<Vec3> {
+        None
+    }
+
+    fn get_light_sampler_sphere(&self) -> Sphere<UnitMaterial> {
+        panic!("This hittable does not implement the light sampler method");
     }
 }
 

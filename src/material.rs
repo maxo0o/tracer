@@ -12,16 +12,30 @@ use crate::vector::Vec3;
 use rand::Rng;
 
 pub trait Material: Send + Sync + std::fmt::Debug {
-    fn scatter(&self, ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool);
+    fn scatter(&self, ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool) {
+        (
+            Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, 0.0)),
+            Colour::new(0.0, 0.0, 0.0),
+            false,
+        )
+    }
 
     fn emitted(&self, u: f64, v: f64, p: &Vec3) -> Colour {
         Colour::new(0.0, 0.0, 0.0)
     }
 
     fn scattering_pdf(&self, ray_in: &Ray, hit_record: &HitRecord, scattered: &Ray) -> f64 {
-        0.0
+        1.0
+    }
+
+    fn use_pdfs(&self) -> bool {
+        false
     }
 }
+
+#[derive(Debug)]
+pub struct UnitMaterial {}
+impl Material for UnitMaterial {}
 
 #[derive(Debug)]
 pub struct Lambertian {
@@ -51,6 +65,10 @@ impl Material for Lambertian {
         let cosine = hit_record.normal.dot(&scattered.direction.unit());
 
         return if cosine < 0.0 { 0.0 } else { cosine / PI };
+    }
+
+    fn use_pdfs(&self) -> bool {
+        true
     }
 }
 

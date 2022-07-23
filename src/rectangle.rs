@@ -135,13 +135,13 @@ impl<T: Material + std::fmt::Debug> Hittable for Plane<T> {
         0.0
     }
 
-    fn random(&self, origin: &Vec3) -> Vec3 {
+    fn random(&self, origin: &Vec3) -> Option<Vec3> {
         let random_point = Vec3::new(
             rand::thread_rng().gen_range(self.a0..self.a1),
             self.k,
             rand::thread_rng().gen_range(self.b0..self.b1),
         );
-        return random_point - origin;
+        return Some(random_point - origin);
     }
 }
 

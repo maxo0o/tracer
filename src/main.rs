@@ -26,7 +26,7 @@ use object::Object;
 use rand::Rng;
 use std::sync::{Arc, Mutex};
 // use bvh::BoundingVolumeHierarchy;
-use crate::pdf::{HittablePDF, ProbabilityDensityFunction, MixturePDF};
+use crate::pdf::{HittablePDF, MixturePDF, ProbabilityDensityFunction};
 use instance::{RotateY, Translate};
 use pdf::CosinePDF;
 use ray::Ray;
@@ -46,11 +46,10 @@ const MAX_RAY_DEPTH: u32 = 100;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Image
-    // const ASPECT_RATIO: f64 = 3.0 / 2.0;
-    const ASPECT_RATIO: f64 = 1.0;
-    const IMAGE_WIDTH: u32 = 600;
+    const ASPECT_RATIO: f64 = 3.0 / 2.0;
+    const IMAGE_WIDTH: u32 = 3000;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-    let samples_per_pixel = 100;
+    let samples_per_pixel = 25;
 
     let zbuffer = Arc::new(Mutex::new(vec![
         vec![INFINITY; IMAGE_WIDTH as usize];
@@ -59,214 +58,174 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // World
     let mut world = random_scene();
+    let mut lights: Vec<Arc<Box<dyn Hittable>>> = vec![];
 
-    let mushroom_orb = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/mushroom_orb.obj")?);
-    // let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/suz2.obj")?);
+    // MUSHROOM ORB 1
+    let mushroom_orb = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/mushroom_orb1.obj")?);
     let model: Obj<TexturedVertex, u32> = load_obj(mushroom_orb)?;
-
     let img = image::open("/mnt/c/Users/maxmc/Desktop/mushroom.png").unwrap();
     let image_texture = ImageTexture::new(img, true);
     let orb_material = Light {
         albedo: Box::new(image_texture),
-        intensity: 3.0,
+        intensity: 5.0,
     };
-
     let object_orb = Object::new(model, orb_material);
-    let object_orb = Translate::new(Box::new(object_orb), Vec3::new(0.0, 3.0, 0.0));
     eprintln!("Finished KDTree load");
-    // world.objects.push(Box::new(object_orb));
+    let sampler = Box::new(object_orb.get_light_sampler_sphere());
+    lights.push(Arc::new(sampler));
+    world.objects.push(Box::new(object_orb));
+
+    // MUSHROOM ORB 2
+    let mushroom_orb = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/mushroom_orb2.obj")?);
+    let model: Obj<TexturedVertex, u32> = load_obj(mushroom_orb)?;
+    let img = image::open("/mnt/c/Users/maxmc/Desktop/mushroom.png").unwrap();
+    let image_texture = ImageTexture::new(img, true);
+    let orb_material = Light {
+        albedo: Box::new(image_texture),
+        intensity: 5.0,
+    };
+    let object_orb = Object::new(model, orb_material);
+    eprintln!("Finished KDTree load");
+    let sampler = Box::new(object_orb.get_light_sampler_sphere());
+    lights.push(Arc::new(sampler));
+    world.objects.push(Box::new(object_orb));
+
+    // MUSHROOM ORB 3
+    let mushroom_orb = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/mushroom_orb3.obj")?);
+    let model: Obj<TexturedVertex, u32> = load_obj(mushroom_orb)?;
+    let img = image::open("/mnt/c/Users/maxmc/Desktop/mushroom.png").unwrap();
+    let image_texture = ImageTexture::new(img, true);
+    let orb_material = Light {
+        albedo: Box::new(image_texture),
+        intensity: 5.0,
+    };
+    let object_orb = Object::new(model, orb_material);
+    eprintln!("Finished KDTree load");
+    let sampler = Box::new(object_orb.get_light_sampler_sphere());
+    lights.push(Arc::new(sampler));
+    world.objects.push(Box::new(object_orb));
+
+    // MUSHROOM ORB 4
+    let mushroom_orb = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/mushroom_orb4.obj")?);
+    let model: Obj<TexturedVertex, u32> = load_obj(mushroom_orb)?;
+    let img = image::open("/mnt/c/Users/maxmc/Desktop/mushroom.png").unwrap();
+    let image_texture = ImageTexture::new(img, true);
+    let orb_material = Light {
+        albedo: Box::new(image_texture),
+        intensity: 5.0,
+    };
+    let object_orb = Object::new(model, orb_material);
+    eprintln!("Finished KDTree load");
+    let sampler = Box::new(object_orb.get_light_sampler_sphere());
+    lights.push(Arc::new(sampler));
+    world.objects.push(Box::new(object_orb));
+
+    // MUSHROOM ORB 5
+    let mushroom_orb = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/mushroom_orb5.obj")?);
+    let model: Obj<TexturedVertex, u32> = load_obj(mushroom_orb)?;
+    let img = image::open("/mnt/c/Users/maxmc/Desktop/mushroom.png").unwrap();
+    let image_texture = ImageTexture::new(img, true);
+    let orb_material = Light {
+        albedo: Box::new(image_texture),
+        intensity: 5.0,
+    };
+    let object_orb = Object::new(model, orb_material);
+    eprintln!("Finished KDTree load");
+    let sampler = Box::new(object_orb.get_light_sampler_sphere());
+    lights.push(Arc::new(sampler));
+    world.objects.push(Box::new(object_orb));
 
     let input = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/mushroom_d.obj")?);
     let model: Obj<TexturedVertex, u32> = load_obj(input)?;
-
     let img = image::open("/mnt/c/Users/maxmc/Desktop/mushroom.png").unwrap();
     let image_texture = ImageTexture::new(img, false);
     let image_material = Lambertian {
         albedo: Box::new(image_texture),
     };
-
     eprintln!("Started KDTree load");
     let object = Object::new(model, image_material);
-    let object = Translate::new(Box::new(object), Vec3::new(0.0, 3.0, 0.0));
+    // let object = Translate::new(Box::new(object), Vec3::new(0.0, 3.0, 0.0));
     eprintln!("Finished KDTree load");
-    // world.objects.push(Box::new(object));
+    world.objects.push(Box::new(object));
 
     let river = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/river.obj")?);
     let model: Obj<TexturedVertex, u32> = load_obj(river)?;
-
     let _obj_material = Metal {
         albedo: Colour::new(0.65, 0.65, 0.65),
         f: 0.025,
     };
-
     let river_obj = Object::new(model, _obj_material);
     let river_obj = Translate::new(Box::new(river_obj), Vec3::new(0.0, -1.7, 0.0));
     eprintln!("Finished KDTree load");
-    // world.objects.push(Box::new(river_obj));
+    world.objects.push(Box::new(river_obj));
 
-    // let input = BufReader::new(File::open("/Users/maxmclaughlin/Desktop/box.obj")?);
-    let _obj_diffuse_box = Lambertian {
-        albedo: Box::new(SolidColour::new(Colour::new(0.5, 0.5, 0.2))),
-    };
-    // let box_model: Obj = load_obj(input)?;
-    // let box_object = Object::new(box_model, _obj_diffuse_box);
-    // world.objects.push(Box::new(box_object));
-    //objects.push(Arc::new(Box::new(box_object)));
-
-    let light_material = Light {
-        intensity: 1.0,
-        albedo: Box::new(SolidColour::new(Colour::new(
-            (254. / 256.0 as f64).powf(2.0),
-            (129.0 / 256.0 as f64).powf(2.0),
-            (76.0 / 256.0 as f64).powf(2.0),
-        ))),
-    };
-    let light = Box::new(Sphere::new(Vec3::new(2.0, 24.8, 5.0), 1.5, light_material));
-    // let light_material = Light {
+    // let sphere_mat = Light {
+    //     albedo: Box::new(SolidColour::new(Colour::new(2.0, 2.0, 2.0))),
     //     intensity: 1.0,
-    //     albedo: Box::new(SolidColour::new(Colour::new(4.0, 4.0, 4.0))),
     // };
-    // let light = Box::new(Plane::new(
-    //     (3.0, 5.0, 1.0, 3.0),
-    //     -2.0,
-    //     light_material,
-    //     PlaneOrientation::XZ,
-    // ));
-    // world.objects.push(light);
+    // let sphere = Sphere::new(Vec3::new(0.0, 2., 0.0), 0.5, sphere_mat);
+    // world.objects.push(Box::new(sphere));
 
-    let green = Lambertian {
-        albedo: Box::new(SolidColour::new(Colour::new(0.12, 0.45, 0.15))),
+    // let sphere_mat = Light {
+    //     albedo: Box::new(SolidColour::new(Colour::new(4.0, 4.0, 4.0))),
+    //     intensity: 5.0,
+    // };
+    // let sphere = Sphere::new(Vec3::new(0.0, 2., 0.0), 0.5, sphere_mat);
+    // lights.push(Arc::new(Box::new(sphere)));
+    
+
+    // COOB
+    // let mushroom_orb = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/cube.obj")?);
+    // let model: Obj<TexturedVertex, u32> = load_obj(mushroom_orb)?;
+    // let text = SolidColour::new(Colour::new(0.5, 0.5, 0.5));
+    // let orb_material = Lambertian {
+    //     albedo: Box::new(text),
+    // };
+    // let object_orb = Object::new(model, orb_material);
+    // eprintln!("Finished KDTree load");
+    // world.objects.push(Box::new(object_orb));
+
+    let sphere_mat = Lambertian {
+        albedo: Box::new(SolidColour::new(Colour::new(0.5, 0.5, 0.5))),
     };
-    let box1 = Box::new(Plane::new(
-        (0.0, 555.0, 0.0, 555.0),
-        555.0,
-        green,
-        PlaneOrientation::YZ,
-    ));
-    world.objects.push(box1);
+    let sphere = Sphere::new(Vec3::new(0.0, 6., 0.0), 6.0, sphere_mat);
+    //world.objects.push(Box::new(sphere));
 
-    let red = Lambertian {
-        albedo: Box::new(SolidColour::new(Colour::new(0.65, 0.05, 0.05))),
+
+    // let sphere_mat = Lambertian {
+    //     albedo: Box::new(SolidColour::new(Colour::new(0.5, 0.5, 0.5))),
+    // };
+    // let sphere = Sphere::new(Vec3::new(-0.9934191703796387, 12.072142601013184 + 3.76 , -0.059713006019592285), 3.76, sphere_mat);
+    // world.objects.push(Box::new(sphere));
+    
+    // solo ordbo
+    let mushroom_orb = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/mushroom_1.obj")?);
+    let model: Obj<TexturedVertex, u32> = load_obj(mushroom_orb)?;
+    let img = image::open("/mnt/c/Users/maxmc/Desktop/mushroom.png").unwrap();
+    let image_texture = ImageTexture::new(img, true);
+    let orb_material = Light {
+        albedo: Box::new(image_texture),
+        intensity: 5.0,
     };
-    let box2 = Box::new(Plane::new(
-        (0.0, 555.0, 0.0, 555.0),
-        0.0,
-        red,
-        PlaneOrientation::YZ,
-    ));
-    world.objects.push(box2);
-
-    let light = Light {
-        intensity: 15.0,
-        albedo: Box::new(SolidColour::new(Colour::new(1.0, 1.0, 1.0))),
-    };
-    let box3 = Box::new(Plane::new(
-        (213.0, 343.0, 227.0, 332.0),
-        554.0,
-        light,
-        PlaneOrientation::XZ,
-    ));
-    world.objects.push(box3);
-
-    let white1 = Lambertian {
-        albedo: Box::new(SolidColour::new(Colour::new(0.73, 0.73, 0.73))),
-    };
-    let box4 = Box::new(Plane::new(
-        (0.0, 555.0, 0.0, 555.0),
-        0.0,
-        white1,
-        PlaneOrientation::XZ,
-    ));
-    world.objects.push(box4);
-
-    let white2 = Lambertian {
-        albedo: Box::new(SolidColour::new(Colour::new(0.73, 0.73, 0.73))),
-    };
-    let box5 = Box::new(Plane::new(
-        (0.0, 555.0, 0.0, 555.0),
-        555.0,
-        white2,
-        PlaneOrientation::XZ,
-    ));
-    world.objects.push(box5);
-
-    let white3 = Lambertian {
-        albedo: Box::new(SolidColour::new(Colour::new(0.73, 0.73, 0.73))),
-    };
-    let box6 = Box::new(Plane::new(
-        (0.0, 555.0, 0.0, 555.0),
-        555.0,
-        white3,
-        PlaneOrientation::XY,
-    ));
-    world.objects.push(box6);
-
-    let cube = Box::new(Cube::new(
-        Vec3::new(0., 0., 0.),
-        Vec3::new(165., 165., 165.),
-        Colour::new(0.73, 0.73, 0.73),
-    ));
-    let cube = Box::new(RotateY::new(cube, -18.0));
-    let cube = Box::new(Translate::new(cube, Vec3::new(130., 0., 65.)));
-    let white4 = Lambertian {
-        albedo: Box::new(SolidColour::new(Colour::new(0.73, 0.73, 0.73))),
-    };
-    // let cube = Box::new(Volume::new(cube, 0.005, white4));
-    world.objects.push(cube);
-
-    let cube2 = Box::new(Cube::new(
-        Vec3::new(0., 0., 0.),
-        Vec3::new(165., 330., 165.),
-        Colour::new(0.73, 0.73, 0.73),
-    ));
-    let cube2 = Box::new(RotateY::new(cube2, 15.0));
-    let cube2 = Box::new(Translate::new(cube2, Vec3::new(265., 0., 295.)));
-    world.objects.push(cube2);
-
-    // let objects = BoundingVolumeHierarchy::build(&mut objects[..], 0);
-    // eprintln!("HELLO {:?}", objects);
-
-    let light_pdf = Light {
-        intensity: 15.0,
-        albedo: Box::new(SolidColour::new(Colour::new(1.0, 1.0, 1.0))),
-    };
-    let light = Box::new(Plane::new(
-        (213.0, 343.0, 227.0, 332.0),
-        554.0,
-        light_pdf,
-        PlaneOrientation::XZ,
-    ));
-    let light = light as Box<dyn Hittable>;
-    let light = Arc::new(light);
+    let object_orb = Object::new(model, orb_material);
+    eprintln!("Finished KDTree load");
+    let sampler = Box::new(object_orb.get_light_sampler_sphere());
+    //lights.push(Arc::new(sampler));
+    //world.objects.push(Box::new(object_orb));
 
     // Camera
-    // let look_from = Vec3::new(128.0, 50.0, 165.0);
-    // let look_at = Vec3::new(0.0, 1.0, 0.0);
-    // let look_from = Vec3::new(26., 3., 6.);
-    // let look_at = Vec3::new(0., 2., 0.);
+    let look_from = Vec3::new(128.0, 50.0, 165.0);
+    let look_at = Vec3::new(0.0, 1.0, 0.0);
     let vup = Vec3::new(0.0, 1.0, 0.0);
     let dist_to_focus = 1.0;
     let aperture = 0.0;
-
-    // let cam = Camera::new(
-    //     &look_from,
-    //     &look_at,
-    //     vup,
-    //     20.0,
-    //     ASPECT_RATIO,
-    //     aperture,
-    //     dist_to_focus,
-    // );
-
-    let look_from = Vec3::new(278., 278., -800.);
-    let look_at = Vec3::new(278., 278., 0.);
 
     let cam = Camera::new(
         &look_from,
         &look_at,
         vup,
-        40.0,
-        1.0,
+        20.0,
+        ASPECT_RATIO,
         aperture,
         dist_to_focus,
     );
@@ -294,7 +253,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         MAX_RAY_DEPTH,
                         pixel,
                         Arc::clone(&zbuffer),
-                        Arc::clone(&light),
+                        &lights,
                     );
 
                     let mut zbuff = zbuffer.lock().unwrap();
@@ -320,7 +279,7 @@ fn ray_colour(
     depth: u32,
     pixel: Option<(usize, usize)>,
     zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
-    light: Arc<Box<dyn Hittable>>,
+    lights: &Vec<Arc<Box<dyn Hittable>>>,
 ) -> Colour {
     if depth <= 0 {
         return Colour::new(0.0, 0.0, 0.0);
@@ -349,47 +308,34 @@ fn ray_colour(
             return emitted;
         }
 
-        // let on_light = Vec3::new(
-        //     rand::thread_rng().gen_range(213.0..343.0),
-        //     554.0,
-        //     rand::thread_rng().gen_range(227.0..322.0),
-        // );
-        // let to_light = on_light - hit_record.p;
-        // let distance_squared = to_light.length_squared();
-        // let to_light = to_light.unit();
-
-        // if to_light.dot(&hit_record.normal) < 0.0 {
-        //     return emitted;
-        // }
-
-        // let light_area = (343.0 - 213.0) * (322.0 - 227.0);
-        // let light_cosine = to_light.y;
-        // if light_cosine < 0.000001 {
-        //     return emitted;
-        // }
-
-        // use crate::pdf::{CosinePDF, ProbabilityDensityFunction};
-        // let cos_pdf = CosinePDF::new(&hit_record.normal);
-        // let scattered_ray = Ray::new(hit_record.p, cos_pdf.generate());
-        // let pdf = cos_pdf.value(&scattered_ray.direction, &camera, pixel_tup, Arc::clone(&zbuffer));
-
-        // let pdf = distance_squared / (light_cosine * light_area);
-        // let scattered_ray = Ray::new(hit_record.p, to_light);
-
-        // let light_pdf = HittablePDF::new(&hit_record.p, Arc::clone(&light));
-        // let scattered_ray = Ray::new(hit_record.p, light_pdf.generate());
-        // let pdf = light_pdf.value(
-        //     &scattered_ray.direction,
-        //     &camera,
-        //     pixel,
-        //     Arc::clone(&zbuffer),
-        // );
-        let light_pdf = HittablePDF::new(&hit_record.p, Arc::clone(&light));
-        let cos_pdf = CosinePDF::new(&hit_record.normal);
-        let mixture_pdf = MixturePDF::new(Box::new(light_pdf), Box::new(cos_pdf));
-
-        let scattered_ray = Ray::new(hit_record.p, mixture_pdf.generate());
-        let pdf = mixture_pdf.value(&scattered_ray.direction, camera, pixel, Arc::clone(&zbuffer));
+        let mut pdf = 1.0;
+        let mut scattered_ray = scattered_ray;
+        // this only works for lambertian materials rn
+        if hit_record.material.use_pdfs() {
+            let mut pdfs: Vec<Box<dyn ProbabilityDensityFunction>> = vec![];
+            for light in lights {
+                let light_pdf = Box::new(HittablePDF::new(&hit_record.p, Arc::clone(light)));
+                let light_pdf = light_pdf as Box<dyn ProbabilityDensityFunction>;
+                pdfs.push(light_pdf);
+            }
+    
+            let cos_pdf = Box::new(CosinePDF::new(&hit_record.normal));
+            let cos_pdf = cos_pdf as Box<dyn ProbabilityDensityFunction>;
+            pdfs.push(cos_pdf);
+    
+            let mixture_pdf = MixturePDF::new(pdfs);
+    
+            if let Some(ray) = mixture_pdf.generate() {
+                scattered_ray = Ray::new(hit_record.p, ray);
+            }
+    
+            pdf = mixture_pdf.value(
+                &scattered_ray.direction,
+                camera,
+                pixel,
+                Arc::clone(&zbuffer),
+            );
+        }
 
         return emitted
             + hit_record
@@ -403,7 +349,7 @@ fn ray_colour(
                     depth - 1,
                     pixel,
                     Arc::clone(&zbuffer),
-                    light,
+                    lights,
                 )
                 / pdf;
     }
@@ -412,12 +358,12 @@ fn ray_colour(
     let t = 0.5 * (direction.y + 1.0);
     //return (1.0 - t) * Colour::new(70. / 256., 216. / 256., 253. / 256.) + t * Colour::new( 39. / 256., 87. / 256., 185. / 256.);
     // return (1.0 - t) * Colour::new(1.0, 1.0, 1.0) + t * Colour::new(0.5, 0.7, 1.0);
-    return Colour::new(0.0, 0.0, 0.0);
-    // return Colour::new(
-    //     (39. / 256. as f64 - 0.2).powf(2.),
-    //     (87. / 256. as f64 - 0.2).powf(2.),
-    //     (185. / 256. as f64 - 0.2).powf(2.),
-    // );
+    // return Colour::new(0.0, 0.0, 0.0);
+    return Colour::new(
+        (39. / 256. as f64 - 0.2).powf(2.0),
+        (87. / 256. as f64 - 0.2).powf(2.0),
+        (185. / 256. as f64 - 0.2).powf(2.0),
+    );
 }
 
 fn random_scene() -> HittableList {
@@ -427,79 +373,18 @@ fn random_scene() -> HittableList {
         f: 0.05,
     };
     let _ground_material = Lambertian {
-        albedo: Box::new(SolidColour::new(Colour::new(0.5, 0.5, 0.5))),
+        albedo: Box::new(SolidColour::new(Colour::new(0.7, 0.7, 0.7))),
     };
     let solid_text_1 = Box::new(SolidColour::new(Colour::new(0.2, 0.3, 0.1)));
     let solid_text_2 = Box::new(SolidColour::new(Colour::new(0.9, 0.9, 0.9)));
     let material3 = Lambertian {
         albedo: Box::new(CheckerTexture::new(solid_text_1, solid_text_2)),
     };
-    // world.objects.push(Box::new(Sphere::new(
-    //     Vec3::new(0.0, -10000.0, 0.0),
-    //     10000.0,
-    //     _ground_material,
-    // )));
-
-    // for a in -5..5 {
-    //     for b in -5..5 {
-    //         let choose_mat = rand::random::<f64>();
-    //         let center = Vec3::new(a as f64 + 0.9 * rand::random::<f64>(), 0.2, b as f64 + 0.9 * rand::random::<f64>());
-
-    //         if (&center - Vec3::new(4.0, 0.2, 0.0)).length() > 0.9 {
-    //             if choose_mat < 0.8 {
-    //                 // DIFFUSE
-    //                 let albedo = Colour::random() * Colour::random();
-    //                 let sphere_material = Lambertian { albedo };
-    //                 world.objects.push(Box::new(Sphere::new(
-    //                     Vec3::copy(&center),
-    //                     0.2,
-    //                     sphere_material,
-    //                 )));
-    //             } else if choose_mat < 0.95 {
-    //                 // METAL
-    //                 let albedo = Colour::random_min_max(0.5, 1.0);
-    //                 let fuzz = rand::thread_rng().gen_range(0.0..0.5);
-    //                 let sphere_material = Metal { albedo, f: fuzz };
-    //                 world.objects.push(Box::new(Sphere::new(
-    //                     Vec3::copy(&center),
-    //                     0.2,
-    //                     sphere_material,
-    //                 )));
-    //             } else {
-    //                 // GLASS
-    //                 let sphere_material = Dialectric { index_of_refraction: 1.5 };
-    //                 world.objects.push(Box::new(Sphere::new(
-    //                     Vec3::copy(&center),
-    //                     0.2,
-    //                     sphere_material,
-    //                 )));
-    //             }
-    //         }
-    //     }
-    // }
-
-    // let material1 = Dialectric { index_of_refraction: 1.5 };
-    // world.objects.push(Box::new(Sphere::new(
-    //     Vec3::new(0.0, 1.0, 0.0),
-    //     1.0,
-    //     material1,
-    // )));
-
-    // let material2 = Lambertian { albedo: Colour::new(0.4, 0.2, 0.1) };
-    // world.objects.push(Box::new(Sphere::new(
-    //     Vec3::new(-4.0, 1.0, 0.0),
-    //     1.0,
-    //     material2,
-    // )));
-
-    // let solid_text_1 = Box::new(SolidColour::new(Colour::new(0.2, 0.3, 0.1)));
-    // let solid_text_2 = Box::new(SolidColour::new(Colour::new(0.9, 0.9, 0.9)));
-    // let material3 = Lambertian { albedo: Box::new(CheckerTexture::new(solid_text_1, solid_text_2))};
-    // world.objects.push(Box::new(Sphere::new(
-    //     Vec3::new(4.0, 1.0, 0.0),
-    //     1.0,
-    //     material3,
-    // )));
+    world.objects.push(Box::new(Sphere::new(
+        Vec3::new(0.0, -10002.0, 0.0),
+        10000.0,
+        _ground_material,
+    )));
 
     world
 }

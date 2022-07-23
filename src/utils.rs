@@ -74,3 +74,15 @@ pub fn random_cosine_direction() -> Vec3 {
 
     Vec3::new(x, y, z)
 }
+
+pub fn random_to_sphere(radius: f64, distance_squared: f64) -> Vec3 {
+    let r1: f64 = rand::thread_rng().gen();
+    let r2: f64 = rand::thread_rng().gen();
+    let z = 1.0 + r2 * ((1.0 - radius * radius / distance_squared).sqrt() - 1.0);
+
+    let phi = 2.0 * PI * r1;
+    let x = phi.cos() * (1.0 - z * z).sqrt();
+    let y = phi.sin() * (1.0 - z * z).sqrt();
+
+    Vec3::new(x, y, z)
+}

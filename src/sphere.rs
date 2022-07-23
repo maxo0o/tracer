@@ -2,9 +2,12 @@ use crate::aabb::AxisAlignedBoundingBox;
 use crate::camera::Camera;
 use crate::hittable::{HitRecord, Hittable};
 use crate::material::Material;
+use crate::onb::OrthonormalBasis;
 use crate::ray::Ray;
+use crate::utils::{random_to_sphere, distance, random_in_unit_sphere};
 use crate::vector::Vec3;
 
+use std::f64::consts::PI;
 use std::sync::{Arc, Mutex};
 
 #[derive(Clone, Debug)]
@@ -78,6 +81,52 @@ impl<T: Material + std::fmt::Debug> Hittable for Sphere<T> {
         let point_b = &self.center + Vec3::new(self.radius, self.radius, self.radius);
 
         Some(AxisAlignedBoundingBox::new(point_a, point_b))
+    }
+
+    fn pdf_value(
+        &self,
+        origin: &Vec3,
+        v: &Vec3,
+        camera: &Camera,
+        pixel: Option<(usize, usize)>,
+        zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+    ) -> f64 {
+        // if the point is inside the light sampler we can't choose a point on the sphere
+        // or else we get some weird behaviour
+        if distance(origin, &self.center) < self.radius {
+            return 0.0;
+        }
+
+        if let Some(hit) = self.hit(
+            &Ray::new(*origin, *v),
+            camera,
+            0.0001,
+            f64::INFINITY,
+            pixel,
+            zbuffer,
+        ) {
+            let cos_theta_max =
+                (1.0 - self.radius * self.radius / (self.center - origin).length_squared()).sqrt();
+            let solid_angle = 2.0 * PI * (1.0 - cos_theta_max);
+
+            return 1.0 / solid_angle;
+        }
+
+        0.0
+    }
+
+    fn random(&self, origin: &Vec3) -> Option<Vec3> {
+        // if the point is inside the light sampler we can't choose a point on the sphere
+        // or else we get some weird behaviour
+        if distance(origin, &self.center) < self.radius {
+            return None;
+        }
+
+        let direction = self.center - origin;
+        let distance_squared = direction.length_squared();
+
+        let uvw = OrthonormalBasis::build_from_w(&direction);
+        return Some(uvw.local_vec(&random_to_sphere(self.radius, distance_squared)));
     }
 }
 

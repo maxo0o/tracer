@@ -63,7 +63,7 @@ impl<T: Material + std::fmt::Debug> Hittable for Sphere<T> {
 
         let p = ray.at(root);
 
-        let (u, v) = get_sphere_uv(&p);
+        let (u, v) = get_sphere_uv(&p, &self.center);
 
         Some(HitRecord {
             p,
@@ -130,12 +130,17 @@ impl<T: Material + std::fmt::Debug> Hittable for Sphere<T> {
     }
 }
 
-fn get_sphere_uv(p: &Vec3) -> (f64, f64) {
+fn get_sphere_uv(p: &Vec3, center: &Vec3) -> (f64, f64) {
     let theta = -p.y.acos();
     let phi = -p.z.atan2(p.x) + std::f64::consts::PI;
 
-    (
-        phi / (2.0 * std::f64::consts::PI),
-        theta / std::f64::consts::PI,
-    )
+    //(
+      //  phi / (2.0 * std::f64::consts::PI),
+     //   theta / std::f64::consts::PI,
+    //)
+    let n = (p - center).unit();
+    let u = n.x.atan2(n.z) / (2.0 * std::f64::consts::PI) + 0.5;
+    let v = n.y.asin() / std::f64::consts::PI + 0.5;
+
+    (u, v)
 }

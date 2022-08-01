@@ -15,10 +15,10 @@ use crate::texture::{ImageTexture, SolidColour, Texture};
 use crate::vector::Vec3;
 
 pub struct Scene {
-    camera: Camera,
-    objects: HittableList,
-    lights: Vec<Arc<Box<dyn Hittable>>>,
-    skybox: Sphere,
+    pub camera: Camera,
+    pub objects: HittableList,
+    pub lights: Vec<Arc<Box<dyn Hittable>>>,
+    pub skybox: Sphere,
 }
 
 impl Scene {

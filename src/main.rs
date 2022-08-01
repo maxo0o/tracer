@@ -20,6 +20,7 @@ mod vector;
 mod volume;
 
 use crate::pdf::{HittablePDF, MixturePDF, ProbabilityDensityFunction};
+use crate::scene::Scene;
 use camera::Camera;
 use colour::Colour;
 use hittable::{Hittable, HittableList};
@@ -46,9 +47,9 @@ const MAX_RAY_DEPTH: u32 = 100;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Image
     const ASPECT_RATIO: f64 = 3.0 / 2.0;
-    const IMAGE_WIDTH: u32 = 2000;
+    const IMAGE_WIDTH: u32 = 1000;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-    let samples_per_pixel = 25;
+    let samples_per_pixel = 2;
 
     let zbuffer = Arc::new(Mutex::new(vec![
         vec![INFINITY; IMAGE_WIDTH as usize];
@@ -56,267 +57,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     ]));
 
     // World
-    let mut world = random_scene();
-    let mut lights: Vec<Arc<Box<dyn Hittable>>> = vec![];
-
-    // MUSHROOM ORB 1
-    let mushroom_orb = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/mushroom_orb1.obj")?);
-    let model: Obj<TexturedVertex, u32> = load_obj(mushroom_orb)?;
-    let img = image::open("/mnt/c/Users/maxmc/Desktop/mushroom.png").unwrap();
-    let image_texture = ImageTexture::new(img, true, 1.0);
-    let orb_material = Light {
-        albedo: Box::new(image_texture),
-        intensity: 3.0,
-    };
-    let object_orb = Object::new(model, Box::new(orb_material));
-    eprintln!("Finished KDTree load");
-    let sampler = Box::new(object_orb.get_light_sampler_sphere());
-    lights.push(Arc::new(sampler));
-    world.objects.push(Box::new(object_orb));
-
-    // MUSHROOM ORB 2
-    let mushroom_orb = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/mushroom_orb2.obj")?);
-    let model: Obj<TexturedVertex, u32> = load_obj(mushroom_orb)?;
-    let img = image::open("/mnt/c/Users/maxmc/Desktop/mushroom.png").unwrap();
-    let image_texture = ImageTexture::new(img, true, 1.0);
-    let orb_material = Light {
-        albedo: Box::new(image_texture),
-        intensity: 3.0,
-    };
-    let object_orb = Object::new(model, Box::new(orb_material));
-    eprintln!("Finished KDTree load");
-    let sampler = Box::new(object_orb.get_light_sampler_sphere());
-    lights.push(Arc::new(sampler));
-    world.objects.push(Box::new(object_orb));
-
-    // MUSHROOM ORB 3
-    let mushroom_orb = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/mushroom_orb3.obj")?);
-    let model: Obj<TexturedVertex, u32> = load_obj(mushroom_orb)?;
-    let img = image::open("/mnt/c/Users/maxmc/Desktop/mushroom.png").unwrap();
-    let image_texture = ImageTexture::new(img, true, 1.0);
-    let orb_material = Light {
-        albedo: Box::new(image_texture),
-        intensity: 3.0,
-    };
-    let object_orb = Object::new(model, Box::new(orb_material));
-    eprintln!("Finished KDTree load");
-    let sampler = Box::new(object_orb.get_light_sampler_sphere());
-    lights.push(Arc::new(sampler));
-    world.objects.push(Box::new(object_orb));
-
-    // MUSHROOM ORB 4
-    let mushroom_orb = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/mushroom_orb4.obj")?);
-    let model: Obj<TexturedVertex, u32> = load_obj(mushroom_orb)?;
-    let img = image::open("/mnt/c/Users/maxmc/Desktop/mushroom.png").unwrap();
-    let image_texture = ImageTexture::new(img, true, 1.0);
-    let orb_material = Light {
-        albedo: Box::new(image_texture),
-        intensity: 3.0,
-    };
-    let object_orb = Object::new(model, Box::new(orb_material));
-    eprintln!("Finished KDTree load");
-    let sampler = Box::new(object_orb.get_light_sampler_sphere());
-    lights.push(Arc::new(sampler));
-    world.objects.push(Box::new(object_orb));
-
-    // MUSHROOM ORB 5
-    let mushroom_orb = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/mushroom_orb5.obj")?);
-    let model: Obj<TexturedVertex, u32> = load_obj(mushroom_orb)?;
-    let img = image::open("/mnt/c/Users/maxmc/Desktop/mushroom.png").unwrap();
-    let image_texture = ImageTexture::new(img, true, 1.0);
-    let orb_material = Light {
-        albedo: Box::new(image_texture),
-        intensity: 3.0,
-    };
-    let object_orb = Object::new(model, Box::new(orb_material));
-    eprintln!("Finished KDTree load");
-    let sampler = Box::new(object_orb.get_light_sampler_sphere());
-    lights.push(Arc::new(sampler));
-    world.objects.push(Box::new(object_orb));
-
-    let input = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/mushroom_d.obj")?);
-    let model: Obj<TexturedVertex, u32> = load_obj(input)?;
-    let img = image::open("/mnt/c/Users/maxmc/Desktop/mushroom.png").unwrap();
-    let image_texture = ImageTexture::new(img, false, 1.0);
-    let image_material = Lambertian {
-        albedo: Box::new(image_texture),
-    };
-    eprintln!("Started KDTree load");
-    let object = Object::new(model, Box::new(image_material));
-    // let object = Translate::new(Box::new(object), Vec3::new(0.0, 3.0, 0.0));
-    eprintln!("Finished KDTree load");
-    world.objects.push(Box::new(object));
-
-    let river = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/river_flat.obj")?);
-    let model: Obj<TexturedVertex, u32> = load_obj(river)?;
-    let _obj_material = Metal {
-        albedo: Box::new(SolidColour::new(Colour::new(0.65, 0.65, 0.65))),
-        // f: 0.001,
-        f: 0.0,
-    };
-    let river_obj = Object::new(model, Box::new(_obj_material));
-    let river_obj = Translate::new(Box::new(river_obj), Vec3::new(0.0, -1.7, 0.0));
-    eprintln!("Finished KDTree load");
-    world.objects.push(Box::new(river_obj));
-
-    // let sphere_mat = Light {
-    //     albedo: Box::new(SolidColour::new(Colour::new(2.0, 2.0, 2.0))),
-    //     intensity: 1.0,
-    // };
-    // let sphere = Sphere::new(Vec3::new(0.0, 2., 0.0), 0.5, sphere_mat);
-    // world.objects.push(Box::new(sphere));
-
-    // let sphere_mat = Light {
-    //     albedo: Box::new(SolidColour::new(Colour::new(4.0, 4.0, 4.0))),
-    //     intensity: 5.0,
-    // };
-    // let sphere = Sphere::new(Vec3::new(0.0, 2., 0.0), 0.5, sphere_mat);
-    // lights.push(Arc::new(Box::new(sphere)));
-
-    // COOB
-    // let mushroom_orb = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/cube.obj")?);
-    // let model: Obj<TexturedVertex, u32> = load_obj(mushroom_orb)?;
-    // let text = SolidColour::new(Colour::new(0.5, 0.5, 0.5));
-    // let orb_material = Lambertian {
-    //     albedo: Box::new(text),
-    // };
-    // let object_orb = Object::new(model, orb_material);
-    // eprintln!("Finished KDTree load");
-    // world.objects.push(Box::new(object_orb));
-
-    //let sphere_mat = Lambertian {
-    //    albedo: Box::new(SolidColour::new(Colour::new(0.5, 0.5, 0.5))),
-    //};
-    //let sphere = Sphere::new(Vec3::new(0.0, 6., 0.0), 6.0, sphere_mat);
-    //world.objects.push(Box::new(sphere));
-
-    // let sphere_mat = Lambertian {
-    //     albedo: Box::new(SolidColour::new(Colour::new(0.5, 0.5, 0.5))),
-    // };
-    // let sphere = Sphere::new(Vec3::new(-0.9934191703796387, 12.072142601013184 + 3.76 , -0.059713006019592285), 3.76, sphere_mat);
-    // world.objects.push(Box::new(sphere));
-
-    // solo ordbo
-    let land = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/land_front.obj")?);
-    let model: Obj<TexturedVertex, u32> = load_obj(land)?;
-    let img = image::open("/mnt/c/Users/maxmc/Desktop/dirt.png").unwrap();
-    let image_texture = ImageTexture::new(img, false, 20.0);
-    let _ground_material = Lambertian {
-        albedo: Box::new(image_texture),
-    };
-    let object_orb = Object::new(model, Box::new(_ground_material));
-    eprintln!("Finished KDTree load");
-    //let sampler = Box::new(object_orb.get_light_sampler_sphere());
-    //lights.push(Arc::new(sampler));
-    world.objects.push(Box::new(object_orb));
-
-    let land = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/land_second.obj")?);
-    let model: Obj<TexturedVertex, u32> = load_obj(land)?;
-    let img = image::open("/mnt/c/Users/maxmc/Desktop/dirt.png").unwrap();
-    let image_texture = ImageTexture::new(img, false, 20.0);
-    let _ground_material = Lambertian {
-        albedo: Box::new(image_texture),
-    };
-    let object_orb = Object::new(model, Box::new(_ground_material));
-    eprintln!("Finished KDTree load");
-    //let sampler = Box::new(object_orb.get_light_sampler_sphere());
-    //lights.push(Arc::new(sampler));
-    world.objects.push(Box::new(object_orb));
-
-    let land = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/land_third.obj")?);
-    let model: Obj<TexturedVertex, u32> = load_obj(land)?;
-    let img = image::open("/mnt/c/Users/maxmc/Desktop/dirt.png").unwrap();
-    let image_texture = ImageTexture::new(img, false, 20.0);
-    let _ground_material = Lambertian {
-        albedo: Box::new(image_texture),
-    };
-    let object_orb = Object::new(model, Box::new(_ground_material));
-    eprintln!("Finished KDTree load");
-    //let sampler = Box::new(object_orb.get_light_sampler_sphere());
-    //lights.push(Arc::new(sampler));
-    world.objects.push(Box::new(object_orb));
-
-    let land = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/land_fourth.obj")?);
-    let model: Obj<TexturedVertex, u32> = load_obj(land)?;
-    let img = image::open("/mnt/c/Users/maxmc/Desktop/dirt.png").unwrap();
-    let image_texture = ImageTexture::new(img, false, 100.0);
-    let _ground_material = Lambertian {
-        albedo: Box::new(image_texture),
-    };
-    let object_orb = Object::new(model, Box::new(_ground_material));
-    eprintln!("Finished KDTree load");
-    //let sampler = Box::new(object_orb.get_light_sampler_sphere());
-    //lights.push(Arc::new(sampler));
-    world.objects.push(Box::new(object_orb));
-
-    let input = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/mushroomzzz.obj")?);
-    let model: Obj<TexturedVertex, u32> = load_obj(input)?;
-    let img = image::open("/mnt/c/Users/maxmc/Desktop/mushroom.png").unwrap();
-    let image_texture = ImageTexture::new(img, false, 1.0);
-    let image_material = Lambertian {
-        albedo: Box::new(image_texture),
-    };
-    eprintln!("Started KDTree load");
-    let object = Object::new(model, Box::new(image_material));
-    let object = Translate::new(Box::new(object), Vec3::new(0.0, 3.0, 0.0));
-    eprintln!("Finished KDTree load");
-    world.objects.push(Box::new(object));
-
-    let input = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/mushroomt1.obj")?);
-    let model: Obj<TexturedVertex, u32> = load_obj(input)?;
-    let img = image::open("/mnt/c/Users/maxmc/Desktop/mushroomt1.png").unwrap();
-    let image_texture = ImageTexture::new(img, false, 1.0);
-    let image_material = Lambertian {
-        albedo: Box::new(image_texture),
-    };
-    eprintln!("Started KDTree load");
-    let object = Object::new(model, Box::new(image_material));
-    let object = Translate::new(Box::new(object), Vec3::new(0.0, 3.0, 0.0));
-    eprintln!("Finished KDTree load");
-    world.objects.push(Box::new(object));
-
-    let input = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/mushroomt2.obj")?);
-    let model: Obj<TexturedVertex, u32> = load_obj(input)?;
-    let img = image::open("/mnt/c/Users/maxmc/Desktop/mushroomt1.png").unwrap();
-    let image_texture = ImageTexture::new(img, false, 1.0);
-    let image_material = Lambertian {
-        albedo: Box::new(image_texture),
-    };
-    eprintln!("Started KDTree load");
-    let object = Object::new(model, Box::new(image_material));
-    let object = Translate::new(Box::new(object), Vec3::new(0.0, 3.0, 0.0));
-    eprintln!("Finished KDTree load");
-    world.objects.push(Box::new(object));
-
-    let input = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/mushroomt3.obj")?);
-    let model: Obj<TexturedVertex, u32> = load_obj(input)?;
-    let img = image::open("/mnt/c/Users/maxmc/Desktop/mushroomt1.png").unwrap();
-    let image_texture = ImageTexture::new(img, false, 1.0);
-    let image_material = Lambertian {
-        albedo: Box::new(image_texture),
-    };
-    eprintln!("Started KDTree load");
-    let object = Object::new(model, Box::new(image_material));
-    let object = Translate::new(Box::new(object), Vec3::new(0.0, 3.0, 0.0));
-    eprintln!("Finished KDTree load");
-    world.objects.push(Box::new(object));
-
-    //   let img = image::open("/mnt/c/Users/maxmc/Desktop/earthmap.jpg").unwrap();
-    //   let image_texture = ImageTexture::new(img, true, 1.0);
-    //   let image_material = Lambertian {
-    //       albedo: Box::new(image_texture),
-    //   };
-
-    //let s = Sphere::new(Vec3::new(0.0, 0.0, 0.0), 50.0, image_material);
-    //world.objects.push(Box::new(s));
-
-    let img = image::open("/mnt/c/Users/maxmc/Desktop/sky.jpg").unwrap();
-    let image_texture = ImageTexture::new(img, true, 8.0);
-    let image_material = Lambertian {
-        albedo: Box::new(image_texture),
-    };
-    let skybox = Sphere::new(Vec3::new(0.0, 0.0, 0.0), 4000.0, Box::new(image_material));
-    let skybox = Arc::new(skybox);
+    let mut scene = Scene::new("test.txt".to_string());
 
     let colour = Colour::new(0.1, 0.1, 0.1);
     let cube = Cube::new(
@@ -328,7 +69,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         albedo: Box::new(SolidColour::new(Colour::new(0.8, 0.8, 0.8))),
     };
     let mist = Volume::new(Box::new(cube), 0.000215, Box::new(material));
-    world.objects.push(Box::new(mist));
+    scene.objects.objects.push(Box::new(mist));
 
     // Camera
     let look_from = Vec3::new(295.0, 20.0, 205.0);
@@ -366,12 +107,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     pixel_colour += ray_colour(
                         &ray,
                         &cam,
-                        &world,
+                        &scene.objects,
                         MAX_RAY_DEPTH,
                         pixel,
                         Arc::clone(&zbuffer),
-                        &lights,
-                        Arc::clone(&skybox),
+                        &scene.lights,
+                        &scene.skybox,
                     );
 
                     let mut zbuff = zbuffer.lock().unwrap();
@@ -398,7 +139,7 @@ fn ray_colour(
     pixel: Option<(usize, usize)>,
     zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     lights: &Vec<Arc<Box<dyn Hittable>>>,
-    skybox: Arc<Sphere>,
+    skybox: &Sphere,
 ) -> Colour {
     if depth == 0 {
         return Colour::new(0.0, 0.0, 0.0);
@@ -469,7 +210,7 @@ fn ray_colour(
                     pixel,
                     Arc::clone(&zbuffer),
                     lights,
-                    Arc::clone(&skybox),
+                    skybox,
                 )
                 / pdf;
     }
@@ -489,27 +230,4 @@ fn ray_colour(
         (87. / 256. as f64 - 0.0).powf(2.0),
         (185. / 256. as f64 - 0.0).powf(2.0),
     )
-}
-
-fn random_scene() -> HittableList {
-    let world = HittableList::new();
-    let _obj_material = Metal {
-        albedo: Box::new(SolidColour::new(Colour::new(0.35, 0.35, 0.45))),
-        f: 0.05,
-    };
-    let _ground_material = Lambertian {
-        albedo: Box::new(SolidColour::new(Colour::new(0.7, 0.7, 0.7))),
-    };
-    //   let solid_text_1 = Box::new(SolidColour::new(Colour::new(0.2, 0.3, 0.1)));
-    //   let solid_text_2 = Box::new(SolidColour::new(Colour::new(0.9, 0.9, 0.9)));
-    //   let material3 = Lambertian {
-    //       albedo: Box::new(CheckerTexture::new(solid_text_1, solid_text_2)),
-    //   };
-    // world.objects.push(Box::new(Sphere::new(
-    //     Vec3::new(0.0, -10002.0, 0.0),
-    //     10000.0,
-    //     _ground_material,
-    // )));
-
-    world
 }

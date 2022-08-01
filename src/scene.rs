@@ -8,7 +8,8 @@ use crate::camera::Camera;
 use crate::colour::Colour;
 use crate::hittable::{Hittable, HittableList};
 use crate::json::*;
-use crate::material::{Lambertian, Material};
+use crate::material::{Dialectric, Isotropic, Lambertian, Light, Material, Metal};
+use crate::object::Object;
 use crate::sphere::Sphere;
 use crate::texture::{ImageTexture, SolidColour, Texture};
 use crate::vector::Vec3;
@@ -17,7 +18,7 @@ pub struct Scene {
     camera: Camera,
     objects: HittableList,
     lights: Vec<Arc<Box<dyn Hittable>>>,
-    skybox: Sphere<Lambertian>,
+    skybox: Sphere,
 }
 
 impl Scene {
@@ -58,7 +59,9 @@ impl Scene {
         let skybox = Sphere::new(
             Vec3::new(0.0, 0.0, 0.0),
             scene.skybox.radius,
-            skybox_material,
+            Box::new(Lambertian {
+                albedo: skybox_material,
+            }),
         );
 
         for model in scene.models {
@@ -72,15 +75,43 @@ impl Scene {
                 Ok(model) => model,
             };
 
+            let mut is_light = false;
             let object_material = match model.material {
-                MaterialJSON::Metal { albedo, f } => {}
-                MaterialJSON::Light { albedo, intensity } => {}
-                MaterialJSON::Isotropic { albedo: () } => {}
-                MaterialJSON::Lambertian { albedo } => {}
+                MaterialJSON::Metal { albedo, f } => {
+                    let texture = parse_texture(albedo);
+                    Box::new(Metal { albedo: texture, f }) as Box<dyn Material>
+                }
+                MaterialJSON::Light { albedo, intensity } => {
+                    let texture = parse_texture(albedo);
+                    is_light = true;
+                    Box::new(Light {
+                        albedo: texture,
+                        intensity,
+                    }) as Box<dyn Material>
+                }
+                MaterialJSON::Isotropic { albedo } => {
+                    let texture = parse_texture(albedo);
+                    Box::new(Isotropic { albedo: texture }) as Box<dyn Material>
+                }
+                MaterialJSON::Lambertian { albedo } => {
+                    let texture = parse_texture(albedo);
+                    Box::new(Lambertian { albedo: texture }) as Box<dyn Material>
+                }
                 MaterialJSON::Dialectric {
-                    index_of_refraction: (),
-                } => {}
+                    index_of_refraction,
+                } => Box::new(Dialectric {
+                    index_of_refraction,
+                }) as Box<dyn Material>,
             };
+
+            let object = Object::new(object, object_material);
+
+            if is_light {
+                let light_sampler = Box::new(object.get_light_sampler_sphere());
+                lights.push(Arc::new(light_sampler));
+            }
+
+            objects.objects.push(Box::new(object));
         }
 
         Scene {
@@ -92,7 +123,7 @@ impl Scene {
     }
 }
 
-fn parse_texture(texture: TextureJSON) -> &'static dyn Material {
+fn parse_texture(texture: TextureJSON) -> Box<dyn Texture + Send + Sync + 'static> {
     match texture {
         TextureJSON::ImageTexture {
             image_path,
@@ -106,15 +137,10 @@ fn parse_texture(texture: TextureJSON) -> &'static dyn Material {
                 ),
                 Ok(image) => image,
             };
-            let image_texture = ImageTexture::new(img, is_light, scale);
-            &Lambertian {
-                albedo: Box::new(image_texture),
-            }
+            Box::new(ImageTexture::new(img, is_light, scale))
         }
-        TextureJSON::SolidColour { colour } => &Lambertian {
-            albedo: Box::new(SolidColour::new(Colour::new(
-                colour[0], colour[1], colour[2],
-            ))),
-        },
+        TextureJSON::SolidColour { colour } => Box::new(SolidColour::new(Colour::new(
+            colour[0], colour[1], colour[2],
+        ))),
     }
 }

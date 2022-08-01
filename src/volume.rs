@@ -5,14 +5,14 @@ use crate::vector::Vec3;
 use std::sync::{Arc, Mutex};
 
 #[derive(Debug)]
-pub struct Volume<T: Material> {
+pub struct Volume {
     boundary: Box<dyn Hittable>,
-    pub material: T,
+    pub material: Box<dyn Material>,
     neg_inv_density: f64,
 }
 
-impl<T: Material> Volume<T> {
-    pub fn new(boundary: Box<dyn Hittable>, d: f64, material: T) -> Volume<T> {
+impl Volume {
+    pub fn new(boundary: Box<dyn Hittable>, d: f64, material: Box<dyn Material>) -> Volume {
         Volume {
             boundary,
             neg_inv_density: -1.0 / d,
@@ -21,7 +21,7 @@ impl<T: Material> Volume<T> {
     }
 }
 
-impl<T: Material> Hittable for Volume<T> {
+impl Hittable for Volume {
     fn hit(
         &self,
         ray: &crate::ray::Ray,

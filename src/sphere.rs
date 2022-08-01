@@ -4,21 +4,21 @@ use crate::hittable::{HitRecord, Hittable};
 use crate::material::Material;
 use crate::onb::OrthonormalBasis;
 use crate::ray::Ray;
-use crate::utils::{random_to_sphere, distance, random_in_unit_sphere};
+use crate::utils::{distance, random_in_unit_sphere, random_to_sphere};
 use crate::vector::Vec3;
 
 use std::f64::consts::PI;
 use std::sync::{Arc, Mutex};
 
-#[derive(Clone, Debug)]
-pub struct Sphere<T: Material> {
+#[derive(Debug)]
+pub struct Sphere {
     pub center: Vec3,
     pub radius: f64,
-    pub material: T,
+    pub material: Box<dyn Material>,
 }
 
-impl<T: Material> Sphere<T> {
-    pub fn new(center: Vec3, radius: f64, material: T) -> Sphere<T> {
+impl Sphere {
+    pub fn new(center: Vec3, radius: f64, material: Box<dyn Material>) -> Sphere {
         Sphere {
             center,
             radius,
@@ -27,7 +27,7 @@ impl<T: Material> Sphere<T> {
     }
 }
 
-impl<T: Material + std::fmt::Debug> Hittable for Sphere<T> {
+impl Hittable for Sphere {
     fn hit(
         &self,
         ray: &Ray,
@@ -135,8 +135,8 @@ fn get_sphere_uv(p: &Vec3, center: &Vec3) -> (f64, f64) {
     let phi = -p.z.atan2(p.x) + std::f64::consts::PI;
 
     //(
-      //  phi / (2.0 * std::f64::consts::PI),
-     //   theta / std::f64::consts::PI,
+    //  phi / (2.0 * std::f64::consts::PI),
+    //   theta / std::f64::consts::PI,
     //)
     let n = (p - center).unit();
     let u = n.x.atan2(n.z) / (2.0 * std::f64::consts::PI) + 0.5;

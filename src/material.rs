@@ -74,7 +74,7 @@ impl Material for Lambertian {
 
 #[derive(Debug)]
 pub struct Metal {
-    pub albedo: Colour,
+    pub albedo: Box<dyn Texture + Send + Sync>,
     pub f: f64,
 }
 
@@ -86,7 +86,11 @@ impl Material for Metal {
             reflected + self.f.clamp(0.0, 1.0) * &random_in_unit_sphere(),
         );
         let scattered = scattered_ray.direction.dot(&hit_record.normal) > 0.0;
-        (scattered_ray, Colour::copy(&self.albedo), scattered)
+        (
+            scattered_ray,
+            self.albedo.value(hit_record.u, hit_record.v, &hit_record.p),
+            scattered,
+        )
     }
 }
 

@@ -17,14 +17,14 @@ use std::f64::consts::PI;
 use std::sync::{Arc, Mutex};
 
 #[derive(Debug)]
-pub struct Object<M: Material> {
+pub struct Object {
     pub tree: Box<KDTree>,
-    material: M,
+    material: Box<dyn Material>,
     bounding_box: AxisAlignedBoundingBox,
 }
 
-impl<M: Material> Object<M> {
-    pub fn new(object: Obj<TexturedVertex, u32>, material: M) -> Object<M> {
+impl Object {
+    pub fn new(object: Obj<TexturedVertex, u32>, material: Box<dyn Material>) -> Object {
         let (mut faces, bounding_box) = build_from_obj(object);
 
         if let Some(tree) = KDTree::build(&mut faces[..], 15, 0) {
@@ -39,7 +39,7 @@ impl<M: Material> Object<M> {
     }
 }
 
-impl<T: Material + std::fmt::Debug> Hittable for Object<T> {
+impl Hittable for Object {
     fn hit(
         &self,
         ray: &Ray,
@@ -143,7 +143,7 @@ impl<T: Material + std::fmt::Debug> Hittable for Object<T> {
     //     return uvw.local_vec(&random_to_sphere(radius, distance_squared));
     // }
 
-    fn get_light_sampler_sphere(&self) -> Sphere<UnitMaterial> {
+    fn get_light_sampler_sphere(&self) -> Sphere {
         let center = Vec3::new(
             (self.bounding_box.minimum.x + self.bounding_box.maximum.x) / 2.0,
             (self.bounding_box.minimum.y + self.bounding_box.maximum.y) / 2.0,
@@ -162,7 +162,7 @@ impl<T: Material + std::fmt::Debug> Hittable for Object<T> {
         Sphere {
             center,
             radius,
-            material: UnitMaterial {},
+            material: Box::new(UnitMaterial {}),
         }
     }
 

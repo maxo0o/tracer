@@ -18,9 +18,9 @@ pub enum PlaneOrientation {
 }
 
 #[derive(Debug)]
-pub struct Plane<T: Material> {
+pub struct Plane {
     pub orientation: PlaneOrientation,
-    pub material: T,
+    pub material: Box<dyn Material>,
     pub a0: f64,
     pub a1: f64,
     pub b0: f64,
@@ -28,13 +28,13 @@ pub struct Plane<T: Material> {
     pub k: f64,
 }
 
-impl<T: Material> Plane<T> {
+impl Plane {
     pub fn new(
         points: (f64, f64, f64, f64),
         k: f64,
-        material: T,
+        material: Box<dyn Material>,
         orientation: PlaneOrientation,
-    ) -> Plane<T> {
+    ) -> Plane {
         Plane {
             material,
             a0: points.0,
@@ -47,7 +47,7 @@ impl<T: Material> Plane<T> {
     }
 }
 
-impl<T: Material + std::fmt::Debug> Hittable for Plane<T> {
+impl Hittable for Plane {
     fn hit(
         &self,
         ray: &crate::ray::Ray,
@@ -179,39 +179,39 @@ impl Cube {
         sides.objects.push(Box::new(Plane::new(
             (box_min.x, box_max.x, box_min.y, box_max.y),
             box_max.z,
-            side_colour_1,
+            Box::new(side_colour_1),
             PlaneOrientation::XY,
         )));
         sides.objects.push(Box::new(Plane::new(
             (box_min.x, box_max.x, box_min.y, box_max.y),
             box_min.z,
-            side_colour_2,
+            Box::new(side_colour_2),
             PlaneOrientation::XY,
         )));
 
         sides.objects.push(Box::new(Plane::new(
             (box_min.x, box_max.x, box_min.z, box_max.z),
             box_max.y,
-            side_colour_3,
+            Box::new(side_colour_3),
             PlaneOrientation::XZ,
         )));
         sides.objects.push(Box::new(Plane::new(
             (box_min.x, box_max.x, box_min.z, box_max.z),
             box_min.y,
-            side_colour_4,
+            Box::new(side_colour_4),
             PlaneOrientation::XZ,
         )));
 
         sides.objects.push(Box::new(Plane::new(
             (box_min.y, box_max.y, box_min.z, box_max.z),
             box_max.x,
-            side_colour_5,
+            Box::new(side_colour_5),
             PlaneOrientation::YZ,
         )));
         sides.objects.push(Box::new(Plane::new(
             (box_min.y, box_max.y, box_min.z, box_max.z),
             box_min.x,
-            side_colour_6,
+            Box::new(side_colour_6),
             PlaneOrientation::YZ,
         )));
 

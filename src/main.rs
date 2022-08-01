@@ -4,6 +4,7 @@ mod camera;
 mod colour;
 mod hittable;
 mod instance;
+mod json;
 mod kdtree;
 mod material;
 mod object;
@@ -11,29 +12,28 @@ mod onb;
 mod pdf;
 mod ray;
 mod rectangle;
+mod scene;
 mod sphere;
 mod texture;
 mod utils;
 mod vector;
 mod volume;
-mod json;
-mod scene;
 
+use crate::pdf::{HittablePDF, MixturePDF, ProbabilityDensityFunction};
 use camera::Camera;
 use colour::Colour;
 use hittable::{Hittable, HittableList};
+use instance::Translate;
 use material::{Isotropic, Lambertian, Light, Metal};
 use obj::{load_obj, Obj, TexturedVertex};
 use object::Object;
-use std::sync::{Arc, Mutex};
-use crate::pdf::{HittablePDF, MixturePDF, ProbabilityDensityFunction};
-use instance::Translate;
 use pdf::CosinePDF;
 use ray::Ray;
 use rayon::prelude::*;
 use sphere::Sphere;
 use std::fs::File;
 use std::io::BufReader;
+use std::sync::{Arc, Mutex};
 use texture::{ImageTexture, SolidColour};
 use vector::Vec3;
 use volume::Volume;
@@ -68,7 +68,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         albedo: Box::new(image_texture),
         intensity: 3.0,
     };
-    let object_orb = Object::new(model, orb_material);
+    let object_orb = Object::new(model, Box::new(orb_material));
     eprintln!("Finished KDTree load");
     let sampler = Box::new(object_orb.get_light_sampler_sphere());
     lights.push(Arc::new(sampler));
@@ -83,7 +83,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         albedo: Box::new(image_texture),
         intensity: 3.0,
     };
-    let object_orb = Object::new(model, orb_material);
+    let object_orb = Object::new(model, Box::new(orb_material));
     eprintln!("Finished KDTree load");
     let sampler = Box::new(object_orb.get_light_sampler_sphere());
     lights.push(Arc::new(sampler));
@@ -98,7 +98,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         albedo: Box::new(image_texture),
         intensity: 3.0,
     };
-    let object_orb = Object::new(model, orb_material);
+    let object_orb = Object::new(model, Box::new(orb_material));
     eprintln!("Finished KDTree load");
     let sampler = Box::new(object_orb.get_light_sampler_sphere());
     lights.push(Arc::new(sampler));
@@ -113,7 +113,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         albedo: Box::new(image_texture),
         intensity: 3.0,
     };
-    let object_orb = Object::new(model, orb_material);
+    let object_orb = Object::new(model, Box::new(orb_material));
     eprintln!("Finished KDTree load");
     let sampler = Box::new(object_orb.get_light_sampler_sphere());
     lights.push(Arc::new(sampler));
@@ -128,7 +128,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         albedo: Box::new(image_texture),
         intensity: 3.0,
     };
-    let object_orb = Object::new(model, orb_material);
+    let object_orb = Object::new(model, Box::new(orb_material));
     eprintln!("Finished KDTree load");
     let sampler = Box::new(object_orb.get_light_sampler_sphere());
     lights.push(Arc::new(sampler));
@@ -142,7 +142,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         albedo: Box::new(image_texture),
     };
     eprintln!("Started KDTree load");
-    let object = Object::new(model, image_material);
+    let object = Object::new(model, Box::new(image_material));
     // let object = Translate::new(Box::new(object), Vec3::new(0.0, 3.0, 0.0));
     eprintln!("Finished KDTree load");
     world.objects.push(Box::new(object));
@@ -150,11 +150,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let river = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/river_flat.obj")?);
     let model: Obj<TexturedVertex, u32> = load_obj(river)?;
     let _obj_material = Metal {
-        albedo: Colour::new(0.65, 0.65, 0.65),
+        albedo: Box::new(SolidColour::new(Colour::new(0.65, 0.65, 0.65))),
         // f: 0.001,
         f: 0.0,
     };
-    let river_obj = Object::new(model, _obj_material);
+    let river_obj = Object::new(model, Box::new(_obj_material));
     let river_obj = Translate::new(Box::new(river_obj), Vec3::new(0.0, -1.7, 0.0));
     eprintln!("Finished KDTree load");
     world.objects.push(Box::new(river_obj));
@@ -172,7 +172,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // };
     // let sphere = Sphere::new(Vec3::new(0.0, 2., 0.0), 0.5, sphere_mat);
     // lights.push(Arc::new(Box::new(sphere)));
-    
 
     // COOB
     // let mushroom_orb = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/cube.obj")?);
@@ -191,13 +190,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     //let sphere = Sphere::new(Vec3::new(0.0, 6., 0.0), 6.0, sphere_mat);
     //world.objects.push(Box::new(sphere));
 
-
     // let sphere_mat = Lambertian {
     //     albedo: Box::new(SolidColour::new(Colour::new(0.5, 0.5, 0.5))),
     // };
     // let sphere = Sphere::new(Vec3::new(-0.9934191703796387, 12.072142601013184 + 3.76 , -0.059713006019592285), 3.76, sphere_mat);
     // world.objects.push(Box::new(sphere));
-    
+
     // solo ordbo
     let land = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/land_front.obj")?);
     let model: Obj<TexturedVertex, u32> = load_obj(land)?;
@@ -206,12 +204,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let _ground_material = Lambertian {
         albedo: Box::new(image_texture),
     };
-    let object_orb = Object::new(model, _ground_material);
+    let object_orb = Object::new(model, Box::new(_ground_material));
     eprintln!("Finished KDTree load");
     //let sampler = Box::new(object_orb.get_light_sampler_sphere());
     //lights.push(Arc::new(sampler));
     world.objects.push(Box::new(object_orb));
-
 
     let land = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/land_second.obj")?);
     let model: Obj<TexturedVertex, u32> = load_obj(land)?;
@@ -220,12 +217,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let _ground_material = Lambertian {
         albedo: Box::new(image_texture),
     };
-    let object_orb = Object::new(model, _ground_material);
+    let object_orb = Object::new(model, Box::new(_ground_material));
     eprintln!("Finished KDTree load");
     //let sampler = Box::new(object_orb.get_light_sampler_sphere());
     //lights.push(Arc::new(sampler));
     world.objects.push(Box::new(object_orb));
-    
 
     let land = BufReader::new(File::open("/mnt/c/Users/maxmc/Desktop/land_third.obj")?);
     let model: Obj<TexturedVertex, u32> = load_obj(land)?;
@@ -234,7 +230,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let _ground_material = Lambertian {
         albedo: Box::new(image_texture),
     };
-    let object_orb = Object::new(model, _ground_material);
+    let object_orb = Object::new(model, Box::new(_ground_material));
     eprintln!("Finished KDTree load");
     //let sampler = Box::new(object_orb.get_light_sampler_sphere());
     //lights.push(Arc::new(sampler));
@@ -247,7 +243,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let _ground_material = Lambertian {
         albedo: Box::new(image_texture),
     };
-    let object_orb = Object::new(model, _ground_material);
+    let object_orb = Object::new(model, Box::new(_ground_material));
     eprintln!("Finished KDTree load");
     //let sampler = Box::new(object_orb.get_light_sampler_sphere());
     //lights.push(Arc::new(sampler));
@@ -261,8 +257,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         albedo: Box::new(image_texture),
     };
     eprintln!("Started KDTree load");
-    let object = Object::new(model, image_material);
-     let object = Translate::new(Box::new(object), Vec3::new(0.0, 3.0, 0.0));
+    let object = Object::new(model, Box::new(image_material));
+    let object = Translate::new(Box::new(object), Vec3::new(0.0, 3.0, 0.0));
     eprintln!("Finished KDTree load");
     world.objects.push(Box::new(object));
 
@@ -274,8 +270,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         albedo: Box::new(image_texture),
     };
     eprintln!("Started KDTree load");
-    let object = Object::new(model, image_material);
-     let object = Translate::new(Box::new(object), Vec3::new(0.0, 3.0, 0.0));
+    let object = Object::new(model, Box::new(image_material));
+    let object = Translate::new(Box::new(object), Vec3::new(0.0, 3.0, 0.0));
     eprintln!("Finished KDTree load");
     world.objects.push(Box::new(object));
 
@@ -287,8 +283,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         albedo: Box::new(image_texture),
     };
     eprintln!("Started KDTree load");
-    let object = Object::new(model, image_material);
-     let object = Translate::new(Box::new(object), Vec3::new(0.0, 3.0, 0.0));
+    let object = Object::new(model, Box::new(image_material));
+    let object = Translate::new(Box::new(object), Vec3::new(0.0, 3.0, 0.0));
     eprintln!("Finished KDTree load");
     world.objects.push(Box::new(object));
 
@@ -300,37 +296,39 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         albedo: Box::new(image_texture),
     };
     eprintln!("Started KDTree load");
-    let object = Object::new(model, image_material);
-     let object = Translate::new(Box::new(object), Vec3::new(0.0, 3.0, 0.0));
+    let object = Object::new(model, Box::new(image_material));
+    let object = Translate::new(Box::new(object), Vec3::new(0.0, 3.0, 0.0));
     eprintln!("Finished KDTree load");
     world.objects.push(Box::new(object));
-    
-//   let img = image::open("/mnt/c/Users/maxmc/Desktop/earthmap.jpg").unwrap();
-//   let image_texture = ImageTexture::new(img, true, 1.0);
-//   let image_material = Lambertian {
-//       albedo: Box::new(image_texture),
-//   };
+
+    //   let img = image::open("/mnt/c/Users/maxmc/Desktop/earthmap.jpg").unwrap();
+    //   let image_texture = ImageTexture::new(img, true, 1.0);
+    //   let image_material = Lambertian {
+    //       albedo: Box::new(image_texture),
+    //   };
 
     //let s = Sphere::new(Vec3::new(0.0, 0.0, 0.0), 50.0, image_material);
     //world.objects.push(Box::new(s));
-
 
     let img = image::open("/mnt/c/Users/maxmc/Desktop/sky.jpg").unwrap();
     let image_texture = ImageTexture::new(img, true, 8.0);
     let image_material = Lambertian {
         albedo: Box::new(image_texture),
     };
-    let skybox = Sphere::new(Vec3::new(0.0, 0.0, 0.0), 4000.0, image_material);
+    let skybox = Sphere::new(Vec3::new(0.0, 0.0, 0.0), 4000.0, Box::new(image_material));
     let skybox = Arc::new(skybox);
-   
+
     let colour = Colour::new(0.1, 0.1, 0.1);
-    let cube = Cube::new(Vec3::new(-4000.0, -20.0, -4000.0), Vec3::new(4000.0, 150.0, 4000.0), colour);
+    let cube = Cube::new(
+        Vec3::new(-4000.0, -20.0, -4000.0),
+        Vec3::new(4000.0, 150.0, 4000.0),
+        colour,
+    );
     let material = Isotropic {
         albedo: Box::new(SolidColour::new(Colour::new(0.8, 0.8, 0.8))),
     };
-    let mist = Volume::new(Box::new(cube), 0.000215, material);
+    let mist = Volume::new(Box::new(cube), 0.000215, Box::new(material));
     world.objects.push(Box::new(mist));
-
 
     // Camera
     let look_from = Vec3::new(295.0, 20.0, 205.0);
@@ -400,7 +398,7 @@ fn ray_colour(
     pixel: Option<(usize, usize)>,
     zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     lights: &Vec<Arc<Box<dyn Hittable>>>,
-    skybox: Arc<Sphere<Lambertian>>,
+    skybox: Arc<Sphere>,
 ) -> Colour {
     if depth == 0 {
         return Colour::new(0.0, 0.0, 0.0);
@@ -439,17 +437,17 @@ fn ray_colour(
                 let light_pdf = light_pdf as Box<dyn ProbabilityDensityFunction>;
                 pdfs.push(light_pdf);
             }
-    
+
             let cos_pdf = Box::new(CosinePDF::new(&hit_record.normal));
             let cos_pdf = cos_pdf as Box<dyn ProbabilityDensityFunction>;
             pdfs.push(cos_pdf);
-    
+
             let mixture_pdf = MixturePDF::new(pdfs);
-    
+
             if let Some(ray) = mixture_pdf.generate() {
                 scattered_ray = Ray::new(hit_record.p, ray);
             }
-    
+
             pdf = mixture_pdf.value(
                 &scattered_ray.direction,
                 camera,
@@ -476,13 +474,12 @@ fn ray_colour(
                 / pdf;
     }
 
-    
-//   let direction = ray.direction.unit();
-//   let t = 0.5 * (direction.y + 1.0);
-    
+    //   let direction = ray.direction.unit();
+    //   let t = 0.5 * (direction.y + 1.0);
+
     if let Some(hit) = skybox.hit(ray, camera, 0.0001, INFINITY, pixel, Arc::clone(&zbuffer)) {
         let (_, albedo, _) = hit.material.scatter(ray, &hit);
-      return albedo;
+        return albedo;
     };
     //return (1.0 - t) * Colour::new(70. / 256., 216. / 256., 253. / 256.) + t * Colour::new( 39. / 256., 87. / 256., 185. / 256.);
     // return (1.0 - t) * Colour::new(1.0, 1.0, 1.0) + t * Colour::new(0.5, 0.7, 1.0);
@@ -497,17 +494,17 @@ fn ray_colour(
 fn random_scene() -> HittableList {
     let world = HittableList::new();
     let _obj_material = Metal {
-        albedo: Colour::new(0.35, 0.35, 0.45),
+        albedo: Box::new(SolidColour::new(Colour::new(0.35, 0.35, 0.45))),
         f: 0.05,
     };
     let _ground_material = Lambertian {
         albedo: Box::new(SolidColour::new(Colour::new(0.7, 0.7, 0.7))),
     };
-//   let solid_text_1 = Box::new(SolidColour::new(Colour::new(0.2, 0.3, 0.1)));
-//   let solid_text_2 = Box::new(SolidColour::new(Colour::new(0.9, 0.9, 0.9)));
-//   let material3 = Lambertian {
-//       albedo: Box::new(CheckerTexture::new(solid_text_1, solid_text_2)),
-//   };
+    //   let solid_text_1 = Box::new(SolidColour::new(Colour::new(0.2, 0.3, 0.1)));
+    //   let solid_text_2 = Box::new(SolidColour::new(Colour::new(0.9, 0.9, 0.9)));
+    //   let material3 = Lambertian {
+    //       albedo: Box::new(CheckerTexture::new(solid_text_1, solid_text_2)),
+    //   };
     // world.objects.push(Box::new(Sphere::new(
     //     Vec3::new(0.0, -10002.0, 0.0),
     //     10000.0,

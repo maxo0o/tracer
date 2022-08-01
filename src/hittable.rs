@@ -38,7 +38,7 @@ pub trait Hittable: Send + Sync + std::fmt::Debug {
         None
     }
 
-    fn get_light_sampler_sphere(&self) -> Sphere<UnitMaterial> {
+    fn get_light_sampler_sphere(&self) -> Sphere {
         panic!("This hittable does not implement the light sampler method");
     }
 }
@@ -47,7 +47,7 @@ pub trait Hittable: Send + Sync + std::fmt::Debug {
 pub struct HitRecord<'a> {
     pub p: Vec3,
     pub normal: Vec3,
-    pub material: &'a dyn Material,
+    pub material: &'a Box<dyn Material>,
     pub t: f64,
     pub front_face: bool,
     pub u: f64,

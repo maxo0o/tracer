@@ -53,24 +53,26 @@ pub struct ImageTexture {
     width: u32,
     height: u32,
     is_light: bool,
+    scale: f64,
 }
 
 impl ImageTexture {
-    pub fn new(image: DynamicImage, is_light: bool) -> ImageTexture {
+    pub fn new(image: DynamicImage, is_light: bool, scale: f64) -> ImageTexture {
         let (width, height) = image.dimensions();
         ImageTexture {
             image,
             width,
             height,
             is_light,
+            scale,
         }
     }
 }
 
 impl Texture for ImageTexture {
     fn value(&self, u: f64, v: f64, p: &Vec3) -> Colour {
-        let u = u % 1.0;
-        let v = 1.0 - v % 1.0;
+        let u = (u * self.scale).fract() % 1.0;
+        let v = 1.0 - (v * self.scale).fract() % 1.0;
 
         let i = (u * self.width as f64) as u32;
         let j = (v * self.height as f64) as u32;
@@ -80,9 +82,9 @@ impl Texture for ImageTexture {
             .get_pixel(i.clamp(0, self.width - 1), j.clamp(0, self.height - 1))
             .to_rgb();
 
-        let mut r = pixel[0] as f64 / 256.0;
-        let mut g = pixel[1] as f64 / 256.0;
-        let mut b = pixel[2] as f64 / 256.0;
+        let mut r = pixel[0] as f64 / 255.0;
+        let mut g = pixel[1] as f64 / 255.0;
+        let mut b = pixel[2] as f64 / 255.0;
 
         if self.is_light {
             r = r.powf(2.0);

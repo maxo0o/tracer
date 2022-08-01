@@ -14,8 +14,8 @@ pub struct Camera {
 
 impl Camera {
     pub fn new(
-        look_from: &Vec3,
-        look_at: &Vec3,
+        look_from: Vec3,
+        look_at: Vec3,
         vup: Vec3,
         vfov: f64,
         aspect_ratio: f64,

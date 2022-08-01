@@ -12,6 +12,9 @@ impl Vec3 {
         Vec3 { x, y, z }
     }
 
+    pub fn new_arr(arr: [f64; 3]) -> Vec3 {
+        Vec3 { x: arr[0], y: arr[1], z: arr[2] }
+    }
     pub fn copy(v: &Vec3) -> Vec3 {
         Vec3 {
             x: v.x,

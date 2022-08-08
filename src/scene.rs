@@ -19,6 +19,13 @@ pub struct Scene {
     pub objects: HittableList,
     pub lights: Vec<Arc<Box<dyn Hittable>>>,
     pub skybox: Sphere,
+    pub render_settings: RenderSettings,
+}
+
+pub struct RenderSettings {
+    pub samples: u32,
+    pub image_width: u32,
+    pub image_height: u32,
 }
 
 impl Scene {
@@ -51,6 +58,12 @@ impl Scene {
             scene.camera.aperture,
             scene.camera.dist_to_focus,
         );
+
+        let render_settings = RenderSettings {
+            image_width: scene.render_settings.image_width,
+            image_height: scene.render_settings.image_height,
+            samples: scene.render_settings.samples,
+        };
 
         let mut objects = HittableList::new();
         let mut lights: Vec<Arc<Box<dyn Hittable>>> = vec![];
@@ -115,6 +128,7 @@ impl Scene {
         }
 
         Scene {
+            render_settings,
             camera,
             objects,
             lights,

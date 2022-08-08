@@ -9,7 +9,7 @@ pub struct SkyboxJSON {
 #[derive(Serialize, Deserialize, Debug)]
 pub enum TextureJSON {
     SolidColour {
-        colour: [f64; 3]
+        colour: [f64; 3],
     },
     ImageTexture {
         image_path: String,
@@ -20,23 +20,11 @@ pub enum TextureJSON {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum MaterialJSON {
-    Lambertian {
-        albedo: TextureJSON,
-    },
-    Metal {
-        albedo: TextureJSON,
-        f: f64,
-    },
-    Dialectric {
-        index_of_refraction: f64,
-    },
-    Light {
-        albedo: TextureJSON,
-        intensity: f64,
-    },
-    Isotropic {
-        albedo: TextureJSON,
-    },
+    Lambertian { albedo: TextureJSON },
+    Metal { albedo: TextureJSON, f: f64 },
+    Dialectric { index_of_refraction: f64 },
+    Light { albedo: TextureJSON, intensity: f64 },
+    Isotropic { albedo: TextureJSON },
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -47,8 +35,6 @@ pub struct ModelJSON {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CameraJSON {
-    pub resolution: [u32; 2],
-    pub samples: u32,
     pub aspect_ratio: f64,
     pub look_from: [f64; 3],
     pub look_at: [f64; 3],
@@ -59,7 +45,15 @@ pub struct CameraJSON {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct RenderSettingsJSON {
+    pub image_width: u32,
+    pub image_height: u32,
+    pub samples: u32,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct SceneJSON {
+    pub render_settings: RenderSettingsJSON,
     pub camera: CameraJSON,
     pub models: Vec<ModelJSON>,
     pub skybox: SkyboxJSON,

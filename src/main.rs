@@ -24,18 +24,13 @@ use crate::scene::Scene;
 use camera::Camera;
 use colour::Colour;
 use hittable::{Hittable, HittableList};
-use instance::Translate;
-use material::{Isotropic, Lambertian, Light, Metal};
-use obj::{load_obj, Obj, TexturedVertex};
-use object::Object;
+use material::Isotropic;
 use pdf::CosinePDF;
 use ray::Ray;
 use rayon::prelude::*;
 use sphere::Sphere;
-use std::fs::File;
-use std::io::BufReader;
 use std::sync::{Arc, Mutex};
-use texture::{ImageTexture, SolidColour};
+use texture::SolidColour;
 use vector::Vec3;
 use volume::Volume;
 
@@ -45,19 +40,17 @@ const INFINITY: f64 = f64::INFINITY;
 const MAX_RAY_DEPTH: u32 = 100;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Image
-    const ASPECT_RATIO: f64 = 3.0 / 2.0;
-    const IMAGE_WIDTH: u32 = 1000;
-    const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-    let samples_per_pixel = 2;
+    // World
+    let mut scene = Scene::new("scene.json".to_string());
 
     let zbuffer = Arc::new(Mutex::new(vec![
-        vec![INFINITY; IMAGE_WIDTH as usize];
-        IMAGE_HEIGHT as usize
+        vec![
+            INFINITY;
+            scene.render_settings.image_width
+                as usize
+        ];
+        scene.render_settings.image_height as usize
     ]));
-
-    // World
-    let mut scene = Scene::new("test.txt".to_string());
 
     let colour = Colour::new(0.1, 0.1, 0.1);
     let cube = Cube::new(
@@ -71,42 +64,30 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mist = Volume::new(Box::new(cube), 0.000215, Box::new(material));
     scene.objects.objects.push(Box::new(mist));
 
-    // Camera
-    let look_from = Vec3::new(295.0, 20.0, 205.0);
-    let look_at = Vec3::new(-35.0, -5.0, 0.0);
-    let vup = Vec3::new(0.0, 1.0, 0.0);
-    let dist_to_focus = 1.0;
-    let aperture = 0.0;
-
-    let cam = Camera::new(
-        look_from,
-        look_at,
-        vup,
-        20.0,
-        ASPECT_RATIO,
-        aperture,
-        dist_to_focus,
+    // Render
+    print!(
+        "P3\n{} {}\n255\n",
+        scene.render_settings.image_width, scene.render_settings.image_height
     );
 
-    // Render
-    print!("P3\n{} {}\n255\n", IMAGE_WIDTH, IMAGE_HEIGHT);
-
-    for j in (0..=IMAGE_HEIGHT - 1).rev() {
+    for j in (0..=scene.render_settings.image_height - 1).rev() {
         eprint!("\rScanlines remaining: {:?}", j);
 
-        let scanline: Vec<Colour> = (0..IMAGE_WIDTH)
+        let scanline: Vec<Colour> = (0..scene.render_settings.image_width)
             .into_par_iter()
             .map(|i| {
                 let mut pixel_colour = Colour::new(0.0, 0.0, 0.0);
-                for _ in 0..samples_per_pixel {
-                    let u = (i as f64 + rand::random::<f64>()) / (IMAGE_WIDTH - 1) as f64;
-                    let v = (j as f64 + rand::random::<f64>()) / (IMAGE_HEIGHT - 1) as f64;
+                for _ in 0..scene.render_settings.samples {
+                    let u = (i as f64 + rand::random::<f64>())
+                        / (scene.render_settings.image_width - 1) as f64;
+                    let v = (j as f64 + rand::random::<f64>())
+                        / (scene.render_settings.image_height - 1) as f64;
 
                     let pixel = Some((j as usize, i as usize));
-                    let ray = cam.get_ray(u, v);
+                    let ray = scene.camera.get_ray(u, v);
                     pixel_colour += ray_colour(
                         &ray,
-                        &cam,
+                        &scene.camera,
                         &scene.objects,
                         MAX_RAY_DEPTH,
                         pixel,
@@ -123,7 +104,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .collect();
 
         for pixel_colour in scanline {
-            pixel_colour.write_colour(samples_per_pixel);
+            pixel_colour.write_colour(scene.render_settings.samples);
         }
     }
 

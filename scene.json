@@ -1,0 +1,242 @@
+{
+    "render_settings": {
+        "image_width": 2000,
+        "image_height": 1333,
+        "samples": 1 
+    },
+    "camera": {
+        "aspect_ratio": 1.5,
+        "look_from": [295.0, 20.0, 205.0],
+        "look_at": [-35.0, -5.0, 0.0],
+        "vfov": 20.0,
+        "v_up": [0.0, 1.0, 0.0],
+        "dist_to_focus": 1.0,
+        "aperture": 0.0
+    },
+    "models": [
+        {
+            "obj_path": "/mnt/c/Users/maxmc/Desktop/mushroom_orb1.obj",
+            "material": {
+                "Light": {
+                    "albedo": {
+                        "ImageTexture": {
+                            "image_path": "/mnt/c/Users/maxmc/Desktop/mushroom.png",
+                            "scale": 1.0,
+                            "is_light": true
+                        }
+                    },
+                    "intensity": 3.0
+                }
+            }
+        },
+        {
+            "obj_path": "/mnt/c/Users/maxmc/Desktop/mushroom_orb2.obj",
+            "material": {
+                "Light": {
+                    "albedo": {
+                        "ImageTexture": {
+                            "image_path": "/mnt/c/Users/maxmc/Desktop/mushroom.png",
+                            "scale": 1.0,
+                            "is_light": true
+                        }
+                    },
+                    "intensity": 3.0
+                }
+            }
+        },
+        {
+            "obj_path": "/mnt/c/Users/maxmc/Desktop/mushroom_orb3.obj",
+            "material": {
+                "Light": {
+                    "albedo": {
+                        "ImageTexture": {
+                            "image_path": "/mnt/c/Users/maxmc/Desktop/mushroom.png",
+                            "scale": 1.0,
+                            "is_light": true
+                        }
+                    },
+                    "intensity": 3.0
+                }
+            }
+        },
+        {
+            "obj_path": "/mnt/c/Users/maxmc/Desktop/mushroom_orb4.obj",
+            "material": {
+                "Light": {
+                    "albedo": {
+                        "ImageTexture": {
+                            "image_path": "/mnt/c/Users/maxmc/Desktop/mushroom.png",
+                            "scale": 1.0,
+                            "is_light": true
+                        }
+                    },
+                    "intensity": 3.0
+                }
+            }
+        },
+        {
+            "obj_path": "/mnt/c/Users/maxmc/Desktop/mushroom_orb5.obj",
+            "material": {
+                "Light": {
+                    "albedo": {
+                        "ImageTexture": {
+                            "image_path": "/mnt/c/Users/maxmc/Desktop/mushroom.png",
+                            "scale": 1.0,
+                            "is_light": true
+                        }
+                    },
+                    "intensity": 3.0
+                }
+            }
+        },
+        {
+            "obj_path": "/mnt/c/Users/maxmc/Desktop/mushroom_d.obj",
+            "material": {
+                "Lambertian": {
+                    "albedo": {
+                        "ImageTexture": {
+                            "image_path": "/mnt/c/Users/maxmc/Desktop/mushroom.png",
+                            "scale": 1.0,
+                            "is_light": false 
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "obj_path": "/mnt/c/Users/maxmc/Desktop/river_flat.obj",
+            "material": {
+                "Metal": {
+                    "albedo": {
+                        "SolidColour": {
+                            "colour": [0.65, 0.65, 0.65] 
+                        }
+                    },
+                    "f": 0.0
+                }
+            }
+        },
+        {
+            "obj_path": "/mnt/c/Users/maxmc/Desktop/land_front.obj",
+            "material": {
+                "Lambertian": {
+                    "albedo": {
+                        "ImageTexture": {
+                            "image_path": "/mnt/c/Users/maxmc/Desktop/dirt.jpg",
+                            "scale": 20.0,
+                            "is_light": false
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "obj_path": "/mnt/c/Users/maxmc/Desktop/land_second.obj",
+            "material": {
+                "Lambertian": {
+                    "albedo": {
+                        "ImageTexture": {
+                            "image_path": "/mnt/c/Users/maxmc/Desktop/dirt.jpg",
+                            "scale": 20.0,
+                            "is_light": false
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "obj_path": "/mnt/c/Users/maxmc/Desktop/land_third.obj",
+            "material": {
+                "Lambertian": {
+                    "albedo": {
+                        "ImageTexture": {
+                            "image_path": "/mnt/c/Users/maxmc/Desktop/dirt.jpg",
+                            "scale": 20.0,
+                            "is_light": false
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "obj_path": "/mnt/c/Users/maxmc/Desktop/land_fourth.obj",
+            "material": {
+                "Lambertian": {
+                    "albedo": {
+                        "ImageTexture": {
+                            "image_path": "/mnt/c/Users/maxmc/Desktop/dirt.jpg",
+                            "scale": 100.0,
+                            "is_light": false
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "obj_path": "/mnt/c/Users/maxmc/Desktop/mushroomzzz.obj",
+            "material": {
+                "Lambertian": {
+                    "albedo": {
+                        "ImageTexture": {
+                            "image_path": "/mnt/c/Users/maxmc/Desktop/mushroom.png",
+                            "scale": 1.0,
+                            "is_light": false
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "obj_path": "/mnt/c/Users/maxmc/Desktop/mushroomt1.obj",
+            "material": {
+                "Lambertian": {
+                    "albedo": {
+                        "ImageTexture": {
+                            "image_path": "/mnt/c/Users/maxmc/Desktop/mushroomt1.png",
+                            "scale": 1.0,
+                            "is_light": false
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "obj_path": "/mnt/c/Users/maxmc/Desktop/mushroomt2.obj",
+            "material": {
+                "Lambertian": {
+                    "albedo": {
+                        "ImageTexture": {
+                            "image_path": "/mnt/c/Users/maxmc/Desktop/mushroomt1.png",
+                            "scale": 1.0,
+                            "is_light": false
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "obj_path": "/mnt/c/Users/maxmc/Desktop/mushroomt3.obj",
+            "material": {
+                "Lambertian": {
+                    "albedo": {
+                        "ImageTexture": {
+                            "image_path": "/mnt/c/Users/maxmc/Desktop/mushroomt1.png",
+                            "scale": 1.0,
+                            "is_light": false
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "skybox": {
+        "radius": 4000.0,
+        "image_texture": {
+            "ImageTexture": {
+                "image_path": "/mnt/c/Users/maxmc/Desktop/sky.jpg",
+                "scale": 8.0,
+                "is_light": true 
+            }
+        }
+    }
+}

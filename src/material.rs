@@ -6,13 +6,13 @@ use crate::onb::OrthonormalBasis;
 use crate::ray::Ray;
 use crate::texture::Texture;
 use crate::utils::random_cosine_direction;
-use crate::utils::{random_in_unit_sphere, random_in_unit_vector, reflect, refract};
+use crate::utils::{random_in_unit_sphere, reflect, refract};
 use crate::vector::Vec3;
 
 use rand::Rng;
 
 pub trait Material: Send + Sync + std::fmt::Debug {
-    fn scatter(&self, ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool) {
+    fn scatter(&self, _ray_in: &Ray, _hit_record: &HitRecord) -> (Ray, Colour, bool) {
         (
             Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, 0.0)),
             Colour::new(0.0, 0.0, 0.0),
@@ -20,11 +20,11 @@ pub trait Material: Send + Sync + std::fmt::Debug {
         )
     }
 
-    fn emitted(&self, u: f64, v: f64, p: &Vec3) -> Colour {
+    fn emitted(&self, _u: f64, _v: f64, _p: &Vec3) -> Colour {
         Colour::new(0.0, 0.0, 0.0)
     }
 
-    fn scattering_pdf(&self, ray_in: &Ray, hit_record: &HitRecord, scattered: &Ray) -> f64 {
+    fn scattering_pdf(&self, _ray_in: &Ray, _hit_record: &HitRecord, _scattered: &Ray) -> f64 {
         1.0
     }
 
@@ -44,6 +44,10 @@ pub struct Lambertian {
 
 impl Material for Lambertian {
     fn scatter(&self, _ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool) {
+        let normal_map = self
+            .albedo
+            .normal_value(hit_record.u, hit_record.v, &hit_record.p);
+
         let onb = OrthonormalBasis::build_from_w(&hit_record.normal);
         //let mut scatter_direction = &hit_record.normal + random_in_unit_vector();
         let mut scatter_direction = onb.local_vec(&random_cosine_direction());
@@ -52,7 +56,7 @@ impl Material for Lambertian {
             scatter_direction = Vec3::copy(&hit_record.normal);
         }
 
-        let scattered = Ray::new(Vec3::copy(&hit_record.p), scatter_direction);
+        let scattered = Ray::new(Vec3::copy(&hit_record.p), scatter_direction + normal_map);
 
         (
             scattered,
@@ -61,10 +65,14 @@ impl Material for Lambertian {
         )
     }
 
-    fn scattering_pdf(&self, ray_in: &Ray, hit_record: &HitRecord, scattered: &Ray) -> f64 {
+    fn scattering_pdf(&self, _ray_in: &Ray, hit_record: &HitRecord, scattered: &Ray) -> f64 {
         let cosine = hit_record.normal.dot(&scattered.direction.unit());
 
-        return if cosine < 0.0 { 0.0 } else { cosine / PI };
+        if cosine < 0.0 {
+            0.0
+        } else {
+            cosine / PI
+        }
     }
 
     fn use_pdfs(&self) -> bool {
@@ -80,6 +88,19 @@ pub struct Metal {
 
 impl Material for Metal {
     fn scatter(&self, ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool) {
+        let normal_map = self
+            .albedo
+            .normal_value(hit_record.u, hit_record.v, &hit_record.p);
+
+        let mut normal = Vec3::new(0.0, 0.0, 0.0);
+        if let (Some(tangent), Some(bitangent)) = (hit_record.tangent, hit_record.bitangent) {
+            normal = normal_map.x * &tangent
+                + normal_map.y * &bitangent
+                + normal_map.z * &hit_record.normal.unit();
+        } else {
+            normal = hit_record.normal;
+        }
+
         let reflected = reflect(&ray_in.direction.unit(), &hit_record.normal);
         let scattered_ray = Ray::new(
             Vec3::copy(&hit_record.p),
@@ -137,13 +158,35 @@ pub struct Light {
 }
 
 impl Material for Light {
-    fn scatter(&self, ray_in: &Ray, _hit_record: &HitRecord) -> (Ray, Colour, bool) {
+    fn scatter(&self, ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool) {
+        if self.albedo.alpha_value(hit_record.u, hit_record.v) < 0.1 {
+            let onb = OrthonormalBasis::build_from_w(&hit_record.normal);
+            //let mut scatter_direction = &hit_record.normal + random_in_unit_vector();
+            let mut scatter_direction = onb.local_vec(&random_cosine_direction());
+
+            if scatter_direction.near_zero() {
+                scatter_direction = Vec3::copy(&hit_record.normal);
+            }
+
+            let scattered = Ray::new(Vec3::copy(&hit_record.p), scatter_direction);
+
+            return (
+                scattered,
+                Colour::copy(&self.albedo.value(hit_record.u, hit_record.v, &hit_record.p)),
+                true,
+            );
+        }
+
         let ray = Ray::new(Vec3::copy(&ray_in.origin), Vec3::copy(&ray_in.direction));
         (ray, Colour::new(0.0, 0.0, 0.0), false)
     }
 
     fn emitted(&self, u: f64, v: f64, p: &Vec3) -> Colour {
-        self.intensity * self.albedo.value(u, v, p)
+        let alpha_value = self.albedo.alpha_value(u, v);
+        if alpha_value > 0.1 {
+            return alpha_value.powf(2.0) * self.intensity * self.albedo.value(u, v, p);
+        }
+        Colour::new(0.0, 0.0, 0.0)
     }
 }
 
@@ -153,7 +196,7 @@ pub struct Isotropic {
 }
 
 impl Material for Isotropic {
-    fn scatter(&self, ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool) {
+    fn scatter(&self, _ray_in: &Ray, hit_record: &HitRecord) -> (Ray, Colour, bool) {
         let ray = Ray::new(Vec3::copy(&hit_record.p), random_in_unit_sphere());
         (
             ray,

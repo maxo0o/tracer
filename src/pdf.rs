@@ -1,6 +1,6 @@
+use rand::Rng;
 use std::f64::consts::PI;
 use std::sync::{Arc, Mutex};
-use rand::Rng;
 
 use crate::camera::Camera;
 use crate::hittable::Hittable;
@@ -35,13 +35,17 @@ impl ProbabilityDensityFunction for CosinePDF {
     fn value(
         &self,
         direction: &Vec3,
-        camera: &Camera,
-        pixel: Option<(usize, usize)>,
-        zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+        _camera: &Camera,
+        _pixel: Option<(usize, usize)>,
+        _zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     ) -> f64 {
         let cosine = direction.unit().dot(&self.uvw.w());
 
-        return if cosine <= 0.0 { 0.0 } else { cosine / PI };
+        if cosine <= 0.0 {
+            0.0
+        } else {
+            cosine / PI
+        }
     }
 
     fn generate(&self) -> Option<Vec3> {
@@ -71,13 +75,8 @@ impl ProbabilityDensityFunction for HittablePDF {
         pixel: Option<(usize, usize)>,
         zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     ) -> f64 {
-        return self.hittable.pdf_value(
-            &self.origin,
-            direction,
-            camera,
-            pixel,
-            Arc::clone(&zbuffer),
-        );
+        self.hittable
+            .pdf_value(&self.origin, direction, camera, pixel, Arc::clone(&zbuffer))
     }
 
     fn generate(&self) -> Option<Vec3> {
@@ -106,14 +105,15 @@ impl ProbabilityDensityFunction for MixturePDF {
         self.pdfs
             .iter()
             .map(|pdf| {
-                (1.0 / self.pdfs.len() as f64) * pdf.value(direction, camera, pixel, Arc::clone(&zbuffer)) as f64
+                (1.0 / self.pdfs.len() as f64)
+                    * pdf.value(direction, camera, pixel, Arc::clone(&zbuffer)) as f64
             })
             .fold(0.0, |acc, x| acc + x)
     }
 
     fn generate(&self) -> Option<Vec3> {
         let mut pdf: Option<Vec3> = None;
-        while let None = pdf {
+        while pdf.is_none() {
             let choice = rand::thread_rng().gen_range(0..self.pdfs.len());
             pdf = self.pdfs[choice].generate();
         }

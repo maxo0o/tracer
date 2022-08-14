@@ -50,6 +50,7 @@ pub fn random_in_unit_disk() -> Vec3 {
     }
 }
 
+#[allow(dead_code)]
 pub fn random_in_unit_vector() -> Vec3 {
     random_in_unit_sphere().unit()
 }

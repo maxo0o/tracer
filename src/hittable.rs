@@ -1,11 +1,11 @@
 use crate::aabb::{surrounding_box, AxisAlignedBoundingBox};
-use crate::material::{Lambertian, UnitMaterial};
+use crate::colour::Colour;
 use crate::ray::Ray;
+use crate::rectangle::Cube;
 use crate::sphere::Sphere;
 use crate::vector::Vec3;
 use crate::{camera::Camera, material::Material};
 
-use rand::Rng;
 use std::sync::{Arc, Mutex};
 
 pub trait Hittable: Send + Sync + std::fmt::Debug {
@@ -25,16 +25,16 @@ pub trait Hittable: Send + Sync + std::fmt::Debug {
 
     fn pdf_value(
         &self,
-        origin: &Vec3,
-        v: &Vec3,
-        camera: &Camera,
-        pixel: Option<(usize, usize)>,
-        zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+        _origin: &Vec3,
+        _v: &Vec3,
+        _camera: &Camera,
+        _pixel: Option<(usize, usize)>,
+        _zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     ) -> f64 {
         0.0
     }
 
-    fn random(&self, origin: &Vec3) -> Option<Vec3> {
+    fn random(&self, _origin: &Vec3) -> Option<Vec3> {
         None
     }
 
@@ -47,6 +47,8 @@ pub trait Hittable: Send + Sync + std::fmt::Debug {
 pub struct HitRecord<'a> {
     pub p: Vec3,
     pub normal: Vec3,
+    pub tangent: Option<Vec3>,
+    pub bitangent: Option<Vec3>,
     pub material: &'a Box<dyn Material>,
     pub t: f64,
     pub front_face: bool,
@@ -56,11 +58,11 @@ pub struct HitRecord<'a> {
 
 impl HitRecord<'_> {
     pub fn set_face_normal(&mut self, ray: &Ray, outward_normal: &Vec3) {
-        self.front_face = ray.direction.dot(&outward_normal) < 0.0;
+        self.front_face = ray.direction.dot(outward_normal) < 0.0;
         self.normal = if self.front_face {
-            outward_normal.clone()
+            *outward_normal
         } else {
-            -outward_normal.clone()
+            -*outward_normal
         };
     }
 }
@@ -104,6 +106,12 @@ impl Hittable for HittableList {
         let mut closest_so_far = t_max;
 
         for object in &self.objects {
+            if let Some(bounding_box) = object.bounding_box() {
+                if !bounding_box.hit(ray, t_min, t_max) {
+                    continue;
+                }
+            }
+
             if let Some(hit_record) = object.hit(
                 ray,
                 camera,
@@ -121,7 +129,7 @@ impl Hittable for HittableList {
     }
 
     fn bounding_box(&self) -> Option<AxisAlignedBoundingBox> {
-        if self.objects.len() == 0 {
+        if self.objects.is_empty() {
             return None;
         }
 

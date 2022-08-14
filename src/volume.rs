@@ -77,6 +77,8 @@ impl Hittable for Volume {
                     p,
                     t,
                     normal: Vec3::new(1.0, 0.0, 0.0),
+                    tangent: None,
+                    bitangent: None,
                     front_face: true,
                     material: &self.material,
                     u: 0.0,
@@ -86,6 +88,10 @@ impl Hittable for Volume {
                 return None;
             }
         }
+        None
+    }
+
+    fn bounding_box(&self) -> Option<crate::aabb::AxisAlignedBoundingBox> {
         None
     }
 }

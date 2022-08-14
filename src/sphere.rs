@@ -4,7 +4,7 @@ use crate::hittable::{HitRecord, Hittable};
 use crate::material::Material;
 use crate::onb::OrthonormalBasis;
 use crate::ray::Ray;
-use crate::utils::{distance, random_in_unit_sphere, random_to_sphere};
+use crate::utils::{distance, random_to_sphere};
 use crate::vector::Vec3;
 
 use std::f64::consts::PI;
@@ -37,7 +37,7 @@ impl Hittable for Sphere {
         _pixel: Option<(usize, usize)>,
         _zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     ) -> Option<HitRecord> {
-        let oc = &ray.origin - &self.center;
+        let oc = ray.origin - self.center;
         let a = ray.direction.length_squared();
         let half_b = oc.dot(&ray.direction);
         let c = oc.length_squared() - self.radius * self.radius;
@@ -55,7 +55,7 @@ impl Hittable for Sphere {
             }
         }
 
-        let mut outward_normal = (&ray.at(root) - &self.center) / self.radius;
+        let mut outward_normal = (ray.at(root) - self.center) / self.radius;
         let front_face = ray.direction.dot(&outward_normal) < 0.0;
         if !front_face {
             outward_normal = -outward_normal;
@@ -69,6 +69,8 @@ impl Hittable for Sphere {
             p,
             t: root,
             normal: outward_normal,
+            tangent: None,
+            bitangent: None,
             material: &self.material,
             front_face,
             u,
@@ -77,8 +79,8 @@ impl Hittable for Sphere {
     }
 
     fn bounding_box(&self) -> Option<AxisAlignedBoundingBox> {
-        let point_a = &self.center - Vec3::new(self.radius, self.radius, self.radius);
-        let point_b = &self.center + Vec3::new(self.radius, self.radius, self.radius);
+        let point_a = self.center - Vec3::new(self.radius, self.radius, self.radius);
+        let point_b = self.center + Vec3::new(self.radius, self.radius, self.radius);
 
         Some(AxisAlignedBoundingBox::new(point_a, point_b))
     }
@@ -97,7 +99,7 @@ impl Hittable for Sphere {
             return 0.0;
         }
 
-        if let Some(hit) = self.hit(
+        if let Some(_hit) = self.hit(
             &Ray::new(*origin, *v),
             camera,
             0.0001,
@@ -126,13 +128,14 @@ impl Hittable for Sphere {
         let distance_squared = direction.length_squared();
 
         let uvw = OrthonormalBasis::build_from_w(&direction);
-        return Some(uvw.local_vec(&random_to_sphere(self.radius, distance_squared)));
+
+        Some(uvw.local_vec(&random_to_sphere(self.radius, distance_squared)))
     }
 }
 
 fn get_sphere_uv(p: &Vec3, center: &Vec3) -> (f64, f64) {
-    let theta = -p.y.acos();
-    let phi = -p.z.atan2(p.x) + std::f64::consts::PI;
+    // let theta = -p.y.acos();
+    // let phi = -p.z.atan2(p.x) + std::f64::consts::PI;
 
     //(
     //  phi / (2.0 * std::f64::consts::PI),

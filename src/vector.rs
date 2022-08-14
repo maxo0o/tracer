@@ -13,7 +13,11 @@ impl Vec3 {
     }
 
     pub fn new_arr(arr: [f64; 3]) -> Vec3 {
-        Vec3 { x: arr[0], y: arr[1], z: arr[2] }
+        Vec3 {
+            x: arr[0],
+            y: arr[1],
+            z: arr[2],
+        }
     }
     pub fn copy(v: &Vec3) -> Vec3 {
         Vec3 {
@@ -25,9 +29,9 @@ impl Vec3 {
 
     pub fn get(&self, axis: usize) -> f64 {
         match axis {
-            0 => return self.x,
-            1 => return self.y,
-            2 => return self.z,
+            0 => self.x,
+            1 => self.y,
+            2 => self.z,
             _ => panic!("Invalid axis!"),
         }
     }

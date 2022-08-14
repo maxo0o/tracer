@@ -4,6 +4,7 @@ pub struct OrthonormalBasis {
     axis: [Vec3; 3],
 }
 
+#[allow(dead_code)]
 impl OrthonormalBasis {
     pub fn u(&self) -> Vec3 {
         self.axis[0]

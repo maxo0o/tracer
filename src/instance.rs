@@ -9,6 +9,7 @@ pub struct Translate {
     offset: Vec3,
 }
 
+#[allow(dead_code)]
 impl Translate {
     pub fn new(object: Box<dyn Hittable>, offset: Vec3) -> Translate {
         Translate { object, offset }
@@ -38,6 +39,8 @@ impl Hittable for Translate {
             let mut hit_record = HitRecord {
                 p: hit.p + self.offset,
                 normal: hit.normal.clone(),
+                tangent: None,
+                bitangent: None,
                 material: hit.material,
                 t: hit.t,
                 front_face: hit.front_face,
@@ -51,6 +54,10 @@ impl Hittable for Translate {
 
         None
     }
+
+    fn bounding_box(&self) -> Option<crate::aabb::AxisAlignedBoundingBox> {
+        None
+    }
 }
 
 #[derive(Debug)]
@@ -59,6 +66,7 @@ pub struct RotateY {
     theta: f64,
 }
 
+#[allow(dead_code)]
 impl RotateY {
     pub fn new(object: Box<dyn Hittable>, theta: f64) -> RotateY {
         RotateY {
@@ -110,6 +118,8 @@ impl Hittable for RotateY {
             let mut hit_record = HitRecord {
                 p,
                 normal,
+                tangent: None,
+                bitangent: None,
                 material: hit.material,
                 t: hit.t,
                 front_face: hit.front_face,
@@ -121,6 +131,10 @@ impl Hittable for RotateY {
             return Some(hit_record);
         }
 
+        None
+    }
+
+    fn bounding_box(&self) -> Option<crate::aabb::AxisAlignedBoundingBox> {
         None
     }
 }

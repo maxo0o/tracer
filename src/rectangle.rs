@@ -1,3 +1,4 @@
+use crate::aabb::AxisAlignedBoundingBox;
 use crate::camera::Camera;
 use crate::colour::Colour;
 use crate::hittable::{HitRecord, Hittable, HittableList};
@@ -102,6 +103,8 @@ impl Hittable for Plane {
             p,
             t,
             normal: outward_normal,
+            tangent: None,
+            bitangent: None,
             material: &self.material,
             front_face,
             u,
@@ -141,16 +144,19 @@ impl Hittable for Plane {
             self.k,
             rand::thread_rng().gen_range(self.b0..self.b1),
         );
-        return Some(random_point - origin);
+
+        Some(random_point - origin)
+    }
+
+    fn bounding_box(&self) -> Option<crate::aabb::AxisAlignedBoundingBox> {
+        None
     }
 }
 
 #[derive(Debug)]
 pub struct Cube {
-    box_min: Vec3,
-    box_max: Vec3,
     sides: HittableList,
-    colour: Colour,
+    bounding_box: AxisAlignedBoundingBox,
 }
 
 impl Cube {
@@ -158,22 +164,22 @@ impl Cube {
         let mut sides = HittableList::new();
 
         let side_colour_1 = Lambertian {
-            albedo: Box::new(SolidColour::new(Colour::copy(&colour))),
+            albedo: Box::new(SolidColour::new(Colour::copy(&colour), None, None)),
         };
         let side_colour_2 = Lambertian {
-            albedo: Box::new(SolidColour::new(Colour::copy(&colour))),
+            albedo: Box::new(SolidColour::new(Colour::copy(&colour), None, None)),
         };
         let side_colour_3 = Lambertian {
-            albedo: Box::new(SolidColour::new(Colour::copy(&colour))),
+            albedo: Box::new(SolidColour::new(Colour::copy(&colour), None, None)),
         };
         let side_colour_4 = Lambertian {
-            albedo: Box::new(SolidColour::new(Colour::copy(&colour))),
+            albedo: Box::new(SolidColour::new(Colour::copy(&colour), None, None)),
         };
         let side_colour_5 = Lambertian {
-            albedo: Box::new(SolidColour::new(Colour::copy(&colour))),
+            albedo: Box::new(SolidColour::new(Colour::copy(&colour), None, None)),
         };
         let side_colour_6 = Lambertian {
-            albedo: Box::new(SolidColour::new(Colour::copy(&colour))),
+            albedo: Box::new(SolidColour::new(Colour::copy(&colour), None, None)),
         };
 
         sides.objects.push(Box::new(Plane::new(
@@ -215,11 +221,11 @@ impl Cube {
             PlaneOrientation::YZ,
         )));
 
+        let bounding_box = AxisAlignedBoundingBox::new(box_min, box_max);
+
         Cube {
-            box_min,
-            box_max,
             sides,
-            colour,
+            bounding_box,
         }
     }
 }
@@ -236,5 +242,12 @@ impl Hittable for Cube {
     ) -> Option<HitRecord> {
         self.sides
             .hit(ray, camera, t_min, t_max, pixel, Arc::clone(&zbuffer))
+    }
+
+    fn bounding_box(&self) -> Option<crate::aabb::AxisAlignedBoundingBox> {
+        Some(AxisAlignedBoundingBox::new(
+            self.bounding_box.minimum,
+            self.bounding_box.maximum,
+        ))
     }
 }

@@ -22,6 +22,8 @@ pub struct KDTreeHitRecord {
     pub p: Vec3,
     pub t: f64,
     pub normal: Vec3,
+    pub tangent: Vec3,
+    pub bitangent: Vec3,
     pub front_face: bool,
     pub text_coord: UVCoord,
 }
@@ -56,7 +58,7 @@ impl KDTree {
             if let Some(faces) = &self.faces {
                 for triangle in faces {
                     if let (Some(hit), distance_min) =
-                        triangle_intersection(t_start, t_end, ray, &triangle, camera, d_min)
+                        triangle_intersection(t_start, t_end, ray, triangle, camera, d_min)
                     {
                         potential_hit = Some(hit);
                         d_min = distance_min;
@@ -69,76 +71,70 @@ impl KDTree {
 
         let flip_front_and_back = ray_dir[self.split_axis].is_sign_negative();
         if t_split <= t_start {
-            if flip_front_and_back {
-                if let Some(chosen_child) = &self.left_child {
-                    return chosen_child.traverse(ray, camera, t_start, t_end);
-                }
-            } else {
-                if let Some(chosen_child) = &self.right_child {
-                    return chosen_child.traverse(ray, camera, t_start, t_end);
-                }
+            if let (Some(chosen_child), true) = (&self.left_child, flip_front_and_back) {
+                return chosen_child.traverse(ray, camera, t_start, t_end);
+            } else if let (Some(chosen_child), false) = (&self.right_child, flip_front_and_back) {
+                return chosen_child.traverse(ray, camera, t_start, t_end);
             }
         } else if t_split >= t_end {
-            if flip_front_and_back {
-                if let Some(chosen_child) = &self.right_child {
-                    return chosen_child.traverse(ray, camera, t_start, t_end);
-                }
-            } else {
-                if let Some(chosen_child) = &self.left_child {
-                    return chosen_child.traverse(ray, camera, t_start, t_end);
+            if let (Some(chosen_child), true) = (&self.right_child, flip_front_and_back) {
+                return chosen_child.traverse(ray, camera, t_start, t_end);
+            } else if let (Some(chosen_child), false) = (&self.left_child, flip_front_and_back) {
+                return chosen_child.traverse(ray, camera, t_start, t_end);
+            }
+        } else if let (Some(right_child), true) = (&self.right_child, flip_front_and_back) {
+            if let Some(KDTreeHitRecord {
+                p,
+                t: t_hit,
+                normal,
+                tangent,
+                bitangent,
+                front_face,
+                text_coord,
+            }) = right_child.traverse(ray, camera, t_start, t_split)
+            {
+                if t_hit < t_split {
+                    return Some(KDTreeHitRecord {
+                        p,
+                        t: t_split,
+                        normal,
+                        tangent,
+                        bitangent,
+                        front_face,
+                        text_coord,
+                    });
                 }
             }
-        } else {
-            if flip_front_and_back {
-                if let Some(right_child) = &self.right_child {
-                    if let Some(KDTreeHitRecord {
+
+            if let Some(left_child) = &self.left_child {
+                return left_child.traverse(ray, camera, t_split, t_end);
+            }
+        } else if let (Some(left_child), false) = (&self.left_child, flip_front_and_back) {
+            if let Some(KDTreeHitRecord {
+                p,
+                t: t_hit,
+                normal,
+                tangent,
+                bitangent,
+                front_face,
+                text_coord,
+            }) = left_child.traverse(ray, camera, t_start, t_split)
+            {
+                if t_hit < t_split {
+                    return Some(KDTreeHitRecord {
                         p,
-                        t: t_hit,
+                        t: t_split,
                         normal,
+                        tangent,
+                        bitangent,
                         front_face,
                         text_coord,
-                    }) = right_child.traverse(ray, camera, t_start, t_split)
-                    {
-                        if t_hit < t_split {
-                            return Some(KDTreeHitRecord {
-                                p,
-                                t: t_split,
-                                normal,
-                                front_face,
-                                text_coord,
-                            });
-                        }
-                    }
-
-                    if let Some(left_child) = &self.left_child {
-                        return left_child.traverse(ray, camera, t_split, t_end);
-                    }
+                    });
                 }
-            } else {
-                if let Some(left_child) = &self.left_child {
-                    if let Some(KDTreeHitRecord {
-                        p,
-                        t: t_hit,
-                        normal,
-                        front_face,
-                        text_coord,
-                    }) = left_child.traverse(ray, camera, t_start, t_split)
-                    {
-                        if t_hit < t_split {
-                            return Some(KDTreeHitRecord {
-                                p,
-                                t: t_split,
-                                normal,
-                                front_face,
-                                text_coord,
-                            });
-                        }
-                    }
+            }
 
-                    if let Some(right_child) = &self.right_child {
-                        return right_child.traverse(ray, camera, t_split, t_end);
-                    }
-                }
+            if let Some(right_child) = &self.right_child {
+                return right_child.traverse(ray, camera, t_split, t_end);
             }
         }
 
@@ -168,7 +164,7 @@ impl KDTree {
                 .partial_cmp(&triangle_b_0.points[0].get(axis))
                 .unwrap()
         });
-        let median = triangle_list.len() / 2 as usize;
+        let median = triangle_list.len() / 2_usize;
 
         let mut median_triangle = *triangle_list[median].clone();
         median_triangle
@@ -253,12 +249,14 @@ impl KDTree {
     }
 }
 
-pub fn build_from_obj<'a>(
+pub fn build_from_obj(
     object: Obj<TexturedVertex, u32>,
 ) -> (Vec<Box<Face>>, AxisAlignedBoundingBox) {
     let mut points = vec![];
     let mut minimum = Vec3::new(f64::INFINITY, f64::INFINITY, f64::INFINITY);
     let mut maximum = Vec3::new(-f64::INFINITY, -f64::INFINITY, -f64::INFINITY);
+
+    let bounding_box_padding = 0.25;
 
     for indices in object.indices.chunks(3) {
         let p1 = Vec3::new(
@@ -328,7 +326,15 @@ pub fn build_from_obj<'a>(
         points.push(Box::new(face));
     }
 
-    let bounding_box = AxisAlignedBoundingBox { minimum, maximum };
+    minimum.x -= bounding_box_padding;
+    minimum.y -= bounding_box_padding;
+    minimum.z -= bounding_box_padding;
+
+    maximum.x += bounding_box_padding;
+    maximum.y += bounding_box_padding;
+    maximum.z += bounding_box_padding;
+
+    let bounding_box = AxisAlignedBoundingBox::new(minimum, maximum);
     (points, bounding_box)
 }
 
@@ -344,8 +350,8 @@ fn triangle_intersection(
     let p2 = Vec3::new(face.points[1].x, face.points[1].y, face.points[1].z);
     let p3 = Vec3::new(face.points[2].x, face.points[2].y, face.points[2].z);
 
-    let p1p2 = &p2 - &p1;
-    let p1p3 = &p3 - &p1;
+    let p1p2 = p2 - p1;
+    let p1p3 = p3 - p1;
     let n = p1p2.cross(&p1p3);
 
     let triangle_ray_dot_product = n.dot(&ray.direction);
@@ -367,22 +373,22 @@ fn triangle_intersection(
 
     let p = ray.at(t);
 
-    let edge0 = &p2 - &p1;
-    let v_p1 = &p - &p1;
+    let edge0 = p2 - p1;
+    let v_p1 = p - p1;
     let c0 = edge0.cross(&v_p1);
     if n.dot(&c0) < 0.0 {
         return (None, 0.0);
     }
 
-    let edge1 = &p3 - &p2;
-    let v_p2 = &p - &p2;
+    let edge1 = p3 - p2;
+    let v_p2 = p - p2;
     let c1 = edge1.cross(&v_p2);
     if n.dot(&c1) < 0.0 {
         return (None, 0.0);
     }
 
-    let edge2 = p1 - &p3;
-    let v_p3 = &p - &p3;
+    let edge2 = p1 - p3;
+    let v_p3 = p - p3;
     let c2 = edge2.cross(&v_p3);
     if n.dot(&c2) < 0.0 {
         return (None, 0.0);
@@ -413,11 +419,42 @@ fn triangle_intersection(
             b0 * face.text_coords[0].v + b1 * face.text_coords[1].v + b2 * face.text_coords[2].v;
     }
 
+    // remap coordinate basis used for normal mapping
+    let edge1 = p2 - p1;
+    let edge2 = p3 - p1;
+
+    let uv1 = Vec3::new(
+        face.text_coords[1].u - face.text_coords[0].u,
+        face.text_coords[1].v - face.text_coords[0].v,
+        0.0,
+    );
+    let uv2 = Vec3::new(
+        face.text_coords[2].u - face.text_coords[0].u,
+        face.text_coords[2].v - face.text_coords[0].v,
+        0.0,
+    );
+
+    let f = 1.0 / (uv1.x * uv2.y - uv2.x * uv1.y);
+
+    let tangent = Vec3::new(
+        f * (uv2.y * edge1.x - uv1.y * edge2.x),
+        f * (uv2.y * edge1.y - uv1.y * edge2.y),
+        f * (uv2.y * edge1.z - uv1.y * edge2.z),
+    );
+
+    let bitangent = Vec3::new(
+        f * (-uv2.x * edge1.x + uv1.x * edge2.x),
+        f * (-uv2.x * edge1.y + uv1.x * edge2.y),
+        f * (-uv2.x * edge1.z + uv1.x * edge2.z),
+    );
+
     (
         Some(KDTreeHitRecord {
             p,
             t,
             normal: n_norm,
+            tangent: tangent.unit(),
+            bitangent: bitangent.unit(),
             front_face: _front_face,
             text_coord,
         }),

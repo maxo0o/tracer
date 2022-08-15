@@ -82,7 +82,7 @@ impl HittableList {
     pub fn _hit_something(&self, ray: &Ray, t_min: f64, t_max: f64) -> bool {
         for object in &self.objects {
             if let Some(bounding_box) = object.bounding_box() {
-                if bounding_box.hit(ray, t_min, t_max) {
+                if let (true, _, _) = bounding_box.hit(ray, t_min, t_max) {
                     return true;
                 }
             }
@@ -107,7 +107,7 @@ impl Hittable for HittableList {
 
         for object in &self.objects {
             if let Some(bounding_box) = object.bounding_box() {
-                if !bounding_box.hit(ray, t_min, t_max) {
+                if let (false, _, _) = bounding_box.hit(ray, t_min, t_max) {
                     continue;
                 }
             }

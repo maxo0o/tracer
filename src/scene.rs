@@ -6,10 +6,12 @@ use image::DynamicImage;
 use obj::{load_obj, Obj, TexturedVertex};
 use rayon::prelude::*;
 
+use crate::bvh::BoundingVolumeHierarchy;
 use crate::camera::Camera;
 use crate::colour::Colour;
 use crate::hittable::{Hittable, HittableList};
 use crate::json::*;
+use crate::kdtree_bounds::KDTreeBounds;
 use crate::material::{Dialectric, Isotropic, Lambertian, Light, Material, Metal};
 use crate::object::Object;
 use crate::pdf::CosinePDF;

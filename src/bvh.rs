@@ -87,29 +87,25 @@ impl Hittable for BoundingVolumeHierarchy {
         pixel: Option<(usize, usize)>,
         zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     ) -> Option<HitRecord> {
-        if !self.bounding_box.hit(ray, t_min, t_max) {
+        if let (false, _, _) = self.bounding_box.hit(ray, t_min, t_max) {
             return None;
         }
 
         let mut hit: Option<HitRecord> = None;
-        let mut left_hit_t = 0.0;
+        let mut left_hit_t = t_max;
         if let Some(hit_left) =
             self.left
                 .hit(ray, camera, t_min, t_max, pixel, Arc::clone(&zbuffer))
         {
             left_hit_t = hit_left.t;
             hit = Some(hit_left);
-        } else {
-            left_hit_t = t_max;
         }
-
-        if let Some(hit_right) = self
-            .right
-            .hit(ray, camera, t_min, left_hit_t, pixel, zbuffer)
+        if let Some(hit_right) =
+            self.right
+                .hit(ray, camera, t_min, left_hit_t, pixel, Arc::clone(&zbuffer))
         {
             hit = Some(hit_right);
         }
-
         hit
     }
 

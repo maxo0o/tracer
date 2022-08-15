@@ -1,0 +1,2370 @@
+{
+    "render_settings": {
+        "image_width": 2000,
+        "image_height": 1333, 
+        "samples": 2
+    },
+    "camera": {
+        "aspect_ratio": 1.5,
+        "look_from": [
+            5.0,
+            5.0,
+            5.0
+        ],
+        "look_at": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "vfov": 20.0,
+        "v_up": [
+            0.0,
+            1.0,
+            0.0
+        ],
+        "dist_to_focus": 1.0,
+        "aperture": 0.0
+    },
+    "models": [
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_wheel_bolt5.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_wheel_bolt4.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_wheel_bolt3.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_wheel_bolt2.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_wheel_bolt1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_wheel_bolt.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_pilot_light_circle1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_pilot_light_circle.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_pilot_light.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_pilot_light3.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_pilot_light2.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_pilot_light1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_switcher5.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_switcher4.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_switcher3.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_switcher2.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_switcher1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_switcher.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_tachometer.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_tachometer1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_tachometer2.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_tachometer4.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_tachometer5.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_tachometer6.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_tachometer3.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_break.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_break.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_gear_stick.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_break_cover.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_mirror_center.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_operka3.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_operka2.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_operka1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_operka.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_right1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_left1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_steering_wheel_circle.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_steering_wheel.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_case.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_pakubka.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_tunel_md72.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_tunel_md7.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_tank_lid_screws.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_tank_lid7.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_tank_lid6.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_tank_lid5.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_tank_lid4.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_licence_plate.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_blinker_back_right_gum.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_blinker_back_right_frame.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_blinker_back_right_glass.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_case_handle.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_licence_plate_light.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_gripping_back.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_hooks_back.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_blinker_left_gum.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_blinker_left_frame.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_blinker_left_glass.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_central_cover1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_pedal.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_pedal1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_central_cover.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_door_wood.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_door_cloth.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_interior_cover1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_interior_cover.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_doors.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_cooler_rad.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_hose.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_hose1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_cooler.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_cowling.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_protective_frame.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_protective_frame_covers.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_brakes_front.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_brakes_front1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_brakes_front_calipers.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_brakes_front_calipers1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_grid_left.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_grid_right.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_brakes_back.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_brakes_back_calipers.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_blinkers_left_glass.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_blinkers_left_frame.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_blinkers_left_gum.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_hooks_front.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_hooks_front1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_hook_gripping_front.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_hook_gripping_front1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_blinker_right_glass.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_blinker_right_frame.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_blinker_right_gum.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_tank_lid.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_hook_gripping_front.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_tank_lid1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_tank_lid2.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_tank_lid3.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_glass_frame_cover.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wiper_left.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wiper_right.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_mirror_left.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_mirror_left_frame.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_mirror_left_frame1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_mirror_left_frame_screw.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_side_glass_left.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_side_glass_right.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_nuts_cover.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_nuts_cover1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_front_nuts.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_front_nuts1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_right.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_back_nuts_cover.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_nuts.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_protective_frame.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_protective_frame_covers.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_interior_cover.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_left.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_cowl.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_exhaust_cover.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_exhaust_clutch.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_exhaust.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_glass.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_glass_frame.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_lights.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_lights1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_front.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_front1.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_back.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/plane.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.95,
+                                    0.95,
+                                    0.95
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

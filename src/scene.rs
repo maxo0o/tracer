@@ -28,6 +28,7 @@ const MAX_RAY_DEPTH: u32 = 100;
 
 pub struct Scene {
     pub camera: Camera,
+    //pub objects: BoundingVolumeHierarchy,
     pub objects: HittableList,
     pub lights: Vec<Arc<Box<dyn Hittable>>>,
     pub skybox: Option<Sphere>,
@@ -78,6 +79,7 @@ impl Scene {
         };
 
         let mut objects = HittableList::new();
+        //let mut objects: Vec<Arc<Box<dyn Hittable>>> = vec![];
         let mut lights: Vec<Arc<Box<dyn Hittable>>> = vec![];
 
         let mut skybox: Option<Sphere> = None;
@@ -114,6 +116,7 @@ impl Scene {
                         lights.push(Arc::new(light_sampler));
                     }
 
+                    //objects.push(Arc::new(Box::new(object)));
                     objects.objects.push(Box::new(object));
                 }
                 HittablesJSON::Volume {
@@ -132,10 +135,14 @@ impl Scene {
                     let object_material = parse_material(&material);
                     let mist = Volume::new(Box::new(cube), density, object_material);
 
+                    //objects.push(Arc::new(Box::new(mist)));
                     objects.objects.push(Box::new(mist));
                 }
             }
         }
+
+        //let bvh = BoundingVolumeHierarchy::build(&mut objects[..], 0);
+        //eprintln!("{:?}", bvh);
 
         Scene {
             render_settings,
@@ -209,6 +216,7 @@ impl Scene {
             pixel_tup = pixel;
         }
 
+        //eprintln!("=====START====");
         if let Some(hit_record) = &self.objects.hit(
             ray,
             &self.camera,
@@ -217,6 +225,7 @@ impl Scene {
             pixel_tup,
             Arc::clone(&zbuffer),
         ) {
+            //eprintln!("====STOP====");
             let (scattered_ray, albedo, is_scattered) =
                 hit_record.material.scatter(ray, hit_record);
 

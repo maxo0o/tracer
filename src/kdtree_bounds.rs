@@ -189,7 +189,7 @@ impl KDTreeBounds {
         let median_object = object_list[median].clone();
 
         let split_distance = median_object.bounding_box().unwrap().minimum.get(axis);
-        if object_list.len() <= 2 || depth == max_depth {
+        if object_list.len() <= 15 || depth == max_depth {
             return Some(Box::new(KDTreeBounds {
                 split_axis: axis,
                 left_child: None,

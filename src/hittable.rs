@@ -107,7 +107,7 @@ impl Hittable for HittableList {
 
         for object in &self.objects {
             if let Some(bounding_box) = object.bounding_box() {
-                if let (false, _, _) = bounding_box.hit(ray, t_min, t_max) {
+                if let (false, _, _) = bounding_box.hit(ray, t_min, closest_so_far) {
                     continue;
                 }
             }

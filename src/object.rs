@@ -10,13 +10,19 @@ use crate::utils::distance;
 use crate::vector::Vec3;
 
 use obj::{Obj, TexturedVertex};
+use std::fmt;
 use std::sync::{Arc, Mutex};
 
-#[derive(Debug)]
 pub struct Object {
     pub tree: Box<KDTree>,
     material: Box<dyn Material>,
     bounding_box: AxisAlignedBoundingBox,
+}
+
+impl fmt::Debug for Object {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Object",)
+    }
 }
 
 impl Object {
@@ -45,6 +51,7 @@ impl Hittable for Object {
         pixel: Option<(usize, usize)>,
         zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
     ) -> Option<HitRecord> {
+        //eprintln!("Search object");
         if let Some(KDTreeHitRecord {
             p,
             t,

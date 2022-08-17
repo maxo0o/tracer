@@ -1,8 +1,8 @@
 {
     "render_settings": {
-        "image_width": 2000,
-        "image_height": 1333, 
-        "samples": 2  
+        "image_width": 1000,
+        "image_height": 666, 
+        "samples": 10  
     },
     "camera": {
         "aspect_ratio": 1.5,
@@ -660,16 +660,17 @@
             "Model": {
                 "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_cowling.obj",
                 "material": {
-                    "Lambertian": {
+                    "Metal": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.55,
-                                    0.55,
-                                    0.55
+                                    0.25,
+                                    0.25,
+                                    0.25
                                 ]
                             }
-                        }
+                        },
+                        "f": 0.0
                     }
                 }
             }
@@ -678,16 +679,17 @@
             "Model": {
                 "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_protective_frame.obj",
                 "material": {
-                    "Lambertian": {
+                    "Metal": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.55,
-                                    0.55,
-                                    0.55
+                                    0.75,
+                                    0.75,
+                                    0.75
                                 ]
                             }
-                        }
+                        },
+                        "f": 0.0
                     }
                 }
             }
@@ -696,16 +698,17 @@
             "Model": {
                 "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_protective_frame_covers.obj",
                 "material": {
-                    "Lambertian": {
+                    "Metal": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.55,
-                                    0.55,
-                                    0.55
+                                    0.75,
+                                    0.75,
+                                    0.75
                                 ]
                             }
-                        }
+                        },
+                        "f": 0.0
                     }
                 }
             }
@@ -1182,16 +1185,17 @@
             "Model": {
                 "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_mirror_left.obj",
                 "material": {
-                    "Lambertian": {
+                    "Metal": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.55,
-                                    0.55,
-                                    0.55
+                                    0.75,
+                                    0.75,
+                                    0.75
                                 ]
                             }
-                        }
+                        },
+                        "f": 0.0
                     }
                 }
             }
@@ -1200,16 +1204,17 @@
             "Model": {
                 "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_mirror_left_frame.obj",
                 "material": {
-                    "Lambertian": {
+                    "Metal": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.55,
-                                    0.55,
-                                    0.55
+                                    0.75,
+                                    0.75,
+                                    0.75
                                 ]
                             }
-                        }
+                        },
+                        "f": 0.0
                     }
                 }
             }
@@ -1218,16 +1223,17 @@
             "Model": {
                 "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_mirror_left_frame1.obj",
                 "material": {
-                    "Lambertian": {
+                    "Metal": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.55,
-                                    0.55,
-                                    0.55
+                                    0.75,
+                                    0.75,
+                                    0.75
                                 ]
                             }
-                        }
+                        },
+                        "f": 0.0
                     }
                 }
             }
@@ -1236,16 +1242,17 @@
             "Model": {
                 "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_mirror_left_frame_screw.obj",
                 "material": {
-                    "Lambertian": {
+                    "Metal": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.55,
-                                    0.55,
-                                    0.55
+                                    0.75,
+                                    0.75,
+                                    0.75
                                 ]
                             }
-                        }
+                        },
+                        "f": 0.0
                     }
                 }
             }
@@ -1416,16 +1423,17 @@
             "Model": {
                 "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_protective_frame.obj",
                 "material": {
-                    "Lambertian": {
+                    "Metal": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.55,
-                                    0.55,
-                                    0.55
+                                    0.75,
+                                    0.75,
+                                    0.75
                                 ]
                             }
-                        }
+                        },
+                        "f": 0.0
                     }
                 }
             }
@@ -1434,16 +1442,17 @@
             "Model": {
                 "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_protective_frame_covers.obj",
                 "material": {
-                    "Lambertian": {
+                    "Metal": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.55,
-                                    0.55,
-                                    0.55
+                                    0.75,
+                                    0.75,
+                                    0.75
                                 ]
                             }
-                        }
+                        },
+                        "f": 0.0
                     }
                 }
             }
@@ -1488,16 +1497,17 @@
             "Model": {
                 "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_cowl.obj",
                 "material": {
-                    "Lambertian": {
+                    "Metal": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.55,
-                                    0.55,
-                                    0.55
+                                    0.25,
+                                    0.25,
+                                    0.25
                                 ]
                             }
-                        }
+                        },
+                        "f": 0.0
                     }
                 }
             }
@@ -1506,16 +1516,17 @@
             "Model": {
                 "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_exhaust_cover.obj",
                 "material": {
-                    "Lambertian": {
+                    "Metal": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.55,
-                                    0.55,
-                                    0.55
+                                    0.75,
+                                    0.75,
+                                    0.75
                                 ]
                             }
-                        }
+                        },
+                        "f": 0.0
                     }
                 }
             }
@@ -1524,16 +1535,17 @@
             "Model": {
                 "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_exhaust_clutch.obj",
                 "material": {
-                    "Lambertian": {
+                    "Metal": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.55,
-                                    0.55,
-                                    0.55
+                                    0.75,
+                                    0.75,
+                                    0.75
                                 ]
                             }
-                        }
+                        },
+                        "f": 0.0
                     }
                 }
             }
@@ -1542,16 +1554,17 @@
             "Model": {
                 "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_exhaust.obj",
                 "material": {
-                    "Lambertian": {
+                    "Metal": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.55,
-                                    0.55,
-                                    0.55
+                                    0.75,
+                                    0.75,
+                                    0.75
                                 ]
                             }
-                        }
+                        },
+                        "f": 0.0
                     }
                 }
             }
@@ -1560,16 +1573,8 @@
             "Model": {
                 "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_glass.obj",
                 "material": {
-                    "Lambertian": {
-                        "albedo": {
-                            "SolidColour": {
-                                "colour": [
-                                    0.55,
-                                    0.55,
-                                    0.55
-                                ]
-                            }
-                        }
+                    "Dialectric": {
+                        "index_of_refraction": 0.001
                     }
                 }
             }
@@ -1578,16 +1583,17 @@
             "Model": {
                 "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_glass_frame.obj",
                 "material": {
-                    "Lambertian": {
+                    "Metal": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.55,
-                                    0.55,
-                                    0.55
+                                    0.75,
+                                    0.75,
+                                    0.75
                                 ]
                             }
-                        }
+                        },
+                        "f": 0.0
                     }
                 }
             }
@@ -1700,5 +1706,15 @@
                 }
             }
         }
-    ]
+    ],
+    "skybox": {
+        "radius": 500.0,
+        "image_texture": {
+            "ImageTexture": {
+                "image_path": "/mnt/c/Users/maxmc/Desktop/studio_small.png",
+                "scale": 1.0,
+                "is_light": true
+            }
+        }
+    }
 }

@@ -9,7 +9,7 @@ use rayon::prelude::*;
 use crate::bvh::BoundingVolumeHierarchy;
 use crate::camera::Camera;
 use crate::colour::Colour;
-use crate::hittable::{Hittable, HittableList};
+use crate::hittable::{HitRecord, Hittable, HittableList};
 use crate::json::*;
 use crate::kdtree_bounds::KDTreeBounds;
 use crate::material::{Dialectric, Isotropic, Lambertian, Light, Material, Metal};
@@ -24,7 +24,7 @@ use crate::vector::Vec3;
 use crate::volume::Volume;
 
 const INFINITY: f64 = f64::INFINITY;
-const MAX_RAY_DEPTH: u32 = 100;
+const MAX_RAY_DEPTH: u32 = 10;
 
 pub struct Scene {
     pub camera: Camera,
@@ -176,6 +176,7 @@ impl Scene {
                 .into_par_iter()
                 .map(|i| {
                     let mut pixel_colour = Colour::new(0.0, 0.0, 0.0);
+
                     for _ in 0..self.render_settings.samples {
                         let u = (i as f64 + rand::random::<f64>())
                             / (self.render_settings.image_width - 1) as f64;
@@ -225,7 +226,6 @@ impl Scene {
             pixel_tup,
             Arc::clone(&zbuffer),
         ) {
-            //eprintln!("====STOP====");
             let (scattered_ray, albedo, is_scattered) =
                 hit_record.material.scatter(ray, hit_record);
 

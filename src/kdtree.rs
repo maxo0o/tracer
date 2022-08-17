@@ -17,6 +17,7 @@ pub struct UVCoord {
 pub struct Face {
     points: [Vec3; 3],
     text_coords: [UVCoord; 3],
+    normals: [Vec3; 3],
 }
 
 pub struct KDTreeHitRecord {
@@ -190,7 +191,7 @@ impl KDTree {
             .sort_by(|a, b| a.get(axis).partial_cmp(&b.get(axis)).unwrap());
 
         let split_distance = median_triangle.points[0].get(axis);
-        if triangle_list.len() <= 25 || depth == max_depth {
+        if triangle_list.len() <= 15 || depth == max_depth {
             return Some(Box::new(KDTree {
                 split_axis: axis,
                 left_child: None,
@@ -205,10 +206,10 @@ impl KDTree {
         // find any points that may not have been placed on the correct side
         let mut left_additional = vec![];
         let mut right_additional = vec![];
-        for (i, triangle) in triangle_list.iter().enumerate() {
+        for triangle in triangle_list.iter() {
             let mut point_on_right = false;
             let mut point_on_left = false;
-            let mut points_on_boundary = 0;
+            let mut points_on_boundary = false;
             if triangle.points[0].get(axis) > split_distance
                 || triangle.points[1].get(axis) > split_distance
                 || triangle.points[2].get(axis) > split_distance
@@ -223,47 +224,22 @@ impl KDTree {
                 point_on_left = true;
             }
 
-            if triangle.points[0].get(axis) == split_distance {
-                points_on_boundary += 1;
-            }
-            if triangle.points[1].get(axis) == split_distance {
-                points_on_boundary += 1;
-            }
-            if triangle.points[2].get(axis) == split_distance {
-                points_on_boundary += 1;
+            if triangle.points[0].get(axis) == split_distance
+                && triangle.points[1].get(axis) == split_distance
+                && triangle.points[2].get(axis) == split_distance
+            {
+                points_on_boundary = true;
             }
 
-            if (point_on_left && point_on_right) || points_on_boundary == 3 {
-                //    if i < median {
+            if (point_on_left && point_on_right) || points_on_boundary {
                 right_additional.push(Box::new(*triangle.clone()));
-                //  } else if i > median {
                 left_additional.push(Box::new(*triangle.clone()));
-                // }
             } else if point_on_left {
                 left_additional.push(Box::new(*triangle.clone()));
             } else if point_on_right {
                 right_additional.push(Box::new(*triangle.clone()));
             }
         }
-
-        //        let mut left_points = vec![];
-        //      let mut right_points = vec![];
-
-        //for left_point in &triangle_list[..median] {
-        //    left_points.push(Box::new(*left_point.clone()));
-        //}
-
-        //    for left_additional_point in &left_additional {
-        //      left_points.push(Box::new(left_additional_point.clone()));
-        // }
-
-        //for right_point in &triangle_list[median..] {
-        //    right_points.push(Box::new(*right_point.clone()));
-        //}
-
-        //for right_additional_point in &right_additional {
-        //  right_points.push(Box::new(right_additional_point.clone()));
-        //}
 
         let left_child = KDTree::build(&mut left_additional[..], max_depth, depth + 1);
         let right_child = KDTree::build(&mut right_additional[..], max_depth, depth + 1);
@@ -319,9 +295,19 @@ pub fn build_from_obj(
             v: object.vertices[indices[2] as usize].texture[1] as f64,
         };
 
+        let normal1 = object.vertices[indices[0] as usize].normal;
+        let normal1 = Vec3::new(normal1[0] as f64, normal1[1] as f64, normal1[2] as f64);
+
+        let normal2 = object.vertices[indices[1] as usize].normal;
+        let normal2 = Vec3::new(normal2[0] as f64, normal2[1] as f64, normal2[2] as f64);
+
+        let normal3 = object.vertices[indices[2] as usize].normal;
+        let normal3 = Vec3::new(normal3[0] as f64, normal3[1] as f64, normal3[2] as f64);
+
         let face = Face {
             points: [p1, p2, p3],
             text_coords: [uv1, uv2, uv3],
+            normals: [normal1, normal2, normal3],
         };
 
         let min_x = p1.x.min(p2.x).min(p3.x);
@@ -442,12 +428,15 @@ fn triangle_intersection(
 
     // Determine the UV coords of the hitpoint
     let mut text_coord = UVCoord { u: 0.3, v: 0.5 };
+    let mut smooth_normal = Vec3::new(0.0, 0.0, 0.0);
     if let Some((b1, b2)) = get_bary_coords(&p1, &p2, &p3, &p) {
         let b0 = 1.0 - b1 - b2;
         text_coord.u =
             b0 * face.text_coords[0].u + b1 * face.text_coords[1].u + b2 * face.text_coords[2].u;
         text_coord.v =
             b0 * face.text_coords[0].v + b1 * face.text_coords[1].v + b2 * face.text_coords[2].v;
+
+        smooth_normal = b0 * &face.normals[0] + b1 * &face.normals[1] + b2 * &face.normals[2];
     }
 
     // remap coordinate basis used for normal mapping
@@ -479,11 +468,14 @@ fn triangle_intersection(
         f * (-uv2.x * edge1.z + uv1.x * edge2.z),
     );
 
+    // compute smooth normals
+    let normal = smooth_normal.unit();
+
     (
         Some(KDTreeHitRecord {
             p,
             t,
-            normal: n_norm,
+            normal,
             tangent: tangent.unit(),
             bitangent: bitangent.unit(),
             front_face: _front_face,

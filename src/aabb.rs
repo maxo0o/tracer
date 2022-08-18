@@ -1,11 +1,12 @@
 use crate::ray::Ray;
 use crate::vector::Vec3;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct AxisAlignedBoundingBox {
     pub minimum: Vec3,
     pub maximum: Vec3,
     pub bounds: [Vec3; 2],
+    pub centroid: Vec3,
 }
 
 #[allow(dead_code)]
@@ -15,6 +16,38 @@ impl AxisAlignedBoundingBox {
             minimum: point_a,
             maximum: point_b,
             bounds: [point_a, point_b],
+            centroid: 0.5 * &point_a + 0.5 * &point_b,
+        }
+    }
+
+    pub fn offset(&self, p: Vec3) -> Vec3 {
+        let mut o = p - &self.minimum;
+        if self.maximum.x > self.minimum.x {
+            o.x /= self.maximum.x - self.minimum.x;
+        }
+        if self.maximum.y > self.minimum.y {
+            o.y /= self.maximum.y - self.minimum.y;
+        }
+        if self.maximum.z > self.minimum.z {
+            o.z /= self.maximum.z - self.minimum.z;
+        }
+
+        o
+    }
+
+    pub fn surface_area(&self) -> f64 {
+        let d = self.maximum - self.minimum;
+        2.0 * (d.x * d.y + d.x * d.z + d.y * d.z)
+    }
+
+    pub fn maximum_extent(&self) -> u32 {
+        let d = self.maximum - self.minimum;
+        if d.x > d.y && d.x > d.z {
+            0
+        } else if d.y > d.z {
+            1
+        } else {
+            2
         }
     }
 

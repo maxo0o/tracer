@@ -63,6 +63,7 @@ pub struct KDTree {
     pub split_distance: f64,
     pub is_leaf: bool,
     pub faces: Option<Vec<Box<Face>>>,
+    pub bounds: AxisAlignedBoundingBox,
 }
 
 impl fmt::Debug for KDTree {
@@ -109,8 +110,10 @@ impl KDTree {
         let ray_origin = [ray.origin.x, ray.origin.y, ray.origin.z];
         let ray_dir = [ray.direction.x, ray.direction.y, ray.direction.z];
         let mut d_min = f64::INFINITY;
-        let t_split =
-            (self.split_distance - ray_origin[self.split_axis]) / ray_dir[self.split_axis];
+
+        if let (false, _, _) = self.bounds.hit(ray, 0.001, INFINITY) {
+            return None;
+        }
 
         if self.is_leaf {
             let mut potential_hit: Option<KDTreeHitRecord> = None;
@@ -135,6 +138,8 @@ impl KDTree {
             return potential_hit;
         }
 
+        let t_split =
+            (self.split_distance - ray_origin[self.split_axis]) / ray_dir[self.split_axis];
         let flip_front_and_back = ray_dir[self.split_axis].is_sign_negative();
         if t_split <= t_start {
             if let (Some(chosen_child), true) = (&self.left_child, flip_front_and_back) {
@@ -208,102 +213,102 @@ impl KDTree {
     }
 
     // build KDTree by splitting on the median of sorted triangles
-    pub fn build(
-        triangle_list: &mut [Box<Face>],
-        max_depth: u32,
-        depth: u32,
-    ) -> Option<Box<KDTree>> {
-        if triangle_list.is_empty() {
-            return None;
-        }
+    // pub fn build(
+    //     triangle_list: &mut [Box<Face>],
+    //     max_depth: u32,
+    //     depth: u32,
+    // ) -> Option<Box<KDTree>> {
+    //     if triangle_list.is_empty() {
+    //         return None;
+    //     }
 
-        let axis = (depth % 3) as usize;
-        triangle_list.sort_by(|triangle_a, triangle_b| {
-            // Sort the points inside the triangle by axis too
-            let mut triangle_a_0 = *triangle_a.clone();
-            let mut triangle_b_0 = *triangle_b.clone();
+    //     let axis = (depth % 3) as usize;
+    //     triangle_list.sort_by(|triangle_a, triangle_b| {
+    //         // Sort the points inside the triangle by axis too
+    //         let mut triangle_a_0 = *triangle_a.clone();
+    //         let mut triangle_b_0 = *triangle_b.clone();
 
-            triangle_a_0
-                .points
-                .sort_by(|a, b| a.get(axis).partial_cmp(&b.get(axis)).unwrap());
-            triangle_b_0
-                .points
-                .sort_by(|a, b| a.get(axis).partial_cmp(&b.get(axis)).unwrap());
+    //         triangle_a_0
+    //             .points
+    //             .sort_by(|a, b| a.get(axis).partial_cmp(&b.get(axis)).unwrap());
+    //         triangle_b_0
+    //             .points
+    //             .sort_by(|a, b| a.get(axis).partial_cmp(&b.get(axis)).unwrap());
 
-            triangle_a_0.points[0]
-                .get(axis)
-                .partial_cmp(&triangle_b_0.points[0].get(axis))
-                .unwrap()
-        });
-        let median = triangle_list.len() / 2_usize;
+    //         triangle_a_0.points[0]
+    //             .get(axis)
+    //             .partial_cmp(&triangle_b_0.points[0].get(axis))
+    //             .unwrap()
+    //     });
+    //     let median = triangle_list.len() / 2_usize;
 
-        let mut median_triangle = *triangle_list[median].clone();
-        median_triangle
-            .points
-            .sort_by(|a, b| a.get(axis).partial_cmp(&b.get(axis)).unwrap());
+    //     let mut median_triangle = *triangle_list[median].clone();
+    //     median_triangle
+    //         .points
+    //         .sort_by(|a, b| a.get(axis).partial_cmp(&b.get(axis)).unwrap());
 
-        let split_distance = median_triangle.points[0].get(axis);
-        if triangle_list.len() <= 15 || depth == max_depth {
-            return Some(Box::new(KDTree {
-                split_axis: axis,
-                left_child: None,
-                right_child: None,
-                split_distance,
-                is_leaf: true,
-                faces: Some(triangle_list.to_vec()),
-            }));
-        }
+    //     let split_distance = median_triangle.points[0].get(axis);
+    //     if triangle_list.len() <= 15 || depth == max_depth {
+    //         return Some(Box::new(KDTree {
+    //             split_axis: axis,
+    //             left_child: None,
+    //             right_child: None,
+    //             split_distance,
+    //             is_leaf: true,
+    //             faces: Some(triangle_list.to_vec()),
+    //         }));
+    //     }
 
-        // find any points that may not have been placed on the correct side
-        let mut left_additional = vec![];
-        let mut right_additional = vec![];
-        for triangle in triangle_list.iter() {
-            let mut point_on_right = false;
-            let mut point_on_left = false;
-            let mut points_on_boundary = false;
-            if triangle.points[0].get(axis) > split_distance
-                || triangle.points[1].get(axis) > split_distance
-                || triangle.points[2].get(axis) > split_distance
-            {
-                point_on_right = true;
-            }
+    //     // find any points that may not have been placed on the correct side
+    //     let mut left_additional = vec![];
+    //     let mut right_additional = vec![];
+    //     for triangle in triangle_list.iter() {
+    //         let mut point_on_right = false;
+    //         let mut point_on_left = false;
+    //         let mut points_on_boundary = false;
+    //         if triangle.points[0].get(axis) > split_distance
+    //             || triangle.points[1].get(axis) > split_distance
+    //             || triangle.points[2].get(axis) > split_distance
+    //         {
+    //             point_on_right = true;
+    //         }
 
-            if triangle.points[0].get(axis) < split_distance
-                || triangle.points[1].get(axis) < split_distance
-                || triangle.points[2].get(axis) < split_distance
-            {
-                point_on_left = true;
-            }
+    //         if triangle.points[0].get(axis) < split_distance
+    //             || triangle.points[1].get(axis) < split_distance
+    //             || triangle.points[2].get(axis) < split_distance
+    //         {
+    //             point_on_left = true;
+    //         }
 
-            if triangle.points[0].get(axis) == split_distance
-                && triangle.points[1].get(axis) == split_distance
-                && triangle.points[2].get(axis) == split_distance
-            {
-                points_on_boundary = true;
-            }
+    //         if triangle.points[0].get(axis) == split_distance
+    //             && triangle.points[1].get(axis) == split_distance
+    //             && triangle.points[2].get(axis) == split_distance
+    //         {
+    //             points_on_boundary = true;
+    //         }
 
-            if (point_on_left && point_on_right) || points_on_boundary {
-                right_additional.push(Box::new(*triangle.clone()));
-                left_additional.push(Box::new(*triangle.clone()));
-            } else if point_on_left {
-                left_additional.push(Box::new(*triangle.clone()));
-            } else if point_on_right {
-                right_additional.push(Box::new(*triangle.clone()));
-            }
-        }
+    //         if (point_on_left && point_on_right) || points_on_boundary {
+    //             right_additional.push(Box::new(*triangle.clone()));
+    //             left_additional.push(Box::new(*triangle.clone()));
+    //         } else if point_on_left {
+    //             left_additional.push(Box::new(*triangle.clone()));
+    //         } else if point_on_right {
+    //             right_additional.push(Box::new(*triangle.clone()));
+    //         }
+    //     }
 
-        let left_child = KDTree::build(&mut left_additional[..], max_depth, depth + 1);
-        let right_child = KDTree::build(&mut right_additional[..], max_depth, depth + 1);
+    //     let left_child = KDTree::build(&mut left_additional[..], max_depth, depth + 1);
+    //     let right_child = KDTree::build(&mut right_additional[..], max_depth, depth + 1);
 
-        Some(Box::new(KDTree {
-            split_axis: axis,
-            left_child,
-            right_child,
-            split_distance: median_triangle.points[0].get(axis),
-            is_leaf: false,
-            faces: None,
-        }))
-    }
+    //     Some(Box::new(KDTree {
+    //         split_axis: axis,
+    //         left_child,
+    //         right_child,
+    //         split_distance: median_triangle.points[0].get(axis),
+    //         is_leaf: false,
+    //         faces: None,
+    //     }))
+    // }
 
     //build KDTree using Surface Area Heuristic
     pub fn build_sah(
@@ -313,7 +318,7 @@ impl KDTree {
         bounds: AxisAlignedBoundingBox,
         bad_refines: u32,
     ) -> Option<Box<KDTree>> {
-        if triangle_list_len <= 500 || depth == 0 {
+        if triangle_list_len <= 250 || depth == 0 {
             return Some(Box::new(KDTree {
                 split_axis: 0,
                 left_child: None,
@@ -321,13 +326,14 @@ impl KDTree {
                 split_distance: 0.0,
                 is_leaf: true,
                 faces: Some(triangle_list.to_vec()),
+                bounds,
             }));
         };
 
         let mut best_axis = -1;
         let mut best_offset = -1;
         let mut best_cost = INFINITY;
-        let isect_cost = 80.0;
+        let isect_cost = 20.0;
         let traversal_cost = 1.0;
         let old_cost = triangle_list_len as f64 * isect_cost;
         let total_sa = bounds.surface_area();
@@ -335,7 +341,7 @@ impl KDTree {
         let d = bounds.maximum - bounds.minimum;
         let mut axis = bounds.maximum_extent() as usize;
         let mut retries = 0;
-        let empty_bonus = 0.75;
+        let empty_bonus = 0.5;
         let mut edges: [Vec<BoundEdge>; 3] = [
             vec![BoundEdge::new(0.0, 0, true); 2_usize * triangle_list_len],
             vec![BoundEdge::new(0.0, 0, true); 2_usize * triangle_list_len],
@@ -421,26 +427,30 @@ impl KDTree {
             || best_axis == -1
             || b_refines == 3
         {
+            eprintln!("no good splits!");
             return Some(Box::new(KDTree {
-                split_axis: 0,
+                split_axis: axis,
                 left_child: None,
                 right_child: None,
                 split_distance: 0.0,
                 is_leaf: true,
                 faces: Some(triangle_list.to_vec()),
+                bounds,
             }));
         }
 
-        let mut in_both = HashSet::new();
         let mut left = vec![];
         let mut right = vec![];
+        let mut k = 0;
         for i in 0..best_offset as usize {
             match edges[best_axis as usize][i].edge_type {
                 EdgeType::Start => {
                     left.push(triangle_list[edges[best_axis as usize][i].triangle_num].clone())
                 }
                 EdgeType::End => {
-                    in_both.insert(edges[best_axis as usize][i].triangle_num);
+                    if edges[best_axis as usize][i].t > edges[best_axis as usize][best_offset as usize].t {
+                        k += 1;
+                    }
                 }
             }
         }
@@ -448,46 +458,44 @@ impl KDTree {
         for i in (best_offset as usize + 1)..(2 * triangle_list_len) {
             match edges[best_axis as usize][i].edge_type {
                 EdgeType::End => {
-                    right.push(triangle_list[edges[best_axis as usize][i].triangle_num].clone());
-                    in_both.remove(&edges[best_axis as usize][i].triangle_num);
+                    right.push(triangle_list[edges[best_axis as usize][i].triangle_num].clone())
                 }
                 EdgeType::Start => {
-                    in_both.insert(edges[best_axis as usize][i].triangle_num);
+                    if edges[best_axis as usize][i].t < edges[best_axis as usize][best_offset as usize].t {
+                        k += 1;
+                    }
                 }
             }
         }
 
-        eprintln!("{}", in_both.len());
-        //for triangle_num in in_both {
-        //  left.push(triangle_list[triangle_num].clone());
-        //right.push(triangle_list[triangle_num].clone());
-        //}
+        eprintln!("k: {}", k);
 
         let t_split = edges[best_axis as usize][best_offset as usize].t;
         let mut bounds_left = bounds.clone();
-        let mut bounds_right = bounds;
+        let mut bounds_right = bounds.clone();
         bounds_left.maximum.set(best_axis as usize, t_split);
         bounds_right.minimum.set(best_axis as usize, t_split);
         let left_len = left.len();
         let right_len = right.len();
 
         let left_child =
-            KDTree::build_sah(&mut left[..], left_len, depth - 1, bounds_left, bad_refines);
+            KDTree::build_sah(&mut left[..], left_len, depth - 1, bounds_left, b_refines);
         let right_child = KDTree::build_sah(
             &mut right[..],
             right_len,
             depth - 1,
             bounds_right,
-            bad_refines,
+            b_refines,
         );
 
         Some(Box::new(KDTree {
-            split_axis: axis,
+            split_axis: best_axis as usize,
             left_child,
             right_child,
             split_distance: t_split,
             is_leaf: false,
             faces: None,
+            bounds,
         }))
     }
 }
@@ -499,7 +507,7 @@ pub fn build_from_obj(
     let mut minimum = Vec3::new(f64::INFINITY, f64::INFINITY, f64::INFINITY);
     let mut maximum = Vec3::new(-f64::INFINITY, -f64::INFINITY, -f64::INFINITY);
 
-    let bounding_box_padding = 0.25;
+    let bounding_box_padding = 0.0;
 
     for indices in object.indices.chunks(3) {
         let p1 = Vec3::new(

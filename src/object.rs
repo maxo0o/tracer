@@ -29,7 +29,11 @@ impl Object {
     pub fn new(object: Obj<TexturedVertex, u32>, material: Box<dyn Material>) -> Object {
         let (mut faces, bounding_box) = build_from_obj(object);
 
-        if let Some(tree) = KDTree::build(&mut faces[..], 15, 0) {
+        let faces_len = faces.len();
+        let depth = 8 + (1.3 * (faces_len as f64).log2()) as u32;
+        if let Some(tree) =
+            KDTree::build_sah(&mut faces[..], faces_len, depth, bounding_box.clone(), 0)
+        {
             Object {
                 tree,
                 material,

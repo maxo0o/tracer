@@ -1,10 +1,12 @@
-use crate::aabb::AxisAlignedBoundingBox;
+use crate::aabb::{surrounding_box, AxisAlignedBoundingBox};
 use crate::camera::Camera;
 use crate::ray::Ray;
 use crate::utils::distance;
 use crate::vector::Vec3;
 
 use obj::{Obj, TexturedVertex};
+use std::collections::HashSet;
+use std::f64::INFINITY;
 use std::fmt;
 
 #[derive(Debug, Clone)]
@@ -18,6 +20,29 @@ pub struct Face {
     points: [Vec3; 3],
     text_coords: [UVCoord; 3],
     normals: [Vec3; 3],
+    bounds: AxisAlignedBoundingBox,
+}
+
+impl Face {
+    pub fn new(points: [Vec3; 3], text_coords: [UVCoord; 3], normals: [Vec3; 3]) -> Face {
+        let minimum = Vec3::new(
+            points[0].x.min(points[1].x).min(points[2].x),
+            points[0].y.min(points[1].y).min(points[2].y),
+            points[0].z.min(points[1].z).min(points[2].z),
+        );
+        let maximum = Vec3::new(
+            points[0].x.min(points[1].x).min(points[2].x),
+            points[0].y.min(points[1].y).min(points[2].y),
+            points[0].z.min(points[1].z).min(points[2].z),
+        );
+        let bounds = AxisAlignedBoundingBox::new(minimum, maximum);
+        Face {
+            points,
+            text_coords,
+            normals,
+            bounds,
+        }
+    }
 }
 
 pub struct KDTreeHitRecord {
@@ -36,7 +61,6 @@ pub struct KDTree {
     pub left_child: Option<Box<KDTree>>,
     pub right_child: Option<Box<KDTree>>,
     pub split_distance: f64,
-    pub location: Box<Face>,
     pub is_leaf: bool,
     pub faces: Option<Vec<Box<Face>>>,
 }
@@ -44,6 +68,33 @@ pub struct KDTree {
 impl fmt::Debug for KDTree {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "KDTree")
+    }
+}
+
+#[derive(Copy, Clone)]
+enum EdgeType {
+    Start,
+    End,
+}
+
+#[derive(Clone)]
+struct BoundEdge {
+    t: f64,
+    triangle_num: usize,
+    edge_type: EdgeType,
+}
+
+impl BoundEdge {
+    fn new(t: f64, triangle_num: usize, starting: bool) -> BoundEdge {
+        let edge_type = match starting {
+            true => EdgeType::Start,
+            false => EdgeType::End,
+        };
+        BoundEdge {
+            t,
+            triangle_num,
+            edge_type,
+        }
     }
 }
 
@@ -156,6 +207,7 @@ impl KDTree {
         None
     }
 
+    // build KDTree by splitting on the median of sorted triangles
     pub fn build(
         triangle_list: &mut [Box<Face>],
         max_depth: u32,
@@ -197,7 +249,6 @@ impl KDTree {
                 left_child: None,
                 right_child: None,
                 split_distance,
-                location: Box::new(median_triangle),
                 is_leaf: true,
                 faces: Some(triangle_list.to_vec()),
             }));
@@ -249,7 +300,192 @@ impl KDTree {
             left_child,
             right_child,
             split_distance: median_triangle.points[0].get(axis),
-            location: Box::new(median_triangle),
+            is_leaf: false,
+            faces: None,
+        }))
+    }
+
+    //build KDTree using Surface Area Heuristic
+    pub fn build_sah(
+        triangle_list: &mut [Box<Face>],
+        triangle_list_len: usize,
+        depth: u32,
+        bounds: AxisAlignedBoundingBox,
+        bad_refines: u32,
+    ) -> Option<Box<KDTree>> {
+        if triangle_list_len <= 500 || depth == 0 {
+            return Some(Box::new(KDTree {
+                split_axis: 0,
+                left_child: None,
+                right_child: None,
+                split_distance: 0.0,
+                is_leaf: true,
+                faces: Some(triangle_list.to_vec()),
+            }));
+        };
+
+        let mut best_axis = -1;
+        let mut best_offset = -1;
+        let mut best_cost = INFINITY;
+        let isect_cost = 80.0;
+        let traversal_cost = 1.0;
+        let old_cost = triangle_list_len as f64 * isect_cost;
+        let total_sa = bounds.surface_area();
+        let inv_total_sa = 1.0 / total_sa;
+        let d = bounds.maximum - bounds.minimum;
+        let mut axis = bounds.maximum_extent() as usize;
+        let mut retries = 0;
+        let empty_bonus = 0.75;
+        let mut edges: [Vec<BoundEdge>; 3] = [
+            vec![BoundEdge::new(0.0, 0, true); 2_usize * triangle_list_len],
+            vec![BoundEdge::new(0.0, 0, true); 2_usize * triangle_list_len],
+            vec![BoundEdge::new(0.0, 0, true); 2_usize * triangle_list_len],
+        ];
+
+        while best_axis == -1 && retries < 2 {
+            for i in 0..triangle_list_len {
+                let t_bounds = &triangle_list[i].bounds;
+                edges[axis][2 * i] = BoundEdge::new(t_bounds.minimum.get(axis), i, true);
+                edges[axis][2 * i + 1] = BoundEdge::new(t_bounds.maximum.get(axis), i, false);
+            }
+
+            edges[axis].sort_by(|edge0, edge1| {
+                if edge0.t == edge1.t {
+                    return (edge0.edge_type as u32).cmp(&(edge1.edge_type as u32));
+                }
+                edge0.t.partial_cmp(&edge1.t).unwrap()
+            });
+
+            let mut number_below = 0;
+            let mut number_above = triangle_list_len as u32;
+            for i in 0..(2_usize * triangle_list_len) {
+                match edges[axis][i].edge_type {
+                    EdgeType::Start => {}
+                    EdgeType::End => {
+                        number_above -= 1;
+                    }
+                }
+
+                let edge_t = edges[axis][i].t;
+                if edge_t > bounds.minimum.get(axis) && edge_t < bounds.maximum.get(axis) {
+                    let other_axis0 = (axis + 1) % 3;
+                    let other_axis1 = (axis + 2) % 3;
+                    let below_sa = 2.0
+                        * (d.get(other_axis0) * d.get(other_axis1)
+                            + (edge_t - bounds.minimum.get(axis))
+                                * (d.get(other_axis0) + d.get(other_axis1)));
+                    let above_sa = 2.0
+                        * (d.get(other_axis0) * d.get(other_axis1)
+                            + (bounds.maximum.get(axis) - edge_t)
+                                * (d.get(other_axis0) + d.get(other_axis1)));
+
+                    let p_below = below_sa * inv_total_sa;
+                    let p_above = above_sa * inv_total_sa;
+                    let eb = if number_above == 0 || number_below == 0 {
+                        empty_bonus
+                    } else {
+                        0.0
+                    };
+                    let cost = traversal_cost
+                        + isect_cost
+                            * (1.0 - eb)
+                            * (p_below * number_below as f64 + p_above * number_above as f64);
+
+                    if cost < best_cost {
+                        best_cost = cost;
+                        best_axis = axis as i32;
+                        best_offset = i as i32;
+                    }
+                }
+
+                match edges[axis][i].edge_type {
+                    EdgeType::Start => number_below += 1,
+                    EdgeType::End => {}
+                }
+            }
+
+            if best_axis == -1 && retries < 2 {
+                retries += 1;
+                axis = (axis + 1) % 3;
+                continue;
+            }
+
+            break;
+        }
+
+        let mut b_refines = bad_refines;
+        if best_cost > old_cost {
+            b_refines += 1;
+        }
+        if (best_cost > 4.0 * old_cost && triangle_list_len < 16)
+            || best_axis == -1
+            || b_refines == 3
+        {
+            return Some(Box::new(KDTree {
+                split_axis: 0,
+                left_child: None,
+                right_child: None,
+                split_distance: 0.0,
+                is_leaf: true,
+                faces: Some(triangle_list.to_vec()),
+            }));
+        }
+
+        let mut in_both = HashSet::new();
+        let mut left = vec![];
+        let mut right = vec![];
+        for i in 0..best_offset as usize {
+            match edges[best_axis as usize][i].edge_type {
+                EdgeType::Start => {
+                    left.push(triangle_list[edges[best_axis as usize][i].triangle_num].clone())
+                }
+                EdgeType::End => {
+                    in_both.insert(edges[best_axis as usize][i].triangle_num);
+                }
+            }
+        }
+
+        for i in (best_offset as usize + 1)..(2 * triangle_list_len) {
+            match edges[best_axis as usize][i].edge_type {
+                EdgeType::End => {
+                    right.push(triangle_list[edges[best_axis as usize][i].triangle_num].clone());
+                    in_both.remove(&edges[best_axis as usize][i].triangle_num);
+                }
+                EdgeType::Start => {
+                    in_both.insert(edges[best_axis as usize][i].triangle_num);
+                }
+            }
+        }
+
+        eprintln!("{}", in_both.len());
+        //for triangle_num in in_both {
+        //  left.push(triangle_list[triangle_num].clone());
+        //right.push(triangle_list[triangle_num].clone());
+        //}
+
+        let t_split = edges[best_axis as usize][best_offset as usize].t;
+        let mut bounds_left = bounds.clone();
+        let mut bounds_right = bounds;
+        bounds_left.maximum.set(best_axis as usize, t_split);
+        bounds_right.minimum.set(best_axis as usize, t_split);
+        let left_len = left.len();
+        let right_len = right.len();
+
+        let left_child =
+            KDTree::build_sah(&mut left[..], left_len, depth - 1, bounds_left, bad_refines);
+        let right_child = KDTree::build_sah(
+            &mut right[..],
+            right_len,
+            depth - 1,
+            bounds_right,
+            bad_refines,
+        );
+
+        Some(Box::new(KDTree {
+            split_axis: axis,
+            left_child,
+            right_child,
+            split_distance: t_split,
             is_leaf: false,
             faces: None,
         }))
@@ -304,11 +540,7 @@ pub fn build_from_obj(
         let normal3 = object.vertices[indices[2] as usize].normal;
         let normal3 = Vec3::new(normal3[0] as f64, normal3[1] as f64, normal3[2] as f64);
 
-        let face = Face {
-            points: [p1, p2, p3],
-            text_coords: [uv1, uv2, uv3],
-            normals: [normal1, normal2, normal3],
-        };
+        let face = Face::new([p1, p2, p3], [uv1, uv2, uv3], [normal1, normal2, normal3]);
 
         let min_x = p1.x.min(p2.x).min(p3.x);
         if min_x < minimum.x {

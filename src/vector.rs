@@ -36,6 +36,15 @@ impl Vec3 {
         }
     }
 
+    pub fn set(&mut self, axis: usize, value: f64) {
+        match axis {
+            0 => self.x = value,
+            1 => self.y = value,
+            2 => self.z = value,
+            _ => panic!("Invald axis!"),
+        }
+    }
+
     pub fn length_squared(&self) -> f64 {
         self.x * self.x + self.y * self.y + self.z * self.z
     }

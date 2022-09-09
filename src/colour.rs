@@ -81,6 +81,14 @@ impl ops::Mul<Colour> for f64 {
     }
 }
 
+impl ops::Mul<&Colour> for f64 {
+    type Output = Colour;
+
+    fn mul(self, rhs: &Colour) -> Self::Output {
+        Colour::new(self * rhs.r, self * rhs.g, self * rhs.b)
+    }
+}
+
 impl ops::Mul<Colour> for Colour {
     type Output = Colour;
 
@@ -89,6 +97,13 @@ impl ops::Mul<Colour> for Colour {
     }
 }
 
+impl ops::Mul<&Colour> for Colour {
+    type Output = Colour;
+
+    fn mul(self, rhs: &Colour) -> Self::Output {
+        Colour::new(self.r * rhs.r, self.g * rhs.g, self.b * rhs.b)
+    }
+}
 impl ops::Div<f64> for Colour {
     type Output = Colour;
 

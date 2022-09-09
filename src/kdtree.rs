@@ -21,19 +21,25 @@ pub struct Face {
     text_coords: [UVCoord; 3],
     normals: [Vec3; 3],
     bounds: AxisAlignedBoundingBox,
+    shade_smooth: bool,
 }
 
 impl Face {
-    pub fn new(points: [Vec3; 3], text_coords: [UVCoord; 3], normals: [Vec3; 3]) -> Face {
+    pub fn new(
+        points: [Vec3; 3],
+        text_coords: [UVCoord; 3],
+        normals: [Vec3; 3],
+        shade_smooth: bool,
+    ) -> Face {
         let minimum = Vec3::new(
             points[0].x.min(points[1].x).min(points[2].x),
             points[0].y.min(points[1].y).min(points[2].y),
             points[0].z.min(points[1].z).min(points[2].z),
         );
         let maximum = Vec3::new(
-            points[0].x.min(points[1].x).min(points[2].x),
-            points[0].y.min(points[1].y).min(points[2].y),
-            points[0].z.min(points[1].z).min(points[2].z),
+            points[0].x.max(points[1].x).max(points[2].x),
+            points[0].y.max(points[1].y).max(points[2].y),
+            points[0].z.max(points[1].z).max(points[2].z),
         );
         let bounds = AxisAlignedBoundingBox::new(minimum, maximum);
         Face {
@@ -41,6 +47,7 @@ impl Face {
             text_coords,
             normals,
             bounds,
+            shade_smooth,
         }
     }
 }
@@ -167,7 +174,7 @@ impl KDTree {
                 if t_hit < t_split {
                     return Some(KDTreeHitRecord {
                         p,
-                        t: t_split,
+                        t: t_hit,
                         normal,
                         tangent,
                         bitangent,
@@ -194,7 +201,7 @@ impl KDTree {
                 if t_hit < t_split {
                     return Some(KDTreeHitRecord {
                         p,
-                        t: t_split,
+                        t: t_hit,
                         normal,
                         tangent,
                         bitangent,
@@ -427,7 +434,6 @@ impl KDTree {
             || best_axis == -1
             || b_refines == 3
         {
-            eprintln!("no good splits!");
             return Some(Box::new(KDTree {
                 split_axis: axis,
                 left_child: None,
@@ -441,34 +447,25 @@ impl KDTree {
 
         let mut left = vec![];
         let mut right = vec![];
-        let mut k = 0;
-        for i in 0..best_offset as usize {
+        for i in 0..(best_offset as usize) {
             match edges[best_axis as usize][i].edge_type {
                 EdgeType::Start => {
-                    left.push(triangle_list[edges[best_axis as usize][i].triangle_num].clone())
+                    left.push(triangle_list[edges[best_axis as usize][i].triangle_num].clone());
                 }
-                EdgeType::End => {
-                    if edges[best_axis as usize][i].t > edges[best_axis as usize][best_offset as usize].t {
-                        k += 1;
-                    }
-                }
+                EdgeType::End => {}
             }
         }
 
         for i in (best_offset as usize + 1)..(2 * triangle_list_len) {
             match edges[best_axis as usize][i].edge_type {
                 EdgeType::End => {
-                    right.push(triangle_list[edges[best_axis as usize][i].triangle_num].clone())
+                    right.push(triangle_list[edges[best_axis as usize][i].triangle_num].clone());
                 }
-                EdgeType::Start => {
-                    if edges[best_axis as usize][i].t < edges[best_axis as usize][best_offset as usize].t {
-                        k += 1;
-                    }
-                }
+                EdgeType::Start => {}
             }
         }
 
-        eprintln!("k: {}", k);
+        // eprintln!("{}/{}", both.len(), triangle_list_len);
 
         let t_split = edges[best_axis as usize][best_offset as usize].t;
         let mut bounds_left = bounds.clone();
@@ -502,6 +499,7 @@ impl KDTree {
 
 pub fn build_from_obj(
     object: Obj<TexturedVertex, u32>,
+    shade_smooth: bool,
 ) -> (Vec<Box<Face>>, AxisAlignedBoundingBox) {
     let mut points = vec![];
     let mut minimum = Vec3::new(f64::INFINITY, f64::INFINITY, f64::INFINITY);
@@ -548,7 +546,12 @@ pub fn build_from_obj(
         let normal3 = object.vertices[indices[2] as usize].normal;
         let normal3 = Vec3::new(normal3[0] as f64, normal3[1] as f64, normal3[2] as f64);
 
-        let face = Face::new([p1, p2, p3], [uv1, uv2, uv3], [normal1, normal2, normal3]);
+        let face = Face::new(
+            [p1, p2, p3],
+            [uv1, uv2, uv3],
+            [normal1, normal2, normal3],
+            shade_smooth,
+        );
 
         let min_x = p1.x.min(p2.x).min(p3.x);
         if min_x < minimum.x {
@@ -582,14 +585,6 @@ pub fn build_from_obj(
 
         points.push(Box::new(face));
     }
-
-    minimum.x -= bounding_box_padding;
-    minimum.y -= bounding_box_padding;
-    minimum.z -= bounding_box_padding;
-
-    maximum.x += bounding_box_padding;
-    maximum.y += bounding_box_padding;
-    maximum.z += bounding_box_padding;
 
     let bounding_box = AxisAlignedBoundingBox::new(minimum, maximum);
     (points, bounding_box)
@@ -655,7 +650,7 @@ fn triangle_intersection(
     let mut _front_face = true;
     if ray.direction.dot(&n_norm) > 0.0 {
         _front_face = false;
-        n_norm = -n_norm;
+        //n_norm = -n_norm;
         // return (None, 0.0);
     }
 
@@ -668,7 +663,7 @@ fn triangle_intersection(
 
     // Determine the UV coords of the hitpoint
     let mut text_coord = UVCoord { u: 0.3, v: 0.5 };
-    let mut smooth_normal = Vec3::new(0.0, 0.0, 0.0);
+    let mut normal = n_norm;
     if let Some((b1, b2)) = get_bary_coords(&p1, &p2, &p3, &p) {
         let b0 = 1.0 - b1 - b2;
         text_coord.u =
@@ -676,7 +671,9 @@ fn triangle_intersection(
         text_coord.v =
             b0 * face.text_coords[0].v + b1 * face.text_coords[1].v + b2 * face.text_coords[2].v;
 
-        smooth_normal = b0 * &face.normals[0] + b1 * &face.normals[1] + b2 * &face.normals[2];
+        if face.shade_smooth {
+            normal = b0 * &face.normals[0] + b1 * &face.normals[1] + b2 * &face.normals[2];
+        }
     }
 
     // remap coordinate basis used for normal mapping
@@ -708,8 +705,10 @@ fn triangle_intersection(
         f * (-uv2.x * edge1.z + uv1.x * edge2.z),
     );
 
-    // compute smooth normals
-    let normal = smooth_normal.unit();
+    normal = normal.unit();
+    if !_front_face {
+        normal = -normal;
+    }
 
     (
         Some(KDTreeHitRecord {

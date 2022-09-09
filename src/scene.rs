@@ -7,12 +7,16 @@ use obj::{load_obj, Obj, TexturedVertex};
 use rayon::prelude::*;
 
 use crate::bvh::BoundingVolumeHierarchy;
+use crate::bxdf::MicrofacetReflection;
 use crate::camera::Camera;
 use crate::colour::Colour;
 use crate::hittable::{HitRecord, Hittable, HittableList};
 use crate::json::*;
 use crate::kdtree_bounds::KDTreeBounds;
-use crate::material::{Dialectric, Isotropic, Lambertian, Light, Material, Metal};
+use crate::material::{
+    Dialectric, Isotropic, Lambertian, Light, Material, Metal, MicrofacetReflectance,
+    SpecularReflectance,
+};
 use crate::object::Object;
 use crate::pdf::CosinePDF;
 use crate::pdf::{HittablePDF, MixturePDF, ProbabilityDensityFunction};
@@ -96,7 +100,11 @@ impl Scene {
 
         for model in scene.models {
             match model {
-                HittablesJSON::Model { obj_path, material } => {
+                HittablesJSON::Model {
+                    obj_path,
+                    material,
+                    shade_smooth,
+                } => {
                     let object = match File::open(&obj_path) {
                         Err(why) => panic!("Error opening obj {} :{}", &obj_path, why),
                         Ok(object) => BufReader::new(object),
@@ -109,7 +117,7 @@ impl Scene {
 
                     let object_material = parse_material(&material);
 
-                    let object = Object::new(object, object_material);
+                    let object = Object::new(object, object_material, shade_smooth.unwrap_or(true));
 
                     if let MaterialJSON::Light { .. } = material {
                         let light_sampler = Box::new(object.get_light_sampler_sphere());
@@ -227,7 +235,7 @@ impl Scene {
             Arc::clone(&zbuffer),
         ) {
             let (scattered_ray, albedo, is_scattered) =
-                hit_record.material.scatter(ray, hit_record);
+                hit_record.material.scatter(ray, hit_record, &self.camera);
 
             let emitted = hit_record
                 .material
@@ -284,7 +292,7 @@ impl Scene {
                 pixel,
                 Arc::clone(&zbuffer),
             ) {
-                let (_, albedo, _) = hit.material.scatter(ray, hit);
+                let (_, albedo, _) = hit.material.scatter(ray, hit, &self.camera);
                 return albedo;
             };
         }
@@ -322,10 +330,53 @@ fn parse_material(material: &MaterialJSON) -> Box<dyn Material + Send + Sync + '
             Box::new(Lambertian { albedo: texture })
         }
         MaterialJSON::Dialectric {
+            albedo,
             index_of_refraction,
-        } => Box::new(Dialectric {
-            index_of_refraction: *index_of_refraction,
-        }),
+        } => {
+            let texture = match albedo {
+                Some(albedo) => Some(parse_texture(albedo)),
+                None => None,
+            };
+            Box::new(Dialectric {
+                albedo: texture,
+                index_of_refraction: *index_of_refraction,
+            })
+        }
+        MaterialJSON::SpecularReflectance { albedo } => {
+            let texture = parse_texture(albedo);
+            Box::new(SpecularReflectance { albedo: texture })
+        }
+        MaterialJSON::MicrofacetReflectance {
+            albedo,
+            metallic: option_metallic,
+            roughness: option_roughness,
+            reflectance: option_reflectance,
+            include_diffuse: option_include_diffuse,
+        } => {
+            let texture = parse_texture(albedo);
+            let metallic = match option_metallic {
+                Some(metallic) => *metallic,
+                None => 0.0,
+            };
+            let roughness = match option_roughness {
+                Some(roughness) => *roughness,
+                None => 0.0,
+            };
+            let reflectance = match option_reflectance {
+                Some(reflectance) => *reflectance,
+                None => 0.0,
+            };
+            let include_diffuse = match option_include_diffuse {
+                Some(include_diffuse) => *include_diffuse,
+                None => true,
+            };
+            let microfacet_brdf =
+                MicrofacetReflection::new(metallic, roughness, reflectance, include_diffuse);
+            Box::new(MicrofacetReflectance {
+                albedo: texture,
+                bxdf: Box::new(microfacet_brdf),
+            })
+        }
     }
 }
 

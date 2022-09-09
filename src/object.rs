@@ -26,8 +26,12 @@ impl fmt::Debug for Object {
 }
 
 impl Object {
-    pub fn new(object: Obj<TexturedVertex, u32>, material: Box<dyn Material>) -> Object {
-        let (mut faces, bounding_box) = build_from_obj(object);
+    pub fn new(
+        object: Obj<TexturedVertex, u32>,
+        material: Box<dyn Material>,
+        shade_smooth: bool,
+    ) -> Object {
+        let (mut faces, bounding_box) = build_from_obj(object, shade_smooth);
 
         let faces_len = faces.len();
         let depth = 8 + (1.3 * (faces_len as f64).log2()) as u32;

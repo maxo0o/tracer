@@ -6,12 +6,10 @@ use image::{DynamicImage, GenericImageView, Pixel};
 pub trait Texture: std::fmt::Debug + Send + Sync {
     fn value(&self, u: f64, v: f64, p: &Vec3) -> Colour;
 
-    fn normal_value(&self, _u: f64, _v: f64, _p: &Vec3) -> Vec3 {
-        Vec3::new(0.0, 0.0, 0.0)
-    }
+    fn normal_value(&self, _u: f64, _v: f64, _p: &Vec3) -> Option<Vec3>;
 
     fn alpha_value(&self, _u: f64, _v: f64) -> f64 {
-        0.0
+        1.0
     }
 }
 
@@ -41,31 +39,8 @@ impl Texture for SolidColour {
         Colour::copy(&self.colour)
     }
 
-    fn normal_value(&self, u: f64, v: f64, _p: &Vec3) -> Vec3 {
+    fn normal_value(&self, u: f64, v: f64, _p: &Vec3) -> Option<Vec3> {
         normal_sample(u, v, self.normal_map.as_ref(), self.normal_scale)
-    }
-}
-
-#[derive(Debug)]
-pub struct CheckerTexture {
-    pub odd: Box<dyn Texture>,
-    pub even: Box<dyn Texture>,
-}
-
-impl CheckerTexture {
-    pub fn _new(even: Box<dyn Texture>, odd: Box<dyn Texture>) -> CheckerTexture {
-        CheckerTexture { even, odd }
-    }
-}
-
-impl Texture for CheckerTexture {
-    fn value(&self, u: f64, v: f64, p: &Vec3) -> Colour {
-        let sines = (250.0 * u).sin() * (250.0 * v).sin();
-        if sines < 0.0 {
-            self.odd.value(u, v, p)
-        } else {
-            self.even.value(u, v, p)
-        }
     }
 }
 
@@ -106,11 +81,11 @@ impl ImageTexture {
 
 impl Texture for ImageTexture {
     fn value(&self, u: f64, v: f64, _p: &Vec3) -> Colour {
-        let u = (u * self.scale).fract() % 1.0;
-        let v = 1.0 - (v * self.scale).fract() % 1.0;
+        let u = (u * self.scale).fract();
+        let v = 1.0 - (v * self.scale).fract();
 
-        let i = (u * self.width as f64) as u32;
-        let j = (v * self.height as f64) as u32;
+        let i = (u * self.width as f64) as u32 % self.width;
+        let j = (v * self.height as f64) as u32 % self.height;
 
         let pixel = self
             .image
@@ -137,10 +112,6 @@ impl Texture for ImageTexture {
                 r = r.sqrt();
                 g = g.sqrt();
                 b = b.sqrt();
-            } else {
-                // r *= alpha_pixel;
-                // g *= alpha_pixel;
-                // b *= alpha_pixel;
             }
         }
 
@@ -166,7 +137,7 @@ impl Texture for ImageTexture {
         0.0
     }
 
-    fn normal_value(&self, u: f64, v: f64, _p: &Vec3) -> Vec3 {
+    fn normal_value(&self, u: f64, v: f64, _p: &Vec3) -> Option<Vec3> {
         normal_sample(u, v, self.normal_map.as_ref(), self.normal_scale)
     }
 }
@@ -176,10 +147,10 @@ fn normal_sample(
     v: f64,
     normal_map: Option<&DynamicImage>,
     normal_scale: Option<f64>,
-) -> Vec3 {
+) -> Option<Vec3> {
     let normal_map = match normal_map {
         Some(map) => map,
-        None => return Vec3::new(0.0, 0.0, 0.0),
+        None => return None,
     };
 
     let (width, height) = normal_map.dimensions();
@@ -200,5 +171,5 @@ fn normal_sample(
     let y = (pixel[1] as f64 / 255.0) * 2.0 - 1.0;
     let z = (pixel[2] as f64 / 255.0) * 2.0 - 1.0;
 
-    Vec3::new(x, y, z)
+    Some(Vec3::new(x, y, z))
 }

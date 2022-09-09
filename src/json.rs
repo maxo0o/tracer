@@ -25,17 +25,34 @@ pub enum TextureJSON {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum MaterialJSON {
-    Lambertian { albedo: TextureJSON },
-    Metal { albedo: TextureJSON, f: f64 },
-    Dialectric { index_of_refraction: f64 },
-    Light { albedo: TextureJSON, intensity: f64 },
-    Isotropic { albedo: TextureJSON },
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct ModelJSON {
-    pub obj_path: String,
-    pub material: MaterialJSON,
+    Lambertian {
+        albedo: TextureJSON,
+    },
+    Metal {
+        albedo: TextureJSON,
+        f: f64,
+    },
+    Dialectric {
+        albedo: Option<TextureJSON>,
+        index_of_refraction: f64,
+    },
+    Light {
+        albedo: TextureJSON,
+        intensity: f64,
+    },
+    Isotropic {
+        albedo: TextureJSON,
+    },
+    SpecularReflectance {
+        albedo: TextureJSON,
+    },
+    MicrofacetReflectance {
+        albedo: TextureJSON,
+        metallic: Option<f64>,
+        roughness: Option<f64>,
+        reflectance: Option<f64>,
+        include_diffuse: Option<bool>,
+    },
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -43,6 +60,7 @@ pub enum HittablesJSON {
     Model {
         obj_path: String,
         material: MaterialJSON,
+        shade_smooth: Option<bool>,
     },
     Volume {
         box_min: [f64; 3],

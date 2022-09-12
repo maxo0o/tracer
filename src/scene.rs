@@ -381,6 +381,7 @@ fn parse_material(material: &MaterialJSON) -> Box<dyn Material + Send + Sync + '
             roughness: option_roughness,
             reflectance: option_reflectance,
             include_diffuse: option_include_diffuse,
+            fuzziness,
         } => {
             let texture = parse_texture(albedo);
             let metallic = match option_metallic {
@@ -404,6 +405,7 @@ fn parse_material(material: &MaterialJSON) -> Box<dyn Material + Send + Sync + '
             Box::new(Glossy {
                 albedo: texture,
                 bxdf: Box::new(microfacet_brdf),
+                fuzziness: *fuzziness,
             })
         }
     }

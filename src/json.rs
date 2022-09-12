@@ -59,6 +59,7 @@ pub enum MaterialJSON {
         roughness: Option<f64>,
         reflectance: Option<f64>,
         include_diffuse: Option<bool>,
+        fuzziness: f64,
     },
 }
 

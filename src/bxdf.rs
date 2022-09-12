@@ -1,9 +1,10 @@
+use rand::Rng;
 use std::f64::consts::PI;
 
 use crate::colour::Colour;
 // use crate::fresnel::Fresnel;
 // use crate::microfacet::Microfacet;
-// use crate::utils::*;
+use crate::utils::*;
 use crate::vector::Vec3;
 
 //pub enum BxDFType {
@@ -17,6 +18,7 @@ use crate::vector::Vec3;
 
 pub trait BxDF: std::fmt::Debug + Send + Sync {
     fn f(&self, wo: &Vec3, wi: &Vec3, n: &Vec3, colour: &Colour) -> Colour;
+    fn sample_wh(&self, wo: &Vec3) -> Vec3;
 }
 
 #[derive(Debug)]
@@ -69,6 +71,28 @@ impl BxDF for MicrofacetReflection {
         } else {
             spec + 1.0 * colour
         }
+    }
+
+    fn sample_wh(&self, wo: &Vec3) -> Vec3 {
+        let u: (f64, f64) = (rand::thread_rng().gen(), rand::thread_rng().gen());
+        let mut log_sample = f64::ln(1.0 - u.0);
+        if log_sample.is_infinite() {
+            log_sample = 0.0;
+        }
+
+        let alpha = self.roughness * self.roughness;
+        let tan_2_theta = -alpha * alpha * log_sample;
+        let phi = u.1 * 2.0 * PI;
+
+        let cos_theta = 1.0 / (1.0 + tan_2_theta).sqrt();
+        let sin_theta = f64::sqrt(f64::max(0.0, 1.0 - cos_theta * cos_theta));
+
+        let mut wh = spherical_direction(sin_theta, cos_theta, phi);
+        if !same_hemisphere(wo, &wh) {
+            wh = -wh;
+        }
+
+        wh
     }
 }
 

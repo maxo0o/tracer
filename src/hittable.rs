@@ -1,7 +1,5 @@
 use crate::aabb::{surrounding_box, AxisAlignedBoundingBox};
-use crate::colour::Colour;
 use crate::ray::Ray;
-use crate::rectangle::Cube;
 use crate::sphere::Sphere;
 use crate::vector::Vec3;
 use crate::{camera::Camera, material::Material};

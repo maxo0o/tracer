@@ -1,11 +1,10 @@
-use crate::aabb::{surrounding_box, AxisAlignedBoundingBox};
+use crate::aabb::AxisAlignedBoundingBox;
 use crate::camera::Camera;
 use crate::ray::Ray;
 use crate::utils::distance;
 use crate::vector::Vec3;
 
 use obj::{Obj, TexturedVertex};
-use std::collections::HashSet;
 use std::f64::INFINITY;
 use std::fmt;
 
@@ -219,104 +218,6 @@ impl KDTree {
         None
     }
 
-    // build KDTree by splitting on the median of sorted triangles
-    // pub fn build(
-    //     triangle_list: &mut [Box<Face>],
-    //     max_depth: u32,
-    //     depth: u32,
-    // ) -> Option<Box<KDTree>> {
-    //     if triangle_list.is_empty() {
-    //         return None;
-    //     }
-
-    //     let axis = (depth % 3) as usize;
-    //     triangle_list.sort_by(|triangle_a, triangle_b| {
-    //         // Sort the points inside the triangle by axis too
-    //         let mut triangle_a_0 = *triangle_a.clone();
-    //         let mut triangle_b_0 = *triangle_b.clone();
-
-    //         triangle_a_0
-    //             .points
-    //             .sort_by(|a, b| a.get(axis).partial_cmp(&b.get(axis)).unwrap());
-    //         triangle_b_0
-    //             .points
-    //             .sort_by(|a, b| a.get(axis).partial_cmp(&b.get(axis)).unwrap());
-
-    //         triangle_a_0.points[0]
-    //             .get(axis)
-    //             .partial_cmp(&triangle_b_0.points[0].get(axis))
-    //             .unwrap()
-    //     });
-    //     let median = triangle_list.len() / 2_usize;
-
-    //     let mut median_triangle = *triangle_list[median].clone();
-    //     median_triangle
-    //         .points
-    //         .sort_by(|a, b| a.get(axis).partial_cmp(&b.get(axis)).unwrap());
-
-    //     let split_distance = median_triangle.points[0].get(axis);
-    //     if triangle_list.len() <= 15 || depth == max_depth {
-    //         return Some(Box::new(KDTree {
-    //             split_axis: axis,
-    //             left_child: None,
-    //             right_child: None,
-    //             split_distance,
-    //             is_leaf: true,
-    //             faces: Some(triangle_list.to_vec()),
-    //         }));
-    //     }
-
-    //     // find any points that may not have been placed on the correct side
-    //     let mut left_additional = vec![];
-    //     let mut right_additional = vec![];
-    //     for triangle in triangle_list.iter() {
-    //         let mut point_on_right = false;
-    //         let mut point_on_left = false;
-    //         let mut points_on_boundary = false;
-    //         if triangle.points[0].get(axis) > split_distance
-    //             || triangle.points[1].get(axis) > split_distance
-    //             || triangle.points[2].get(axis) > split_distance
-    //         {
-    //             point_on_right = true;
-    //         }
-
-    //         if triangle.points[0].get(axis) < split_distance
-    //             || triangle.points[1].get(axis) < split_distance
-    //             || triangle.points[2].get(axis) < split_distance
-    //         {
-    //             point_on_left = true;
-    //         }
-
-    //         if triangle.points[0].get(axis) == split_distance
-    //             && triangle.points[1].get(axis) == split_distance
-    //             && triangle.points[2].get(axis) == split_distance
-    //         {
-    //             points_on_boundary = true;
-    //         }
-
-    //         if (point_on_left && point_on_right) || points_on_boundary {
-    //             right_additional.push(Box::new(*triangle.clone()));
-    //             left_additional.push(Box::new(*triangle.clone()));
-    //         } else if point_on_left {
-    //             left_additional.push(Box::new(*triangle.clone()));
-    //         } else if point_on_right {
-    //             right_additional.push(Box::new(*triangle.clone()));
-    //         }
-    //     }
-
-    //     let left_child = KDTree::build(&mut left_additional[..], max_depth, depth + 1);
-    //     let right_child = KDTree::build(&mut right_additional[..], max_depth, depth + 1);
-
-    //     Some(Box::new(KDTree {
-    //         split_axis: axis,
-    //         left_child,
-    //         right_child,
-    //         split_distance: median_triangle.points[0].get(axis),
-    //         is_leaf: false,
-    //         faces: None,
-    //     }))
-    // }
-
     //build KDTree using Surface Area Heuristic
     pub fn build_sah(
         triangle_list: &mut [Box<Face>],
@@ -505,8 +406,6 @@ pub fn build_from_obj(
     let mut minimum = Vec3::new(f64::INFINITY, f64::INFINITY, f64::INFINITY);
     let mut maximum = Vec3::new(-f64::INFINITY, -f64::INFINITY, -f64::INFINITY);
 
-    let bounding_box_padding = 0.0;
-
     for indices in object.indices.chunks(3) {
         let p1 = Vec3::new(
             object.vertices[indices[0] as usize].position[0].into(),
@@ -646,7 +545,7 @@ fn triangle_intersection(
         return (None, 0.0);
     }
 
-    let mut n_norm = n.unit();
+    let n_norm = n.unit();
     let mut _front_face = true;
     if ray.direction.dot(&n_norm) > 0.0 {
         _front_face = false;
@@ -672,7 +571,9 @@ fn triangle_intersection(
             b0 * face.text_coords[0].v + b1 * face.text_coords[1].v + b2 * face.text_coords[2].v;
 
         if face.shade_smooth {
-            normal = b0 * &face.normals[0] + b1 * &face.normals[1] + b2 * &face.normals[2];
+            normal = b0 * &face.normals[0].unit()
+                + b1 * &face.normals[1].unit()
+                + b2 * &face.normals[2].unit();
         }
     }
 

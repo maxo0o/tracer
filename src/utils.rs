@@ -8,7 +8,7 @@ pub fn reflect(v: &Vec3, n: &Vec3) -> Vec3 {
 }
 
 pub fn refract(uv: &Vec3, n: &Vec3, etail_over_etat: f64) -> Vec3 {
-    let cos_theta = -uv.dot(&n).min(1.0);
+    let cos_theta = -uv.dot(n).min(1.0);
     let r_out_perp = etail_over_etat * &(uv + cos_theta * n);
     let r_out_parallel = -(1.0 - r_out_perp.length_squared()).abs().sqrt() * n;
     r_out_perp + r_out_parallel
@@ -86,66 +86,6 @@ pub fn random_to_sphere(radius: f64, distance_squared: f64) -> Vec3 {
     let y = phi.sin() * (1.0 - z * z).sqrt();
 
     Vec3::new(x, y, z)
-}
-
-pub fn cos_theta(w: &Vec3) -> f64 {
-    w.z
-}
-
-pub fn cos_2_theta(w: &Vec3) -> f64 {
-    w.z * w.z
-}
-
-pub fn abs_cos_theta(w: &Vec3) -> f64 {
-    w.z.abs()
-}
-
-pub fn sin_2_theta(w: &Vec3) -> f64 {
-    (0.0 as f64).max(1.0 - cos_2_theta(w))
-}
-
-pub fn sin_theta(w: &Vec3) -> f64 {
-    sin_2_theta(w).sqrt()
-}
-
-pub fn tan_theta(w: &Vec3) -> f64 {
-    sin_theta(w) / cos_theta(w)
-}
-
-pub fn tan_2_theta(w: &Vec3) -> f64 {
-    sin_2_theta(w) / cos_2_theta(w)
-}
-
-pub fn cos_phi(w: &Vec3) -> f64 {
-    let sin_theta = sin_theta(w);
-    if sin_theta == 0.0 {
-        1.0
-    } else {
-        (w.x / sin_theta).clamp(-1.0, 1.0)
-    }
-}
-
-pub fn sin_phi(w: &Vec3) -> f64 {
-    let sin_theta = sin_theta(w);
-    if sin_theta == 0.0 {
-        0.0
-    } else {
-        (w.y / sin_theta).clamp(-1.0, 1.0)
-    }
-}
-
-pub fn cos_2_phi(w: &Vec3) -> f64 {
-    cos_phi(w) * cos_phi(w)
-}
-
-pub fn sin_2_phi(w: &Vec3) -> f64 {
-    sin_phi(w) * sin_phi(w)
-}
-
-pub fn cos_d_phi(wa: &Vec3, wb: &Vec3) -> f64 {
-    ((wa.x * wb.x + wa.y * wb.y)
-        / ((wa.x * wa.x + wa.y * wa.y) * (wb.x * wb.x + wb.y * wb.y)).sqrt())
-    .clamp(-1.0, 1.0)
 }
 
 pub fn spherical_direction(sin_theta: f64, cos_theta: f64, phi: f64) -> Vec3 {

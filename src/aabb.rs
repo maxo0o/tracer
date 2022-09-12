@@ -21,7 +21,7 @@ impl AxisAlignedBoundingBox {
     }
 
     pub fn offset(&self, p: Vec3) -> Vec3 {
-        let mut o = p - &self.minimum;
+        let mut o = p - self.minimum;
         if self.maximum.x > self.minimum.x {
             o.x /= self.maximum.x - self.minimum.x;
         }
@@ -51,7 +51,7 @@ impl AxisAlignedBoundingBox {
         }
     }
 
-    pub fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> (bool, f64, f64) {
+    pub fn hit(&self, ray: &Ray, _t_min: f64, _t_max: f64) -> (bool, f64, f64) {
         let mut tmin = (self.minimum.x - ray.origin.x) / ray.direction.x;
         let mut tmax = (self.maximum.x - ray.origin.x) / ray.direction.x;
 

@@ -6,15 +6,13 @@ use image::DynamicImage;
 use obj::{load_obj, Obj, TexturedVertex};
 use rayon::prelude::*;
 
-use crate::bvh::BoundingVolumeHierarchy;
 use crate::bxdf::MicrofacetReflection;
 use crate::camera::Camera;
 use crate::colour::Colour;
-use crate::hittable::{HitRecord, Hittable, HittableList};
+use crate::hittable::{Hittable, HittableList};
 use crate::json::*;
-use crate::kdtree_bounds::KDTreeBounds;
 use crate::material::{
-    Dialectric, Isotropic, Lambertian, Light, Material, Metal, MicrofacetReflectance,
+    Dielectric, Glossy, Isotropic, Lambertian, Light, Material, Metal, MicrofacetReflectance,
     SpecularReflectance,
 };
 use crate::object::Object;
@@ -329,7 +327,7 @@ fn parse_material(material: &MaterialJSON) -> Box<dyn Material + Send + Sync + '
             let texture = parse_texture(albedo);
             Box::new(Lambertian { albedo: texture })
         }
-        MaterialJSON::Dialectric {
+        MaterialJSON::Dielectric {
             albedo,
             index_of_refraction,
         } => {
@@ -337,7 +335,7 @@ fn parse_material(material: &MaterialJSON) -> Box<dyn Material + Send + Sync + '
                 Some(albedo) => Some(parse_texture(albedo)),
                 None => None,
             };
-            Box::new(Dialectric {
+            Box::new(Dielectric {
                 albedo: texture,
                 index_of_refraction: *index_of_refraction,
             })
@@ -373,6 +371,37 @@ fn parse_material(material: &MaterialJSON) -> Box<dyn Material + Send + Sync + '
             let microfacet_brdf =
                 MicrofacetReflection::new(metallic, roughness, reflectance, include_diffuse);
             Box::new(MicrofacetReflectance {
+                albedo: texture,
+                bxdf: Box::new(microfacet_brdf),
+            })
+        }
+        MaterialJSON::Glossy {
+            albedo,
+            metallic: option_metallic,
+            roughness: option_roughness,
+            reflectance: option_reflectance,
+            include_diffuse: option_include_diffuse,
+        } => {
+            let texture = parse_texture(albedo);
+            let metallic = match option_metallic {
+                Some(metallic) => *metallic,
+                None => 0.0,
+            };
+            let roughness = match option_roughness {
+                Some(roughness) => *roughness,
+                None => 0.0,
+            };
+            let reflectance = match option_reflectance {
+                Some(reflectance) => *reflectance,
+                None => 0.0,
+            };
+            let include_diffuse = match option_include_diffuse {
+                Some(include_diffuse) => *include_diffuse,
+                None => true,
+            };
+            let microfacet_brdf =
+                MicrofacetReflection::new(metallic, roughness, reflectance, include_diffuse);
+            Box::new(Glossy {
                 albedo: texture,
                 bxdf: Box::new(microfacet_brdf),
             })

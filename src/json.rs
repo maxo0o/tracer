@@ -32,7 +32,7 @@ pub enum MaterialJSON {
         albedo: TextureJSON,
         f: f64,
     },
-    Dialectric {
+    Dielectric {
         albedo: Option<TextureJSON>,
         index_of_refraction: f64,
     },
@@ -47,6 +47,13 @@ pub enum MaterialJSON {
         albedo: TextureJSON,
     },
     MicrofacetReflectance {
+        albedo: TextureJSON,
+        metallic: Option<f64>,
+        roughness: Option<f64>,
+        reflectance: Option<f64>,
+        include_diffuse: Option<bool>,
+    },
+    Glossy {
         albedo: TextureJSON,
         metallic: Option<f64>,
         roughness: Option<f64>,

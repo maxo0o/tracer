@@ -159,6 +159,7 @@ impl Material for SpecularReflectance {
 pub struct Glossy {
     pub albedo: Box<dyn Texture + Send + Sync>,
     pub bxdf: Box<dyn BxDF + Send + Sync>,
+    pub fuzziness: f64,
 }
 
 impl Material for Glossy {
@@ -187,7 +188,10 @@ impl Material for Glossy {
             scatter_direction = reflected_world;
         }
 
-        let scattered = Ray::new(Vec3::copy(&hit_record.p), scatter_direction);
+        let scattered = Ray::new(
+            Vec3::copy(&hit_record.p),
+            scatter_direction + self.fuzziness.clamp(0.0, 1.0) * &random_in_unit_sphere(),
+        );
         let _scattered_b = scattered.direction.dot(&normal) > 0.0;
         let colour = self.albedo.value(hit_record.u, hit_record.v, &hit_record.p);
 

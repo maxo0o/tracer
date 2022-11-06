@@ -1,19 +1,19 @@
 {
     "render_settings": {
-        "image_width": 2000,
-        "image_height": 1333, 
-        "samples": 100
+        "image_width": 3000,
+        "image_height": 2000, 
+        "samples": 20
     },
     "camera": {
         "aspect_ratio": 1.5,
         "look_from": [
-            5.0,
-            5.0,
-            5.0
+            4.5,
+            1.5,
+            6.0
         ],
         "look_at": [
-            0.0,
-            0.0,
+            -0.25,
+            0.5,
             0.0
         ],
         "vfov": 20.0,
@@ -28,7 +28,7 @@
     "models": [
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/plane4.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/plane4.obj",
                 "material": {
                     "Light": {
                         "albedo": {
@@ -40,14 +40,15 @@
                                 ]
                             }
                         },
-                        "intensity": 5.0
+                        "intensity": 6.0
                     }
-                }
+                },
+                "should_render": false
             }
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/plane3.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/plane3.obj",
                 "material": {
                     "Light": {
                         "albedo": {
@@ -59,14 +60,15 @@
                                 ]
                             }
                         },
-                        "intensity": 5.0
+                        "intensity": 10.0
                     }
-                }
+                },
+                "should_render": false
             }
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/plane2.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/plane2.obj",
                 "material": {
                     "Light": {
                         "albedo": {
@@ -78,14 +80,15 @@
                                 ]
                             }
                         },
-                        "intensity": 5.0
+                        "intensity": 10.0
                     }
-                }
+                },
+                "should_render": false
             }
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_steering_wheel.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_steering_wheel.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
@@ -106,7 +109,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_steering_wheel1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_steering_wheel1.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -125,7 +128,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_steering_wheel2.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_steering_wheel2.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -144,12 +147,12 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_steering_wheel_circle.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_steering_wheel_circle.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
                             "ImageTexture": {
-                                "image_path": "/mnt/c/Users/maxmc/Desktop/Shelby/wood.jpg",
+                                "image_path": "/Users/maxmclaughlin/Desktop/Shelby/wood.jpg",
                                 "scale": 1.0,
                                 "is_light": false
                             }
@@ -160,7 +163,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard_case.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_dashboard_case.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -179,7 +182,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_pakubka.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_pakubka.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -197,7 +200,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_dashboard.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_dashboard.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -216,7 +219,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_tunel_md72.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_seat_tunel_md72.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -235,7 +238,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_tunel_md7.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_seat_tunel_md7.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -254,7 +257,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_tank_lid_screws.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_tank_lid_screws.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -272,7 +275,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_tank_lid7.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_tank_lid7.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -290,7 +293,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_tank_lid6.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_tank_lid6.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -308,7 +311,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_tank_lid5.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_tank_lid5.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -326,7 +329,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_tank_lid4.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_tank_lid4.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -344,12 +347,12 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_licence_plate.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_licence_plate.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
                             "ImageTexture": {
-                                "image_path": "/mnt/c/Users/maxmc/Desktop/Shelby/license.jpg",
+                                "image_path": "/Users/maxmclaughlin/Desktop/Shelby/license.jpg",
                                 "scale": 1.0,
                                 "is_light": false
                             }
@@ -360,7 +363,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_blinker_back_right_gum.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_blinker_back_right_gum.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
@@ -381,7 +384,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_blinker_back_right_frame.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_blinker_back_right_frame.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -400,7 +403,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_blinker_back_right_glass.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_blinker_back_right_glass.obj",
                 "material": {
                     "Dielectric": {
                         "index_of_refraction": 1.5,
@@ -420,7 +423,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_case_handle.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_back_case_handle.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -439,7 +442,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_licence_plate_light.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_licence_plate_light.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -458,7 +461,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_gripping_back.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_gripping_back.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
@@ -479,7 +482,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_hooks_back.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_hooks_back.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -498,7 +501,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_blinker_left_gum.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_blinker_left_gum.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
@@ -519,7 +522,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_blinker_left_frame.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_blinker_left_frame.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -538,7 +541,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_blinker_left_glass.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_blinker_left_glass.obj",
                 "material": {
                     "Dielectric": {
                         "index_of_refraction": 1.5,
@@ -558,7 +561,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_central_cover1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_central_cover1.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -576,7 +579,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_pedal.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_pedal.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -594,7 +597,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_pedal1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_pedal1.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -612,32 +615,32 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_central_cover.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_central_cover.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.7576,
+                                    0.6076,
                                     0.3352,
                                     0.29215
                                 ]
                             }
                         },
                         "roughness": 0.45,
-                        "reflectance": 1.0
+                        "reflectance": 0.55
                     }
                 }
             }
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_door_wood.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_door_wood.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
                             "ImageTexture": {
-                                "image_path": "/mnt/c/Users/maxmc/Desktop/Shelby/wood.jpg",
+                                "image_path": "/Users/maxmclaughlin/Desktop/Shelby/wood.jpg",
                                 "scale": 1.0,
                                 "is_light": false
                             }
@@ -648,71 +651,69 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_door_cloth.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_door_cloth.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.7576,
+                                    0.6076,
                                     0.3352,
                                     0.29215
                                 ]
                             }
                         },
                         "roughness": 0.45,
-                        "reflectance": 1.0
+                        "reflectance": 0.55
                     }
                 }
             }
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_interior_cover1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_interior_cover1.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.1,
-                                    0.1,
-                                    0.1
+                                    0.15,
+                                    0.15,
+                                    0.15
                                 ],
-                                "normal_path": "/mnt/c/Users/maxmc/Desktop/Shelby/199_normal.png",
-                                "normal_scale": 6.5
+                                "normal_path": "/Users/maxmclaughlin/Desktop/Shelby/199_normal.png",
+                                "normal_scale": 5.0
                             }
                         },
                         "roughness": 0.45,
-                        "reflectance": 1.0
+                        "reflectance": 0.55
                     }
                 }
             }
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_interior_cover.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_interior_cover.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.1,
-                                    0.1,
-                                    0.1
-                                ],
-                                "normal_path": "/mnt/c/Users/maxmc/Desktop/Shelby/199_normal.png",
-                                "normal_scale": 6.5
+                                    0.05,
+                                    0.05,
+                                    0.05
+                                ]
                             }
                         },
                         "roughness": 0.45,
-                        "reflectance": 1.0
+                        "reflectance": 0.55
                     }
                 }
             }
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_doors.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_doors.obj",
                 "material": {
                     "SpecularReflectance": {
                         "albedo": {
@@ -730,7 +731,108 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_cooler_rad.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_cooler_rad.obj",
+                "material": {
+                    "MicrofacetReflectance": {
+                        "albedo": {
+                            "ImageTexture": {
+                                "image_path": "/Users/maxmclaughlin/Desktop/Shelby/chladič.jpg",
+                                "normal_path": "/Users/maxmclaughlin/Desktop/Shelby/cooler_norm.jpg",
+                                "scale": 1.0,
+                                "is_light": false
+                            }
+                        },
+                        "roughness": 0.5,
+                        "reflectance": 0.5
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_hose_left.obj",
+                "material": {
+                    "MicrofacetReflectance": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.4,
+                                    0.4,
+                                    0.4
+                                ],
+                                "normal_path": "/Users/maxmclaughlin/Desktop/Shelby/basket_twill_2_normal.png",
+                                "normal_scale": 10
+                            }
+                        },
+                        "roughness": 0.5,
+                        "reflectance": 0.5
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_hose_left_metal.obj",
+                "material": {
+                    "MicrofacetReflectance": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.581463,
+                                    0.1,
+                                    0.1
+                                ]
+                            }
+                        },
+                        "roughness": 0.15,
+                        "reflectance": 1.0
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_hose_left_metal_bottom.obj",
+                "material": {
+                    "MicrofacetReflectance": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.178396,
+                                    0.276584,
+                                    0.85
+                                ]
+                            }
+                        },
+                        "roughness": 0.15,
+                        "reflectance": 1.0
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_hose_left_metal_pipe.obj",
+                "material": {
+                    "MicrofacetReflectance": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.178396,
+                                    0.276584,
+                                    0.85
+                                ]
+                            }
+                        },
+                        "roughness": 0.15,
+                        "reflectance": 1.0
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_hose1.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -748,69 +850,34 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_hose.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_cooler.obj",
                 "material": {
-                    "Lambertian": {
+                    "MicrofacetReflectance": {
                         "albedo": {
-                            "SolidColour": {
-                                "colour": [
-                                    0.55,
-                                    0.55,
-                                    0.55
-                                ]
+                            "ImageTexture": {
+                                "image_path": "/Users/maxmclaughlin/Desktop/Shelby/chladič.jpg",
+                                "normal_path": "/Users/maxmclaughlin/Desktop/Shelby/cooler_norm.jpg",
+                                "scale": 1.0,
+                                "is_light": false
                             }
-                        }
+                        },
+                        "roughness": 0.5,
+                        "reflectance": 0.5
                     }
                 }
             }
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_hose1.obj",
-                "material": {
-                    "Lambertian": {
-                        "albedo": {
-                            "SolidColour": {
-                                "colour": [
-                                    0.55,
-                                    0.55,
-                                    0.55
-                                ]
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_cooler.obj",
-                "material": {
-                    "Lambertian": {
-                        "albedo": {
-                            "SolidColour": {
-                                "colour": [
-                                    0.55,
-                                    0.55,
-                                    0.55
-                                ]
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_cowling.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_cowling_high_res.obj",
                 "material": {
                     "SpecularReflectance": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.05,
-                                    0.05,
-                                    0.05
+                                    0.01,
+                                    0.01,
+                                    0.01
                                 ]
                             }
                         }
@@ -820,7 +887,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_protective_frame.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_protective_frame.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -839,7 +906,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_protective_frame_covers.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_protective_frame_covers.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -858,7 +925,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_brakes_front.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_brakes_front.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -876,7 +943,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_brakes_front1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_brakes_front1.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -894,7 +961,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_brakes_front_calipers.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_brakes_front_calipers.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -912,7 +979,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_brakes_front_calipers1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_brakes_front_calipers1.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -930,45 +997,43 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_grid_left.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_grid_left.obj",
                 "material": {
-                    "Metal": {
+                    "SpecularReflectance": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.25,
-                                    0.25,
-                                    0.25
+                                    0.01,
+                                    0.01,
+                                    0.01
                                 ]
                             }
-                        },
-                        "f": 0.0
+                        }
                     }
                 }
             }
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_grid_right.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_grid_right.obj",
                 "material": {
-                    "Metal": {
+                    "SpecularReflectance": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.25,
-                                    0.25,
-                                    0.25
+                                    0.01,
+                                    0.01,
+                                    0.01
                                 ]
                             }
-                        },
-                        "f": 0.0
+                        }
                     }
                 }
             }
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_brakes_back.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_brakes_back.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -986,7 +1051,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_brakes_back_calipers.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_brakes_back_calipers.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -1004,7 +1069,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_blinkers_left_glass.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_front_blinkers_left_glass.obj",
                 "material": {
                     "Dielectric": {
                         "index_of_refraction": 1.8,
@@ -1024,7 +1089,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_blinkers_left_frame.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_front_blinkers_left_frame.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1043,7 +1108,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_blinkers_left_gum.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_front_blinkers_left_gum.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
@@ -1064,7 +1129,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_hooks_front.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_hooks_front.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1083,7 +1148,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_hooks_front1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_hooks_front1.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1102,7 +1167,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_hook_gripping_front.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_hook_gripping_front.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
@@ -1123,7 +1188,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_hook_gripping_front1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_hook_gripping_front1.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
@@ -1144,7 +1209,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_blinker_right_glass.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_front_blinker_right_glass.obj",
                 "material": {
                     "Dielectric": {
                         "index_of_refraction": 1.5,
@@ -1164,7 +1229,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_blinker_right_frame.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_front_blinker_right_frame.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1183,7 +1248,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_blinker_right_gum.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_front_blinker_right_gum.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
@@ -1204,7 +1269,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_tank_lid.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_tank_lid.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1223,7 +1288,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_hook_gripping_front.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_hook_gripping_front.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
@@ -1244,7 +1309,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_tank_lid1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_tank_lid1.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1263,7 +1328,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_tank_lid2.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_tank_lid2.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -1281,7 +1346,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_tank_lid3.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_tank_lid3.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -1299,7 +1364,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_glass_frame_cover.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_front_glass_frame_cover.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
@@ -1320,7 +1385,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wiper_left.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wiper_left.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
@@ -1340,7 +1405,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wiper_right.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wiper_right.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
@@ -1360,7 +1425,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_mirror_left.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_back_mirror_left.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1379,7 +1444,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_mirror_center.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_back_mirror_center.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1398,7 +1463,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_mirror_left_frame.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_back_mirror_left_frame.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1417,7 +1482,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_mirror_left_frame1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_back_mirror_left_frame1.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1436,7 +1501,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_mirror_left_frame_screw.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_back_mirror_left_frame_screw.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1455,7 +1520,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_side_glass_left.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_side_glass_left.obj",
                 "material": {
                     "Dielectric": {
                         "index_of_refraction": 1.5
@@ -1465,7 +1530,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_side_glass_right.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_side_glass_right.obj",
                 "material": {
                     "Dielectric": {
                         "index_of_refraction": 1.5
@@ -1475,7 +1540,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_nuts_cover.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_nuts_cover.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1494,7 +1559,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_nuts_cover1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_nuts_cover1.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1513,7 +1578,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_front_nuts.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_front_nuts.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1532,7 +1597,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_front_nuts1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_front_nuts1.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1551,48 +1616,48 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_right.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_seat_right.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.7576,
+                                    0.6076,
                                     0.3352,
                                     0.29215
                                 ],
-                                "normal_path": "/mnt/c/Users/maxmc/Desktop/Shelby/seat_norm.png"
+                                "normal_path": "/Users/maxmclaughlin/Desktop/Shelby/seat_norm.png"
                             }
                         },
                         "roughness": 0.45,
-                        "reflectance": 1.0
+                        "reflectance": 0.55
                     }
                 }
             }
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_right1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_seat_right1.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.7576,
+                                    0.6076,
                                     0.3352,
                                     0.29215
                                 ]
                             }
                         },
                         "roughness": 0.45,
-                        "reflectance": 1.0
+                        "reflectance": 0.55
                     }
                 }
             }
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_back_nuts_cover.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_back_nuts_cover.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1611,7 +1676,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_back_nuts_cover1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_back_nuts_cover1.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1630,7 +1695,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_nuts.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_back_nuts.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1649,7 +1714,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_back_nuts1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_back_nuts1.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1668,7 +1733,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_protective_frame.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_protective_frame.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1687,7 +1752,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_protective_frame_covers.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_protective_frame_covers.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1706,7 +1771,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_interior_cover.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_interior_cover.obj",
                 "material": {
                     "Lambertian": {
                         "albedo": {
@@ -1724,57 +1789,57 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_left.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_seat_left.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.7576,
+                                    0.6076,
                                     0.3352,
                                     0.29215
                                 ],
-                                "normal_path": "/mnt/c/Users/maxmc/Desktop/Shelby/seat_norm.png"
+                                "normal_path": "/Users/maxmclaughlin/Desktop/Shelby/seat_norm.png"
                             }
                         },
                         "roughness": 0.45,
-                        "reflectance": 1.0
+                        "reflectance": 0.55
                     }
                 }
             }
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_left1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_seat_left1.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.7576,
+                                    0.6076,
                                     0.3352,
                                     0.29215
                                 ],
-                                "normal_path": "/mnt/c/Users/maxmc/Desktop/Shelby/seat_norm.png"
+                                "normal_path": "/Users/maxmclaughlin/Desktop/Shelby/seat_norm.png"
                             }
                         },
                         "roughness": 0.45,
-                        "reflectance": 1.0
+                        "reflectance": 0.55
                     }
                 }
             }
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_cowl.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_cowl.obj",
                 "material": {
                     "SpecularReflectance": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.05,
-                                    0.05,
-                                    0.05
+                                    0.01,
+                                    0.01,
+                                    0.01
                                 ]
                             }
                         }
@@ -1784,7 +1849,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_exhaust_cover.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_exhaust_cover.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1803,7 +1868,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_exhaust_clutch.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_exhaust_clutch.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1822,7 +1887,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_exhaust.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_exhaust.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1841,7 +1906,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_glass.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_front_glass.obj",
                 "material": {
                     "Dielectric": {
                         "index_of_refraction": 1.5
@@ -1851,7 +1916,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_glass_frame.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_front_glass_frame.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1870,7 +1935,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_lights.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_front_lights.obj",
                 "material": {
                     "Dielectric": {
                         "index_of_refraction": 1.7,
@@ -1881,7 +1946,7 @@
                                     1.0,
                                     1.0
                                 ],
-                                "normal_path": "/mnt/c/Users/maxmc/Desktop/Shelby/light_normal.jpg",
+                                "normal_path": "/Users/maxmclaughlin/Desktop/Shelby/light_normal.jpg",
                                 "normal_scale": 2.0
                             }
                         }
@@ -1891,7 +1956,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_lights1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_front_lights1.obj",
                 "material": {
                     "Dielectric": {
                         "index_of_refraction": 1.7,
@@ -1902,7 +1967,7 @@
                                     1.0,
                                     1.0
                                 ],
-                                "normal_path": "/mnt/c/Users/maxmc/Desktop/Shelby/light_normal.jpg",
+                                "normal_path": "/Users/maxmclaughlin/Desktop/Shelby/light_normal.jpg",
                                 "normal_scale": 2.0
                             }
                         }
@@ -1912,7 +1977,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_lights2.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_front_lights2.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1931,7 +1996,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_front_lights4.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_front_lights4.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1950,7 +2015,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_front_rim_2.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_front_rim_2.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1969,7 +2034,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_front_rim.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_front_rim.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -1988,12 +2053,12 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_front_tyre_2.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_front_tyre_2.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "ImageTexture": {
-                                "image_path": "/mnt/c/Users/maxmc/Desktop/Shelby/GoodYear1.png",
+                                "image_path": "/Users/maxmclaughlin/Desktop/Shelby/GoodYear1.png",
                                 "scale": 1.0,
                                 "is_light": false
                             }
@@ -2007,12 +2072,30 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_front_tyre.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_front_tyre_22.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.11884,
+                                    0.11884,
+                                    0.11884
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_front_tyre.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "ImageTexture": {
-                                "image_path": "/mnt/c/Users/maxmc/Desktop/Shelby/GoodYear1.png",
+                                "image_path": "/Users/maxmclaughlin/Desktop/Shelby/GoodYear1.png",
                                 "scale": 1.0,
                                 "is_light": false
                             }
@@ -2026,13 +2109,13 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_front_tyre1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_front_tyre1.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "ImageTexture": {
-                                "image_path": "/mnt/c/Users/maxmc/Desktop/Shelby/tyre_thread.png",
-                                "normal_path": "/mnt/c/Users/maxmc/Desktop/Shelby/tyre_thread_normal.png",
+                                "image_path": "/Users/maxmclaughlin/Desktop/Shelby/tyre_thread.png",
+                                "normal_path": "/Users/maxmclaughlin/Desktop/Shelby/tyre_thread_normal.png",
                                 "scale": 1.0,
                                 "is_light": false
                             }
@@ -2046,13 +2129,13 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_front_tyre_21.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_front_tyre_21.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "ImageTexture": {
-                                "image_path": "/mnt/c/Users/maxmc/Desktop/Shelby/tyre_thread.png",
-                                "normal_path": "/mnt/c/Users/maxmc/Desktop/Shelby/tyre_thread_normal.png",
+                                "image_path": "/Users/maxmclaughlin/Desktop/Shelby/tyre_thread.png",
+                                "normal_path": "/Users/maxmclaughlin/Desktop/Shelby/tyre_thread_normal.png",
                                 "scale": 1.0,
                                 "is_light": false
                             }
@@ -2066,7 +2149,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_back_rim1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_back_rim1.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -2085,7 +2168,7 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_back_rim.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_back_rim.obj",
                 "material": {
                     "Metal": {
                         "albedo": {
@@ -2104,12 +2187,12 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_back_tyre.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_back_tyre.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "ImageTexture": {
-                                "image_path": "/mnt/c/Users/maxmc/Desktop/Shelby/GoodYear1.png",
+                                "image_path": "/Users/maxmclaughlin/Desktop/Shelby/GoodYear1.png",
                                 "scale": 1.0,
                                 "is_light": false
                             }
@@ -2123,12 +2206,12 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_back_tyre_2.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_back_tyre_2.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "ImageTexture": {
-                                "image_path": "/mnt/c/Users/maxmc/Desktop/Shelby/GoodYear1.png",
+                                "image_path": "/Users/maxmclaughlin/Desktop/Shelby/GoodYear1.png",
                                 "scale": 1.0,
                                 "is_light": false
                             }
@@ -2142,13 +2225,13 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_back_tyre1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_back_tyre1.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "ImageTexture": {
-                                "image_path": "/mnt/c/Users/maxmc/Desktop/Shelby/tyre_thread.png",
-                                "normal_path": "/mnt/c/Users/maxmc/Desktop/Shelby/tyre_thread_normal.png",
+                                "image_path": "/Users/maxmclaughlin/Desktop/Shelby/tyre_thread.png",
+                                "normal_path": "/Users/maxmclaughlin/Desktop/Shelby/tyre_thread_normal.png",
                                 "scale": 1.0,
                                 "is_light": false
                             }
@@ -2162,13 +2245,13 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_wheels_back_tyre_21.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_wheels_back_tyre_21.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "ImageTexture": {
-                                "image_path": "/mnt/c/Users/maxmc/Desktop/Shelby/tyre_thread.png",
-                                "normal_path": "/mnt/c/Users/maxmc/Desktop/Shelby/tyre_thread_normal.png",
+                                "image_path": "/Users/maxmclaughlin/Desktop/Shelby/tyre_thread.png",
+                                "normal_path": "/Users/maxmclaughlin/Desktop/Shelby/tyre_thread_normal.png",
                                 "scale": 1.0,
                                 "is_light": false
                             }
@@ -2182,15 +2265,15 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/plane.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/back_plane.obj",
                 "material": {
                     "Glossy": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.25884,
-                                    0.25884,
-                                    0.25884
+                                    0.35884,
+                                    0.35884,
+                                    0.35884
                                 ]
                             }
                         },
@@ -2205,80 +2288,80 @@
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_operka3.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_seat_operka3.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.7576,
+                                    0.6076,
                                     0.3352,
                                     0.29215
                                 ]
                             }
                         },
                         "roughness": 0.45,
-                        "reflectance": 1.0
+                        "reflectance": 0.55
                     }
                 }
             }
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_operka2.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_seat_operka2.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.7576,
+                                    0.6076,
                                     0.3352,
                                     0.29215
                                 ]
                             }
                         },
                         "roughness": 0.45,
-                        "reflectance": 1.0
+                        "reflectance": 0.55
                     }
                 }
             }
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_operka1.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_seat_operka1.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.7576,
+                                    0.6076,
                                     0.3352,
                                     0.29215
                                 ]
                             }
                         },
                         "roughness": 0.45,
-                        "reflectance": 1.0
+                        "reflectance": 0.55
                     }
                 }
             }
         },
         {
             "Model": {
-                "obj_path": "/mnt/c/Users/maxmc/Desktop/Shelby/Shelby_Cobra_seat_operka.obj",
+                "obj_path": "/Users/maxmclaughlin/Desktop/Shelby/Shelby_Cobra_seat_operka.obj",
                 "material": {
                     "MicrofacetReflectance": {
                         "albedo": {
                             "SolidColour": {
                                 "colour": [
-                                    0.7576,
+                                    0.6076,
                                     0.3352,
                                     0.29215
                                 ]
                             }
                         },
                         "roughness": 0.45,
-                        "reflectance": 1.0
+                        "reflectance": 0.55
                     }
                 }
             }
@@ -2288,7 +2371,7 @@
         "radius": 500.0,
         "image_texture": {
             "ImageTexture": {
-                "image_path": "/mnt/c/Users/maxmc/Desktop/studio_small.png",
+                "image_path": "/Users/maxmclaughlin/Desktop/sky.png",
                 "scale": 1.0,
                 "is_light": true
             }

@@ -15,6 +15,7 @@ pub trait Hittable: Send + Sync + std::fmt::Debug {
         t_max: f64,
         pixel: Option<(usize, usize)>,
         zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+        first_ray: bool,
     ) -> Option<HitRecord>;
 
     fn bounding_box(&self) -> Option<AxisAlignedBoundingBox> {
@@ -38,6 +39,10 @@ pub trait Hittable: Send + Sync + std::fmt::Debug {
 
     fn get_light_sampler_sphere(&self) -> Sphere {
         panic!("This hittable does not implement the light sampler method");
+    }
+
+    fn should_render(&self) -> bool {
+        true
     }
 }
 
@@ -99,11 +104,16 @@ impl Hittable for HittableList {
         t_max: f64,
         pixel: Option<(usize, usize)>,
         zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+        first_ray: bool,
     ) -> Option<HitRecord> {
         let mut hit_anything: Option<HitRecord> = None;
         let mut closest_so_far = t_max;
 
         for object in &self.objects {
+            if first_ray && !object.should_render() {
+                continue;
+            }
+
             if let Some(bounding_box) = object.bounding_box() {
                 if let (false, _, _) = bounding_box.hit(ray, t_min, closest_so_far) {
                     continue;
@@ -117,6 +127,7 @@ impl Hittable for HittableList {
                 closest_so_far,
                 pixel,
                 Arc::clone(&zbuffer),
+                first_ray,
             ) {
                 closest_so_far = hit_record.t;
                 hit_anything = Some(hit_record);

@@ -30,6 +30,7 @@ impl Hittable for Volume {
         t_max: f64,
         pixel: Option<(usize, usize)>,
         zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+        first_ray: bool,
     ) -> Option<crate::hittable::HitRecord> {
         if let Some(hit1) = &mut self.boundary.hit(
             ray,
@@ -38,6 +39,7 @@ impl Hittable for Volume {
             f64::INFINITY,
             pixel,
             Arc::clone(&zbuffer),
+            first_ray,
         ) {
             if let Some(hit2) = &mut self.boundary.hit(
                 ray,
@@ -46,6 +48,7 @@ impl Hittable for Volume {
                 f64::INFINITY,
                 pixel,
                 Arc::clone(&zbuffer),
+                first_ray,
             ) {
                 if hit1.t < t_min {
                     hit1.t = t_min;

@@ -57,6 +57,7 @@ impl Hittable for Plane {
         t_max: f64,
         _pixel: Option<(usize, usize)>,
         _zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+        _first_ray: bool,
     ) -> Option<crate::hittable::HitRecord> {
         let t = match &self.orientation {
             PlaneOrientation::XY => (self.k - ray.origin.z) / ray.direction.z,
@@ -127,6 +128,7 @@ impl Hittable for Plane {
             f64::INFINITY,
             pixel,
             zbuffer,
+            false,
         ) {
             let area = (self.a1 - self.a0) * (self.b1 - self.b0);
             let distance_squared = hit.t * hit.t * v.length_squared();
@@ -239,9 +241,17 @@ impl Hittable for Cube {
         t_max: f64,
         pixel: Option<(usize, usize)>,
         zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+        first_ray: bool,
     ) -> Option<HitRecord> {
-        self.sides
-            .hit(ray, camera, t_min, t_max, pixel, Arc::clone(&zbuffer))
+        self.sides.hit(
+            ray,
+            camera,
+            t_min,
+            t_max,
+            pixel,
+            Arc::clone(&zbuffer),
+            first_ray,
+        )
     }
 
     fn bounding_box(&self) -> Option<crate::aabb::AxisAlignedBoundingBox> {

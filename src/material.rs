@@ -53,22 +53,22 @@ pub struct MicrofacetReflectance {
 impl Material for MicrofacetReflectance {
     fn scatter(
         &self,
-        ray_in: &Ray,
+        _ray_in: &Ray,
         hit_record: &HitRecord,
         camera: &Camera,
     ) -> (Ray, Colour, bool) {
+        let onb = OrthonormalBasis::build_from_w(&hit_record.normal);
         let normal = match self
             .albedo
             .normal_value(hit_record.u, hit_record.v, &hit_record.p)
         {
-            Some(normal) => normal,
+            Some(normal) => onb.local_vec(&normal),
             None => hit_record.normal,
         };
 
-        let onb = OrthonormalBasis::build_from_w(&hit_record.normal);
-
         let wo = camera.origin - hit_record.p;
-        let wi = reflect(&ray_in.direction, &hit_record.normal).unit();
+        //let wi = reflect(&ray_in.direction, &onb.local_vec(&normal));
+        //let wi = reflect(&ray_in.direction, &hit_record.normal);
 
         let mut scatter_direction = onb.local_vec(&random_cosine_direction());
 
@@ -84,7 +84,9 @@ impl Material for MicrofacetReflectance {
         colour.b = colour.b.powf(2.0);
         (
             scattered,
-            self.bxdf.f(&wo, &wi, &onb.local_vec(&normal), &colour),
+            //self.bxdf.f(&wo, &wi, &onb.local_vec(&normal), &colour),
+            self.bxdf
+                .f(&wo.unit(), &Vec3::new(0.0, 1.0, 1.0), &normal, &colour),
             true,
         )
     }
@@ -118,30 +120,27 @@ impl Material for SpecularReflectance {
             None => hit_record.normal,
         };
 
-        let _onb = OrthonormalBasis::build_from_w(&normal);
+        let onb = OrthonormalBasis::build_from_w(&hit_record.normal);
 
         let reflected_world = reflect(&ray_in.direction, &normal);
         //let reflected = onb.local_vec(&reflected_world).unit();
-        let _wo = camera.origin - hit_record.p;
+        let wo = camera.origin - hit_record.p;
 
-        let scatter_direction = reflected_world;
+        let mut scatter_direction = onb.local_vec(&random_cosine_direction());
+        let mut spec_multi = 1.0;
+        let mut f = 1.0;
+        if rand::thread_rng().gen_range(0.0..1.0) > 0.3 {
+            scatter_direction = reflected_world;
+            spec_multi = 10.4;
+            f = 1.0 - normal.unit().dot(&wo.unit());
+        }
 
         let scattered = Ray::new(Vec3::copy(&hit_record.p), scatter_direction);
         let _scattered_b = scattered.direction.dot(&normal) > 0.0;
         let colour = self.albedo.value(hit_record.u, hit_record.v, &hit_record.p);
-
         (
-            scattered, colour, // * brdf.sample_f(&ray_in.direction, &reflected, (0.0, 0.0)),
-            //       brdf_microfacet(
-            //           &reflected_world,
-            //           &wo,
-            //           &hit_record.normal,
-            //           metallic,
-            //           roughness,
-            //           reflectance,
-            //           &colour,
-            //           false,
-            //       ),
+            scattered,
+            f * spec_multi * colour, // * brdf.sample_f(&ray_in.direction, &reflected, (0.0, 0.0)),
             true,
         )
     }
@@ -180,12 +179,14 @@ impl Material for Glossy {
         let onb = OrthonormalBasis::build_from_w(&hit_record.normal);
 
         let wo = camera.origin - hit_record.p;
-        let wi = reflect(&ray_in.direction, &hit_record.normal).unit();
+        // let wi = reflect(&ray_in.direction, &hit_record.normal);
+        let wi = reflect(&ray_in.direction.unit(), &hit_record.normal);
 
         let mut scatter_direction = onb.local_vec(&random_cosine_direction());
-        let reflected_world = reflect(&ray_in.direction, &normal);
-        if rand::thread_rng().gen_range(0.0..1.0) > 0.8 {
-            scatter_direction = reflected_world;
+        let mut reflect_factor = 1.0;
+        if rand::thread_rng().gen_range(0.0..1.0) > 0.25 {
+            scatter_direction = wi;
+            reflect_factor = 0.1;
         }
 
         let scattered = Ray::new(
@@ -193,10 +194,14 @@ impl Material for Glossy {
             scatter_direction + self.fuzziness.clamp(0.0, 1.0) * &random_in_unit_sphere(),
         );
         let _scattered_b = scattered.direction.dot(&normal) > 0.0;
-        let colour = self.albedo.value(hit_record.u, hit_record.v, &hit_record.p);
+        let mut colour = self.albedo.value(hit_record.u, hit_record.v, &hit_record.p);
 
+        colour.r = colour.r.powf(1.0);
+        colour.g = colour.g.powf(1.0);
+        colour.b = colour.b.powf(1.0);
         (
-            scattered, colour, //self.bxdf.f(&wo, &wi, &onb.local_vec(&normal), &colour),
+            scattered, //colour,
+            reflect_factor * self.bxdf.f(&wo, &wi, &hit_record.normal, &colour),
             true,
         )
     }

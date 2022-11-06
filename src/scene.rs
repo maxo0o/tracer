@@ -102,6 +102,7 @@ impl Scene {
                     obj_path,
                     material,
                     shade_smooth,
+                    should_render,
                 } => {
                     let object = match File::open(&obj_path) {
                         Err(why) => panic!("Error opening obj {} :{}", &obj_path, why),
@@ -115,7 +116,12 @@ impl Scene {
 
                     let object_material = parse_material(&material);
 
-                    let object = Object::new(object, object_material, shade_smooth.unwrap_or(true));
+                    let object = Object::new(
+                        object,
+                        object_material,
+                        shade_smooth.unwrap_or(true),
+                        should_render.unwrap_or(true),
+                    );
 
                     if let MaterialJSON::Light { .. } = material {
                         let light_sampler = Box::new(object.get_light_sampler_sphere());
@@ -219,8 +225,10 @@ impl Scene {
         }
 
         let mut pixel_tup: Option<(usize, usize)> = None;
+        let mut first_ray = false;
         if depth == MAX_RAY_DEPTH {
             pixel_tup = pixel;
+            first_ray = true;
         }
 
         //eprintln!("=====START====");
@@ -231,6 +239,7 @@ impl Scene {
             INFINITY,
             pixel_tup,
             Arc::clone(&zbuffer),
+            first_ray,
         ) {
             let (scattered_ray, albedo, is_scattered) =
                 hit_record.material.scatter(ray, hit_record, &self.camera);
@@ -289,6 +298,7 @@ impl Scene {
                 INFINITY,
                 pixel,
                 Arc::clone(&zbuffer),
+                first_ray,
             ) {
                 let (_, albedo, _) = hit.material.scatter(ray, hit, &self.camera);
                 return albedo;

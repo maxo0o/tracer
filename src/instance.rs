@@ -25,6 +25,7 @@ impl Hittable for Translate {
         t_max: f64,
         pixel: Option<(usize, usize)>,
         zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+        first_ray: bool,
     ) -> Option<HitRecord> {
         let ray_moved = Ray::new(ray.origin - self.offset, ray.direction);
 
@@ -35,6 +36,7 @@ impl Hittable for Translate {
             t_max,
             pixel,
             Arc::clone(&zbuffer),
+            first_ray,
         ) {
             let mut hit_record = HitRecord {
                 p: hit.p + self.offset,
@@ -85,6 +87,7 @@ impl Hittable for RotateY {
         t_max: f64,
         pixel: Option<(usize, usize)>,
         zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+        first_ray: bool,
     ) -> Option<HitRecord> {
         let mut origin = ray.origin.clone();
         let mut direction = ray.direction.clone();
@@ -104,6 +107,7 @@ impl Hittable for RotateY {
             t_max,
             pixel,
             Arc::clone(&zbuffer),
+            first_ray,
         ) {
             let mut p = hit.p;
 

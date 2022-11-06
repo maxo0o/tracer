@@ -69,6 +69,7 @@ pub enum HittablesJSON {
         obj_path: String,
         material: MaterialJSON,
         shade_smooth: Option<bool>,
+        should_render: Option<bool>,
     },
     Volume {
         box_min: [f64; 3],

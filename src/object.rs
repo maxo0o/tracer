@@ -17,6 +17,7 @@ pub struct Object {
     pub tree: Box<KDTree>,
     material: Box<dyn Material>,
     bounding_box: AxisAlignedBoundingBox,
+    render: bool,
 }
 
 impl fmt::Debug for Object {
@@ -30,6 +31,7 @@ impl Object {
         object: Obj<TexturedVertex, u32>,
         material: Box<dyn Material>,
         shade_smooth: bool,
+        render: bool,
     ) -> Object {
         let (mut faces, bounding_box) = build_from_obj(object, shade_smooth);
 
@@ -42,6 +44,7 @@ impl Object {
                 tree,
                 material,
                 bounding_box,
+                render,
             }
         } else {
             panic!("Problem building kdtree");
@@ -58,6 +61,7 @@ impl Hittable for Object {
         t_max: f64,
         pixel: Option<(usize, usize)>,
         zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+        _first_ray: bool,
     ) -> Option<HitRecord> {
         //eprintln!("Search object");
         if let Some(KDTreeHitRecord {
@@ -126,5 +130,9 @@ impl Hittable for Object {
             self.bounding_box.minimum,
             self.bounding_box.maximum,
         ))
+    }
+
+    fn should_render(&self) -> bool {
+        self.render
     }
 }

@@ -53,7 +53,7 @@ impl BxDF for MicrofacetReflection {
         let no_h = n.dot(&h).clamp(0.0, 1.0);
         let vo_h = wo.dot(&h).clamp(0.0, 1.0);
 
-        let r = 0.16 * self.reflectance * self.reflectance;
+        let r = 0.36 * self.reflectance * self.reflectance;
         let f0 = r;
 
         let f = fresnel_schlik(vo_h, f0);

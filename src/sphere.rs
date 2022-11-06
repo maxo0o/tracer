@@ -36,6 +36,7 @@ impl Hittable for Sphere {
         t_max: f64,
         _pixel: Option<(usize, usize)>,
         _zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
+        _first_ray: bool,
     ) -> Option<HitRecord> {
         let oc = ray.origin - self.center;
         let a = ray.direction.length_squared();
@@ -106,6 +107,7 @@ impl Hittable for Sphere {
             f64::INFINITY,
             pixel,
             zbuffer,
+            false,
         ) {
             let cos_theta_max =
                 (1.0 - self.radius * self.radius / (self.center - origin).length_squared()).sqrt();

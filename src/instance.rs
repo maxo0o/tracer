@@ -40,7 +40,7 @@ impl Hittable for Translate {
         ) {
             let mut hit_record = HitRecord {
                 p: hit.p + self.offset,
-                normal: hit.normal.clone(),
+                normal: hit.normal,
                 tangent: None,
                 bitangent: None,
                 material: hit.material,
@@ -89,8 +89,8 @@ impl Hittable for RotateY {
         zbuffer: Arc<Mutex<Vec<Vec<f64>>>>,
         first_ray: bool,
     ) -> Option<HitRecord> {
-        let mut origin = ray.origin.clone();
-        let mut direction = ray.direction.clone();
+        let mut origin = ray.origin;
+        let mut direction = ray.direction;
 
         origin.x = self.theta.cos() * ray.origin.x - self.theta.sin() * ray.origin.z;
         origin.z = self.theta.sin() * ray.origin.x + self.theta.cos() * ray.origin.z;

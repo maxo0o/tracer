@@ -257,8 +257,8 @@ impl KDTree {
         ];
 
         while best_axis == -1 && retries < 2 {
-            for i in 0..triangle_list_len {
-                let t_bounds = &triangle_list[i].bounds;
+            for (i, triangle) in triangle_list.iter().enumerate() {
+                let t_bounds = &triangle.bounds;
                 edges[axis][2 * i] = BoundEdge::new(t_bounds.minimum.get(axis), i, true);
                 edges[axis][2 * i + 1] = BoundEdge::new(t_bounds.maximum.get(axis), i, false);
             }

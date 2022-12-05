@@ -2,19 +2,8 @@ use rand::Rng;
 use std::f64::consts::PI;
 
 use crate::colour::Colour;
-// use crate::fresnel::Fresnel;
-// use crate::microfacet::Microfacet;
 use crate::utils::*;
 use crate::vector::Vec3;
-
-//pub enum BxDFType {
-//    Reflection,
-//    Transmission,
-//    Diffuse,
-//    Glossy,
-//    Specular,
-//    All,
-//}
 
 pub trait BxDF: std::fmt::Debug + Send + Sync {
     fn f(&self, wo: &Vec3, wi: &Vec3, n: &Vec3, colour: &Colour) -> Colour;
@@ -117,73 +106,3 @@ pub fn g1_ggx_schlick(no_v: f64, roughness: f64) -> f64 {
     let k = alpha / 2.0;
     no_v.max(0.001) / (no_v * (1.0 - k) + k)
 }
-//pub struct SpecularReflection {
-//    pub scale: f64,
-//    pub fresnel: Box<dyn Fresnel>,
-//}
-//impl BxDF for SpecularReflection {
-//    fn bxdf_type() -> BxDFType {
-//     BxDFType::Specular
-//    }
-
-//    fn f(&self, _wo: &Vec3, _wi: &Vec3) -> Colour {
-//       Colour::new(0.0, 0.0, 0.0)
-//    }
-//
-//    fn sample_f(&self, _wo: &Vec3, wi: &Vec3, u: (f64, f64)) -> Colour {
-//        let f = (self.fresnel.evaulate(cos_theta(wi)) * self.scale) / abs_cos_theta(wi);
-//        Colour::new(f, f, f)
-//    }
-//}
-
-//pub struct MicrofacetReflection {
-//    pub scale: f64,
-//    pub fresnel: Box<dyn Fresnel>,
-//    pub distribution: Box<dyn Microfacet>,
-//}
-//impl BxDF for MicrofacetReflection {
-//    fn bxdf_type() -> BxDFType {
-//        BxDFType::Reflection
-//    }
-//
-//    fn f(&self, wo: &Vec3, wi: &Vec3) -> Colour {
-//        let cos_theta_o = abs_cos_theta(wo);
-//        let cos_theta_i = abs_cos_theta(wi);
-//        let mut wh = wo + wi;
-//
-//        if cos_theta_o == 0.0 || cos_theta_i == 0.0 {
-//            return Colour::new(0.0, 0.0, 0.0);
-//        }
-//        if wh.x == 0.0 && wh.y == 0.0 && wh.z == 0.0 {
-//            return Colour::new(0.0, 0.0, 0.0);
-//        }
-//
-//        wh = wh.unit();
-//
-//        if wh.dot(&Vec3::new(0.0, 0.0, 1.0)) < 0.0 {
-//            wh = -wh;
-//        }
-//
-//        let f = self.fresnel.evaulate(wi.dot(&wh));
-//        let radiance =
-//            self.scale * self.distribution.distribution(&wh) * self.distribution.g(wo, wi) * f
-//                / (4.0 * cos_theta_i * cos_theta_o);
-//        let pdf = self.distribution.pdf(wo, &wh) / (4.0 * wo.dot(&wh));
-//        Colour::new(radiance, radiance, radiance)
-//    }
-//
-//    fn sample_f(&self, wo: &Vec3, _wi: &Vec3, u: (f64, f64)) -> Colour {
-//        if wo.z == 0.0 {
-//            return Colour::new(0.0, 0.0, 0.0);
-//        }
-//
-//        let wh = self.distribution.sample_wh(wo, u);
-//        let wi = reflect(wo, &wh);
-//
-//        //if !same_hemisphere(wo, &wi) {
-//        //  return Colour::new(0.0, 0.0, 0.0);
-//        //}
-//
-//        self.f(wo, &wi)
-//    }
-//}

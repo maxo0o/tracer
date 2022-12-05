@@ -37,7 +37,7 @@ impl Colour {
         }
     }
 
-    pub fn write_colour(&self, samples_per_pixel: u32) {
+    pub fn write_colour(&self, samples_per_pixel: u32) -> (u8, u8, u8) {
         let mut r = self.r;
         let mut g = self.g;
         let mut b = self.b;
@@ -51,7 +51,7 @@ impl Colour {
         let ig = (256.0 * g.clamp(0.0, 0.999)) as u8;
         let ib = (256.0 * b.clamp(0.0, 0.999)) as u8;
 
-        println!("{} {} {}", ir, ig, ib);
+        (ir, ig, ib)
     }
 }
 

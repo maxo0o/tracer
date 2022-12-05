@@ -1,8 +1,9 @@
 use std::io::BufReader;
 use std::sync::{Arc, Mutex};
+use std::thread;
 use std::{fs::File, io::Read};
 
-use image::DynamicImage;
+use image::{DynamicImage, Rgba, RgbaImage};
 use obj::{load_obj, Obj, TexturedVertex};
 use rayon::prelude::*;
 
@@ -159,7 +160,7 @@ impl Scene {
         }
     }
 
-    pub fn render(&self) {
+    pub fn render(&self, rgba_image: Arc<Mutex<RgbaImage>>) {
         let zbuffer = Arc::new(Mutex::new(vec![
             vec![
                 INFINITY;
@@ -169,13 +170,7 @@ impl Scene {
             self.render_settings.image_height as usize
         ]));
 
-        // Render
-        print!(
-            "P3\n{} {}\n255\n",
-            self.render_settings.image_width, self.render_settings.image_height
-        );
-
-        for j in (0..=self.render_settings.image_height - 1).rev() {
+        for j in 0..=self.render_settings.image_height - 1 {
             eprint!("\rScanlines remaining: {:?}", j);
 
             let scanline: Vec<Colour> = (0..self.render_settings.image_width)
@@ -201,8 +196,15 @@ impl Scene {
                 })
                 .collect();
 
-            for pixel_colour in scanline {
-                pixel_colour.write_colour(self.render_settings.samples);
+            for (x, pixel_colour) in scanline.iter().enumerate() {
+                let w_colour = pixel_colour.write_colour(self.render_settings.samples);
+                let mut image = rgba_image.lock().unwrap();
+                image.put_pixel(
+                    x as u32,
+                    self.render_settings.image_height - j - 1,
+                    Rgba([w_colour.0, w_colour.1, w_colour.2, 1]),
+                );
+                // pixel_colour.write_colour(self.render_settings.samples);
             }
         }
     }

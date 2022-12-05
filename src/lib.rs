@@ -18,3 +18,4 @@ pub mod texture;
 pub mod utils;
 pub mod vector;
 pub mod volume;
+pub mod window;

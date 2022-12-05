@@ -1,5 +1,5 @@
 use clap::Parser;
-use tracer::scene::Scene;
+use tracer::window::run;
 
 ///  A simple raytracer written in Rust. Runs on the CPU only... for now!
 #[derive(Parser, Debug)]
@@ -12,6 +12,6 @@ struct Args {
 
 fn main() {
     let args = Args::parse();
-    let scene = Scene::new(args.scene);
-    scene.render();
+
+    pollster::block_on(run(args.scene));
 }

@@ -1,8 +1,8 @@
 {
     "render_settings": {
-        "image_width": 2000,
-        "image_height": 1333, 
-        "samples": 1
+        "image_width": 1000,
+        "image_height": 667, 
+        "samples": 10
     },
     "camera": {
         "aspect_ratio": 1.5,

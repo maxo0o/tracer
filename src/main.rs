@@ -1,28 +1,17 @@
-mod aabb;
-mod bxdf;
-mod camera;
-mod colour;
-mod hittable;
-mod instance;
-mod json;
-mod kdtree;
-mod material;
-mod object;
-mod onb;
-mod pdf;
-mod ray;
-mod rectangle;
-mod scene;
-mod sphere;
-mod texture;
-mod utils;
-mod vector;
-mod volume;
+use clap::Parser;
+use tracer::scene::Scene;
 
-use crate::scene::Scene;
+///  A simple raytracer written in Rust. Runs on the CPU only... for now!
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    /// The filename containing the scene json blob. ie 'car.json'
+    #[arg(short, long)]
+    scene: String,
+}
 
 fn main() {
-    let scene = Scene::new("car.json".to_string());
-
+    let args = Args::parse();
+    let scene = Scene::new(args.scene);
     scene.render();
 }

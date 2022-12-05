@@ -34,7 +34,7 @@ impl Camera {
         let origin = Vec3::copy(&look_from);
         let horizontal = focus_dist * viewport_width * &u;
         let vertical = focus_dist * viewport_height * &v;
-        let lower_left_corner = &origin - &horizontal / 2.0 - &vertical / 2.0 - focus_dist * &w;
+        let lower_left_corner = origin - &horizontal / 2.0 - &vertical / 2.0 - focus_dist * &w;
 
         let lens_radius = aperture / 2.0;
 
@@ -54,9 +54,9 @@ impl Camera {
         let offset = rd.x * &self.u + rd.y * &self.v;
 
         let origin_c = Vec3::new(self.origin.x, self.origin.y, self.origin.z);
-        let direction = &self.lower_left_corner + s * &self.horizontal + t * &self.vertical
-            - &self.origin
-            - &offset;
+        let direction = self.lower_left_corner + s * &self.horizontal + t * &self.vertical
+            - self.origin
+            - offset;
         Ray::new(origin_c + offset, direction)
     }
 }

@@ -81,7 +81,6 @@ impl Scene {
         };
 
         let mut objects = HittableList::new();
-        //let mut objects: Vec<Arc<Box<dyn Hittable>>> = vec![];
         let mut lights: Vec<Arc<Box<dyn Hittable>>> = vec![];
 
         let mut skybox: Option<Sphere> = None;
@@ -128,7 +127,6 @@ impl Scene {
                         lights.push(Arc::new(light_sampler));
                     }
 
-                    //objects.push(Arc::new(Box::new(object)));
                     objects.objects.push(Box::new(object));
                 }
                 HittablesJSON::Volume {
@@ -147,14 +145,10 @@ impl Scene {
                     let object_material = parse_material(&material);
                     let mist = Volume::new(Box::new(cube), density, object_material);
 
-                    //objects.push(Arc::new(Box::new(mist)));
                     objects.objects.push(Box::new(mist));
                 }
             }
         }
-
-        //let bvh = BoundingVolumeHierarchy::build(&mut objects[..], 0);
-        //eprintln!("{:?}", bvh);
 
         Scene {
             render_settings,
@@ -231,7 +225,6 @@ impl Scene {
             first_ray = true;
         }
 
-        //eprintln!("=====START====");
         if let Some(hit_record) = &self.objects.hit(
             ray,
             &self.camera,
@@ -254,6 +247,7 @@ impl Scene {
 
             let mut pdf = 1.0;
             let mut scattered_ray = scattered_ray;
+
             // this only works for lambertian materials rn
             if hit_record.material.use_pdfs() {
                 let mut pdfs: Vec<Box<dyn ProbabilityDensityFunction>> = vec![];

@@ -2,7 +2,7 @@
     "render_settings": {
         "image_width": 3000,
         "image_height": 2000, 
-        "samples": 64
+        "samples": 16
     },
     "camera": {
         "aspect_ratio": 1.5,
@@ -2120,7 +2120,7 @@
                                 "is_light": false
                             }
                         },
-                        "roughness": 0.25,
+                        "roughness": 0.15,
                         "reflectance": 0.15,
                         "include_diffuse": false
                     }
@@ -2140,7 +2140,7 @@
                                 "is_light": false
                             }
                         },
-                        "roughness": 0.25,
+                        "roughness": 0.15,
                         "reflectance": 0.15,
                         "include_diffuse": false
                     }
@@ -2236,7 +2236,7 @@
                                 "is_light": false
                             }
                         },
-                        "roughness": 0.25,
+                        "roughness": 0.15,
                         "reflectance": 0.15,
                         "include_diffuse": false
                     }
@@ -2256,7 +2256,7 @@
                                 "is_light": false
                             }
                         },
-                        "roughness": 0.25,
+                        "roughness": 0.15,
                         "reflectance": 0.15,
                         "include_diffuse": false
                     }

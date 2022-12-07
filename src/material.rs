@@ -70,8 +70,6 @@ impl Material for MicrofacetReflectance {
 
         let wo = camera.origin - hit_record.p;
         let light_dir = sampled_light_position - hit_record.p;
-        //let wi = reflect(&ray_in.direction, &onb.local_vec(&normal));
-        //let wi = reflect(&ray_in.direction, &hit_record.normal);
 
         let mut scatter_direction = onb.local_vec(&random_cosine_direction());
 
@@ -87,8 +85,7 @@ impl Material for MicrofacetReflectance {
         colour.b = colour.b.powf(2.0);
         (
             scattered,
-            //self.bxdf.f(&wo, &wi, &onb.local_vec(&normal), &colour),
-            self.bxdf.f(&wo.unit(), &light_dir, &normal, &colour),
+            self.bxdf.f(&wo.unit(), &light_dir.unit(), &normal, &colour),
             true,
         )
     }

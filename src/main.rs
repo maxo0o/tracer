@@ -11,12 +11,17 @@ struct Args {
 
     /// The output filename of the render. ie 'car.jpg'
     #[arg(short, long)]
-    out: String,
+    out: Option<String>,
 }
 
 fn main() {
     let args = Args::parse();
 
+    let out_file = match args.out {
+        Some(file) => file,
+        None => format!("untitled_{}.jpg", chrono::offset::Local::now()),
+    };
+
     // Opens a window and starts the raytracer
-    pollster::block_on(run(args.scene, args.out));
+    pollster::block_on(run(args.scene, out_file));
 }

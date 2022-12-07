@@ -1,6 +1,6 @@
+use rand::seq::IteratorRandom;
 use std::io::BufReader;
 use std::sync::{Arc, Mutex};
-use std::thread;
 use std::{fs::File, io::Read};
 
 use image::{DynamicImage, Rgba, RgbaImage};
@@ -23,6 +23,7 @@ use crate::ray::Ray;
 use crate::rectangle::Cube;
 use crate::sphere::Sphere;
 use crate::texture::{ImageTexture, SolidColour, Texture};
+use crate::utils::random_in_unit_sphere;
 use crate::vector::Vec3;
 use crate::volume::Volume;
 
@@ -31,7 +32,6 @@ const MAX_RAY_DEPTH: u32 = 10;
 
 pub struct Scene {
     pub camera: Camera,
-    //pub objects: BoundingVolumeHierarchy,
     pub objects: HittableList,
     pub lights: Vec<Arc<Box<dyn Hittable>>>,
     pub skybox: Option<Sphere>,
@@ -171,8 +171,6 @@ impl Scene {
         ]));
 
         for j in 0..=self.render_settings.image_height - 1 {
-            eprint!("\rScanlines remaining: {:?}", j);
-
             let scanline: Vec<Colour> = (0..self.render_settings.image_width)
                 .into_par_iter()
                 .map(|i| {
@@ -204,7 +202,6 @@ impl Scene {
                     self.render_settings.image_height - j - 1,
                     Rgba([w_colour.0, w_colour.1, w_colour.2, 1]),
                 );
-                // pixel_colour.write_colour(self.render_settings.samples);
             }
         }
     }
@@ -236,8 +233,18 @@ impl Scene {
             Arc::clone(&zbuffer),
             first_ray,
         ) {
+            let mut rng = rand::thread_rng();
+            let bxdf_light = self.lights.iter().choose(&mut rng);
+            let mut light_center = Vec3::new(0.0, 0.0, 0.0);
+            if let Some(light) = bxdf_light {
+                light_center = random_in_unit_sphere() + light.center();
+                light_center = light.radius() * &light_center;
+            }
+
             let (scattered_ray, albedo, is_scattered) =
-                hit_record.material.scatter(ray, hit_record, &self.camera);
+                hit_record
+                    .material
+                    .scatter(ray, hit_record, &self.camera, light_center);
 
             let emitted = hit_record
                 .material
@@ -296,7 +303,9 @@ impl Scene {
                 Arc::clone(&zbuffer),
                 first_ray,
             ) {
-                let (_, albedo, _) = hit.material.scatter(ray, hit, &self.camera);
+                let (_, albedo, _) =
+                    hit.material
+                        .scatter(ray, hit, &self.camera, Vec3::new(0.0, 0.0, 0.0));
                 return albedo;
             };
         }
@@ -427,7 +436,7 @@ fn parse_texture(texture: &TextureJSON) -> Box<dyn Texture + Send + Sync + 'stat
             is_light,
             scale,
         } => {
-            let img = match image::open(&image_path) {
+            let img = match image::open(image_path) {
                 Err(why) => panic!(
                     "Error opening skybox image texture {}: {}",
                     &image_path, why
@@ -437,7 +446,7 @@ fn parse_texture(texture: &TextureJSON) -> Box<dyn Texture + Send + Sync + 'stat
 
             let mut alpha_img: Option<DynamicImage> = None;
             if let Some(alpha) = alpha_path {
-                alpha_img = match image::open(&alpha) {
+                alpha_img = match image::open(alpha) {
                     Err(why) => panic!("Error opening skybox image texture {}: {}", &alpha, why),
                     Ok(image) => Some(image),
                 };
@@ -445,7 +454,7 @@ fn parse_texture(texture: &TextureJSON) -> Box<dyn Texture + Send + Sync + 'stat
 
             let mut normal_img: Option<DynamicImage> = None;
             if let Some(normal) = normal_path {
-                normal_img = match image::open(&normal) {
+                normal_img = match image::open(normal) {
                     Err(why) => panic!("Error opening skybox image texture {}: {}", &normal, why),
                     Ok(image) => Some(image),
                 };
@@ -467,7 +476,7 @@ fn parse_texture(texture: &TextureJSON) -> Box<dyn Texture + Send + Sync + 'stat
         } => {
             let mut normal_img: Option<DynamicImage> = None;
             if let Some(normal) = normal_path {
-                normal_img = match image::open(&normal) {
+                normal_img = match image::open(normal) {
                     Err(why) => panic!("Error opening skybox image texture {}: {}", &normal, why),
                     Ok(image) => Some(image),
                 };

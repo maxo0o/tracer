@@ -8,10 +8,15 @@ struct Args {
     /// The filename containing the scene json blob. ie 'car.json'
     #[arg(short, long)]
     scene: String,
+
+    /// The output filename of the render. ie 'car.jpg'
+    #[arg(short, long)]
+    out: String,
 }
 
 fn main() {
     let args = Args::parse();
 
-    pollster::block_on(run(args.scene));
+    // Opens a window and starts the raytracer
+    pollster::block_on(run(args.scene, args.out));
 }

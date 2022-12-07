@@ -44,6 +44,14 @@ pub trait Hittable: Send + Sync + std::fmt::Debug {
     fn should_render(&self) -> bool {
         true
     }
+
+    fn center(&self) -> Vec3 {
+        panic!("Not implemented for this type!");
+    }
+
+    fn radius(&self) -> f64 {
+        panic!("Not implemented for this type!");
+    }
 }
 
 #[derive(Debug)]

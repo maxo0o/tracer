@@ -19,6 +19,7 @@ pub trait Material: Send + Sync + std::fmt::Debug {
         _ray_in: &Ray,
         _hit_record: &HitRecord,
         _camera: &Camera,
+        _sampled_light_position: Vec3,
     ) -> (Ray, Colour, bool) {
         (
             Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, 0.0)),
@@ -56,6 +57,7 @@ impl Material for MicrofacetReflectance {
         _ray_in: &Ray,
         hit_record: &HitRecord,
         camera: &Camera,
+        sampled_light_position: Vec3,
     ) -> (Ray, Colour, bool) {
         let onb = OrthonormalBasis::build_from_w(&hit_record.normal);
         let normal = match self
@@ -67,6 +69,7 @@ impl Material for MicrofacetReflectance {
         };
 
         let wo = camera.origin - hit_record.p;
+        let light_dir = sampled_light_position - hit_record.p;
         //let wi = reflect(&ray_in.direction, &onb.local_vec(&normal));
         //let wi = reflect(&ray_in.direction, &hit_record.normal);
 
@@ -85,8 +88,7 @@ impl Material for MicrofacetReflectance {
         (
             scattered,
             //self.bxdf.f(&wo, &wi, &onb.local_vec(&normal), &colour),
-            self.bxdf
-                .f(&wo.unit(), &Vec3::new(0.0, 1.0, 1.0), &normal, &colour),
+            self.bxdf.f(&wo.unit(), &light_dir, &normal, &colour),
             true,
         )
     }
@@ -111,6 +113,7 @@ impl Material for SpecularReflectance {
         ray_in: &Ray,
         hit_record: &HitRecord,
         camera: &Camera,
+        _sampled_light_position: Vec3,
     ) -> (Ray, Colour, bool) {
         let normal = match self
             .albedo
@@ -123,7 +126,6 @@ impl Material for SpecularReflectance {
         let onb = OrthonormalBasis::build_from_w(&hit_record.normal);
 
         let reflected_world = reflect(&ray_in.direction, &normal);
-        //let reflected = onb.local_vec(&reflected_world).unit();
         let wo = camera.origin - hit_record.p;
 
         let mut scatter_direction = onb.local_vec(&random_cosine_direction());
@@ -138,11 +140,7 @@ impl Material for SpecularReflectance {
         let scattered = Ray::new(Vec3::copy(&hit_record.p), scatter_direction);
         let _scattered_b = scattered.direction.dot(&normal) > 0.0;
         let colour = self.albedo.value(hit_record.u, hit_record.v, &hit_record.p);
-        (
-            scattered,
-            f * spec_multi * colour, // * brdf.sample_f(&ray_in.direction, &reflected, (0.0, 0.0)),
-            true,
-        )
+        (scattered, f * spec_multi * colour, true)
     }
 
     fn scattering_pdf(&self, _ray_in: &Ray, _hit_record: &HitRecord, _scattered: &Ray) -> f64 {
@@ -167,6 +165,7 @@ impl Material for Glossy {
         ray_in: &Ray,
         hit_record: &HitRecord,
         camera: &Camera,
+        _sampled_light_position: Vec3,
     ) -> (Ray, Colour, bool) {
         let normal = match self
             .albedo
@@ -179,7 +178,6 @@ impl Material for Glossy {
         let onb = OrthonormalBasis::build_from_w(&hit_record.normal);
 
         let wo = camera.origin - hit_record.p;
-        // let wi = reflect(&ray_in.direction, &hit_record.normal);
         let wi = reflect(&ray_in.direction.unit(), &hit_record.normal);
 
         let mut scatter_direction = onb.local_vec(&random_cosine_direction());
@@ -200,7 +198,7 @@ impl Material for Glossy {
         colour.g = colour.g.powf(1.0);
         colour.b = colour.b.powf(1.0);
         (
-            scattered, //colour,
+            scattered,
             reflect_factor * self.bxdf.f(&wo, &wi, &hit_record.normal, &colour),
             true,
         )
@@ -226,6 +224,7 @@ impl Material for Lambertian {
         _ray_in: &Ray,
         hit_record: &HitRecord,
         _camera: &Camera,
+        _sampled_light_position: Vec3,
     ) -> (Ray, Colour, bool) {
         let normal = match self
             .albedo
@@ -286,6 +285,7 @@ impl Material for Metal {
         ray_in: &Ray,
         hit_record: &HitRecord,
         _camera: &Camera,
+        _sampled_light_position: Vec3,
     ) -> (Ray, Colour, bool) {
         let normal = match self
             .albedo
@@ -321,6 +321,7 @@ impl Material for Dielectric {
         ray_in: &Ray,
         hit_record: &HitRecord,
         _camera: &Camera,
+        _sampled_light_position: Vec3,
     ) -> (Ray, Colour, bool) {
         let mut normal = hit_record.normal;
         let mut attenuation = Colour::new(1.0, 1.0, 1.0);
@@ -376,10 +377,10 @@ impl Material for Light {
         ray_in: &Ray,
         hit_record: &HitRecord,
         _camera: &Camera,
+        _sampled_light_position: Vec3,
     ) -> (Ray, Colour, bool) {
         if self.albedo.alpha_value(hit_record.u, hit_record.v) < 0.1 {
             let onb = OrthonormalBasis::build_from_w(&hit_record.normal);
-            //let mut scatter_direction = &hit_record.normal + random_in_unit_vector();
             let mut scatter_direction = onb.local_vec(&random_cosine_direction());
 
             if scatter_direction.near_zero() {
@@ -419,6 +420,7 @@ impl Material for Isotropic {
         _ray_in: &Ray,
         hit_record: &HitRecord,
         _camera: &Camera,
+        _sampled_light_position: Vec3,
     ) -> (Ray, Colour, bool) {
         let ray = Ray::new(Vec3::copy(&hit_record.p), random_in_unit_sphere());
         (

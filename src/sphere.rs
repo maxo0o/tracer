@@ -133,6 +133,14 @@ impl Hittable for Sphere {
 
         Some(uvw.local_vec(&random_to_sphere(self.radius, distance_squared)))
     }
+
+    fn center(&self) -> Vec3 {
+        self.center
+    }
+
+    fn radius(&self) -> f64 {
+        self.radius
+    }
 }
 
 fn get_sphere_uv(p: &Vec3, center: &Vec3) -> (f64, f64) {

@@ -1,5 +1,6 @@
+// Most of this code is directly out of the wgpu tutorial at https://sotrh.github.io/learn-wgpu
 use crate::scene::Scene;
-use image::{ImageBuffer, Rgba, RgbaImage};
+use image::RgbaImage;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use wgpu::util::DeviceExt;
@@ -16,7 +17,6 @@ struct Vertex {
     tex_coords: [f32; 2],
 }
 
-// lib.rs
 impl Vertex {
     fn desc<'a>() -> wgpu::VertexBufferLayout<'a> {
         wgpu::VertexBufferLayout {
@@ -126,31 +126,23 @@ impl State {
             depth_or_array_layers: 1,
         };
         let diffuse_texture = device.create_texture(&wgpu::TextureDescriptor {
-            // All textures are stored as 3D, we represent our 2D texture
-            // by setting depth to 1.
             size: texture_size,
-            mip_level_count: 1, // We'll talk about this a little later
+            mip_level_count: 1,
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
-            // Most images are stored using sRGB so we need to reflect that here.
             format: wgpu::TextureFormat::Rgba8UnormSrgb,
-            // TEXTURE_BINDING tells wgpu that we want to use this texture in shaders
-            // COPY_DST means that we want to copy data to this texture
             usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
             label: Some("diffuse_texture"),
         });
 
         queue.write_texture(
-            // Tells wgpu where to copy the pixel data
             wgpu::ImageCopyTexture {
                 texture: &diffuse_texture,
                 mip_level: 0,
                 origin: wgpu::Origin3d::ZERO,
                 aspect: wgpu::TextureAspect::All,
             },
-            // The actual pixel data
             &diffuse_rgba,
-            // The layout of the texture
             wgpu::ImageDataLayout {
                 offset: 0,
                 bytes_per_row: std::num::NonZeroU32::new(4 * dimensions.0),
@@ -159,8 +151,6 @@ impl State {
             texture_size,
         );
 
-        // We don't need to configure the texture view much, so let's
-        // let wgpu define it.
         let diffuse_texture_view =
             diffuse_texture.create_view(&wgpu::TextureViewDescriptor::default());
         let diffuse_sampler = device.create_sampler(&wgpu::SamplerDescriptor {
@@ -189,8 +179,6 @@ impl State {
                     wgpu::BindGroupLayoutEntry {
                         binding: 1,
                         visibility: wgpu::ShaderStages::FRAGMENT,
-                        // This should match the filterable field of the
-                        // corresponding Texture entry above.
                         ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
                         count: None,
                     },
@@ -292,10 +280,6 @@ impl State {
         }
     }
 
-    fn input(&mut self, event: &WindowEvent) -> bool {
-        todo!()
-    }
-
     fn update(&mut self) {
         let image = self.rgba_image.lock().unwrap();
 
@@ -308,16 +292,13 @@ impl State {
         };
 
         self.queue.write_texture(
-            // Tells wgpu where to copy the pixel data
             wgpu::ImageCopyTexture {
                 texture: &self.diffuse_texture,
                 mip_level: 0,
                 origin: wgpu::Origin3d::ZERO,
                 aspect: wgpu::TextureAspect::All,
             },
-            // The actual pixel data
             &image,
-            // The layout of the texture
             wgpu::ImageDataLayout {
                 offset: 0,
                 bytes_per_row: std::num::NonZeroU32::new(4 * dimensions.0),
@@ -371,10 +352,11 @@ impl State {
     }
 }
 
-pub async fn run(scene_path: String) {
+pub async fn run(scene_path: String, out_path: String) {
     env_logger::init();
     let event_loop = EventLoop::new();
     let window = WindowBuilder::new().build(&event_loop).unwrap();
+    window.set_title("Tracer Raytracer v0.1.0");
 
     let scene = Scene::new(scene_path);
     let rgba_image = Arc::new(Mutex::new(RgbaImage::new(
@@ -383,8 +365,15 @@ pub async fn run(scene_path: String) {
     )));
     let mut state = State::new(&window, Arc::clone(&rgba_image)).await;
 
+    // Where the magic happens. This starts the Raytracer.
     thread::spawn(move || {
         scene.render(Arc::clone(&rgba_image));
+
+        let image = rgba_image.lock().unwrap();
+        match image.save(&out_path) {
+            Ok(_) => println!("Wrote render out to {}", out_path),
+            Err(e) => panic!("Something went wrong trying to save the file {}...", e),
+        }
     });
 
     event_loop.run(move |event, _, control_flow| match event {
@@ -406,7 +395,6 @@ pub async fn run(scene_path: String) {
                 state.resize(*physical_size);
             }
             WindowEvent::ScaleFactorChanged { new_inner_size, .. } => {
-                // new_inner_size is &&mut so we have to dereference it twice
                 state.resize(**new_inner_size);
             }
             _ => {}
@@ -415,21 +403,14 @@ pub async fn run(scene_path: String) {
             state.update();
             match state.render() {
                 Ok(_) => {}
-                // Reconfigure the surface if lost
                 Err(wgpu::SurfaceError::Lost) => state.resize(state.size),
-                // The system is out of memory, we should probably quit
                 Err(wgpu::SurfaceError::OutOfMemory) => *control_flow = ControlFlow::Exit,
-                // All other errors (Outdated, Timeout) should be resolved by the next frame
                 Err(e) => eprintln!("{:?}", e),
             }
         }
         Event::MainEventsCleared => {
-            // RedrawRequested will only trigger once, unless we manually
-            // request it.
             window.request_redraw();
         }
-        _ => {
-            // Do the actual render
-        }
+        _ => {}
     });
 }

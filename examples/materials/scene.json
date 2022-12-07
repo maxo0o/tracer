@@ -1,0 +1,136 @@
+{
+    "render_settings": {
+        "image_width": 2000,
+        "image_height": 1333, 
+        "samples":10
+    },
+    "camera": {
+        "aspect_ratio": 1.5,
+        "look_from": [
+            4.0,
+            2.5,
+            20.0
+        ],
+        "look_at": [
+            0.0,
+            1.0,
+            0.0
+        ],
+        "vfov": 20.0,
+        "v_up": [
+            0.0,
+            1.0,
+            0.0
+        ],
+        "dist_to_focus": 1.0,
+        "aperture": 0.0
+    },
+    "models": [
+        {
+            "Model": {
+                "obj_path": "examples/materials/suz1.obj",
+                "material": {
+                    "Dielectric": {
+                        "index_of_refraction": 1.5,
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.93725490,
+                                    0.478431,
+                                    0.52156
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "examples/materials/suz2.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.55,
+                                    0.55,
+                                    0.55
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "examples/materials/suz3.obj",
+                "material": {
+                    "SpecularReflectance": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.83921,
+                                    0.156862,
+                                    0.2235
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "examples/materials/ground.obj",
+                "material": {
+                    "Lambertian": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    0.29803,
+                                    0.2941,
+                                    0.3882
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Model": {
+                "obj_path": "examples/materials/light.obj",
+                "material": {
+                    "Light": {
+                        "albedo": {
+                            "SolidColour": {
+                                "colour": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "intensity": 20.0
+                    }
+                },
+                "should_render": false
+            }
+        }
+    ],
+    "skybox": {
+        "radius": 100.0,
+        "image_texture": {
+            "SolidColour": {
+                "colour": [
+                    0.529,
+                    0.607,
+                    0.721
+                ],
+                "is_light": true
+            }
+        }
+    }
+}
